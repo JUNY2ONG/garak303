@@ -49,7 +49,7 @@ collectMats();
 applyWalls(); applyRig();
 const startView = QS.get('v');
 if (startView && spaceById(startView)) goSpace(startView, true); else goOrbit(startView === 'plan' ? 'plan' : 'all', true);
-if (QS.get('night')) { light.night = true; segSet('lightMode', 'l', 'night'); applyRig(); }
+if (QS.get('night')) setNight(true);
 markRooms(); qualNote();
 setTimeout(() => toast('방 이름을 누르면 안으로 들어가요<br><b>가구·가전·창을 탭</b>하면 정보가 떠요', 4800), 700);
 requestAnimationFrame(frame);

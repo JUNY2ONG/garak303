@@ -61,7 +61,7 @@ function filmPause(p, quiet) {
 }
 function filmStart() {
   if (film.on) return;
-  hideCard(); closeSheets(); if (state.measuring) setMeasuring(false);
+  hideCard(); closeSheets(); lightPanelSet(false); if (state.measuring) setMeasuring(false);
   MAP.big = false; mapSet(false, false);
   tween = null; walk.path = null; walk.vy = walk.vp = 0; controls.enabled = false;
   film.saved = { night: light.night, wallPref: state.wallPref, study: proposals.study.cur, curtain: curtainMode };

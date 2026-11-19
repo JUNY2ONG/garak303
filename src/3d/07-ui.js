@@ -105,7 +105,7 @@ let cardActs = {};
 function showCard(html, acts) {
   cardActs = acts || {};
   card.innerHTML = `<button class="x" data-a="close" aria-label="닫기">×</button>${html}`;
-  card.classList.add('on');
+  card.classList.add('on'); lightPanelSet(false);
   if (window.innerWidth < 760) card.style.bottom = (window.innerHeight - $('dock').getBoundingClientRect().top + 8) + 'px'; else card.style.bottom = '';
 }
 function hideCard() { if (card.classList.contains('on')) { card.classList.remove('on'); select(null); } }
@@ -299,7 +299,7 @@ $('mapHint').addEventListener('click', () => { MAP.big = false; mapAuto(); });
 
 // ---------- 시트 ----------
 const sheets = ['sheetOpt', 'sheetMemo'].map($);
-function openSheet(id) { sheets.forEach(s => s.classList.toggle('on', s.id === id)); $('scrim').classList.add('on'); hideCard(); }
+function openSheet(id) { sheets.forEach(s => s.classList.toggle('on', s.id === id)); $('scrim').classList.add('on'); hideCard(); lightPanelSet(false); }
 function closeSheets() { sheets.forEach(s => s.classList.remove('on')); $('scrim').classList.remove('on'); }
 $('scrim').addEventListener('click', closeSheets);
 document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeSheets));
@@ -412,7 +412,18 @@ function propBarUpdate() {
 $('tMap').addEventListener('click', () => { if (MAP.big) { MAP.big = false; mapAuto(); } else mapSet(true, true); });
 $('tMeas').addEventListener('click', () => setMeasuring(!state.measuring));
 $('measClear').addEventListener('click', measClear); $('measDone').addEventListener('click', () => setMeasuring(false));
-segInit('lightMode', 'l', v => { light.night = v === 'night'; applyRig(); });
+// 낮 / 저녁: 보기 옵션과 조명 패널 두 곳의 버튼을 같이 맞춤
+function setNight(on) { light.night = !!on; ['lightMode', 'lightMode2'].forEach(id => segSet(id, 'l', on ? 'night' : 'day')); applyRig(); }
+segInit('lightMode', 'l', v => setNight(v === 'night'));
+segInit('lightMode2', 'l', v => setNight(v === 'night'));
+// 조명 패널: 화면을 가리지 않고 밝기 · 색온도를 바꿔 볼 수 있게 도구 줄 위에 뜸
+const lightPanel = $('lightPanel');
+function lightPanelSet(on) {
+  lightPanel.classList.toggle('on', on); $('tLight').classList.toggle('on', on);
+  if (on) { hideCard(); if (state.measuring) setMeasuring(false); if (window.innerWidth < 760) lightPanel.style.bottom = (window.innerHeight - $('dock').getBoundingClientRect().top + 8) + 'px'; else lightPanel.style.bottom = ''; }
+}
+$('tLight').addEventListener('click', () => lightPanelSet(!lightPanel.classList.contains('on')));
+$('lightClose').addEventListener('click', () => lightPanelSet(false));
 // 다운라이트 밝기 · 색온도 (저녁 조명에서 보이므로 조절하면 저녁으로 바꿈)
 (function dlUI() {
   const bEl = $('dlBright'), kEl = $('dlTemp'), name = k => (k <= 3200 ? '전구색' : k <= 4500 ? '주백색' : '주광색');
@@ -421,8 +432,7 @@ segInit('lightMode', 'l', v => { light.night = v === 'night'; applyRig(); });
   const on = () => {
     dl.b = clamp(+bEl.value / 100, 0, 1); dl.k = clamp(+kEl.value, 2700, 6500); show();
     try { localStorage.setItem('house3d.dl', JSON.stringify(dl)); } catch (e) { /* 무시 */ }
-    if (!light.night) { light.night = true; segSet('lightMode', 'l', 'night'); toast('다운라이트가 보이도록 저녁 조명으로 바꿨어요', 2200); }
-    applyRig();
+    if (!light.night) { setNight(true); toast('다운라이트가 보이도록 저녁 조명으로 바꿨어요', 2200); } else applyRig();
   };
   bEl.addEventListener('input', on); kEl.addEventListener('input', on);
   document.querySelectorAll('[data-dlk]').forEach(b => b.addEventListener('click', () => { kEl.value = b.dataset.dlk; on(); }));

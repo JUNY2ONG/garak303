@@ -91,7 +91,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 #card .pc ul{margin:2px 0 0;padding-left:17px}
 .lnk{color:var(--acc);font-weight:700;text-decoration:underline;font-size:12px;padding:6px 2px}
 .propbar .ib{flex:none;height:38px;padding:0 12px;border-radius:10px;background:#f1eee8;font-size:12.5px;font-weight:700;color:var(--ink2)}
-#tools{display:grid;grid-template-columns:repeat(4,1fr);padding:4px;gap:2px}
+#tools{display:grid;grid-template-columns:repeat(5,1fr);padding:4px;gap:2px}
 #tools button{height:52px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11.5px;font-weight:700;color:var(--ink2)}
 #tools button svg{width:21px;height:21px}
 #tools button.on{background:var(--acc-soft);color:var(--acc)}
@@ -166,6 +166,16 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 .memo td{padding:6px 4px;border-top:1px solid var(--line);vertical-align:top;line-height:1.4}
 .memo td:first-child{white-space:nowrap;color:var(--mute);padding-right:10px}
 .sw{display:inline-block;width:14px;height:14px;border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.12);vertical-align:-2px;margin-right:6px}
+
+/* ---------- 조명 패널 (도구의 '조명' 버튼) ---------- */
+#lightPanel{position:fixed;left:10px;right:10px;bottom:calc(var(--sab) + 132px);z-index:6;max-width:560px;margin:0 auto;background:rgba(255,254,251,.96);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-radius:var(--r);box-shadow:0 8px 30px rgba(40,30,15,.2),0 0 0 1px rgba(40,30,15,.06);padding:8px 12px 12px 14px;display:none}
+#lightPanel.on{display:block;animation:pop .18s ease-out}
+.lp-h{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.lp-h b{font-size:15px;font-weight:800;flex:none}
+.lp-h .seg{flex:1;max-width:210px;margin-left:auto}
+.lp-h .seg button{height:36px;font-size:13px}
+.lp-h .x{flex:none;width:40px;height:40px;border-radius:12px;font-size:20px;color:var(--mute)}
+body.film #lightPanel{display:none!important}
 
 /* ---------- 거리 재기 바 / 토스트 ---------- */
 #measBar{position:fixed;left:10px;right:10px;bottom:calc(var(--sab) + 132px);z-index:6;max-width:560px;margin:0 auto;background:var(--ink);color:#fff;border-radius:var(--r);padding:8px 8px 8px 14px;display:none;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
@@ -355,6 +365,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
   #dock{padding-bottom:16px}
   #dock>*{width:auto;min-width:520px}
   #card,#measBar{left:auto;right:16px;bottom:16px;width:360px;margin:0}
+  #lightPanel{left:16px;right:auto;bottom:16px;width:360px;margin:0}
   #measBar{right:auto;left:50%;transform:translateX(-50%);bottom:150px;width:440px}
   .sheet{left:auto;right:16px;bottom:16px;width:420px;border-radius:22px;max-height:calc(100vh - 100px);margin:0;transform:translateY(calc(100% + 30px))}
   #scrim.on{opacity:0;pointer-events:none}
@@ -390,6 +401,12 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 <div id="toast"></div>
 
 <div id="card"></div>
+<div id="lightPanel" aria-label="조명 조절">
+  <div class="lp-h"><b>조명</b><div class="seg" id="lightMode2"><button data-l="day" class="on">낮</button><button data-l="night">저녁</button></div><button class="x" id="lightClose" aria-label="닫기">×</button></div>
+  <label class="sl"><span>밝기</span><input type="range" id="dlBright" min="0" max="100" step="5" value="80"><b id="dlBrightV">80%</b></label>
+  <label class="sl"><span>색온도</span><input type="range" id="dlTemp" min="2700" max="6500" step="100" value="3500" class="temp"><b id="dlTempV">3500K</b></label>
+  <div class="chips3"><button data-dlk="3000">전구색 3000K</button><button data-dlk="4000">주백색 4000K</button><button data-dlk="5700">주광색 5700K</button></div>
+</div>
 <div id="measBar"><div id="measText">잴 곳의 첫 번째 점을 탭하세요</div><button id="measClear">지우기</button><button id="measDone">끝</button></div>
 
 <nav id="dock">
@@ -400,6 +417,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
     <button id="tOpt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>보기 옵션</button>
     <button id="tDims"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M3 6l3-3 3 3M3 18l3 3 3-3"/><rect x="12" y="6" width="9" height="12" rx="1"/><path d="M16.5 6v12"/></svg>창·높이</button>
     <button id="tMeas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 14-14 4 4L7 21z"/><path d="m7 13 2 2M10 10l2 2M13 7l2 2"/></svg>거리 재기</button>
+    <button id="tLight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/></svg>조명</button>
     <button id="tMap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h8v6H3zM11 5h10v9H11zM3 11h8v8H3zM11 14h10v5H11z"/></svg>평면 지도</button>
   </div>
 </nav>
@@ -429,10 +447,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
       <div class="seg" id="lightMode"><button data-l="day" class="on">낮 (햇빛)</button><button data-l="night">저녁 (실내등)</button></div>
     </div>
     <div class="sec"><h4>다운라이트 (3인치 31개) · 옷방 중앙등</h4>
-      <label class="sl"><span>밝기</span><input type="range" id="dlBright" min="0" max="100" step="5" value="80"><b id="dlBrightV">80%</b></label>
-      <label class="sl"><span>색온도</span><input type="range" id="dlTemp" min="2700" max="6500" step="100" value="3500" class="temp"><b id="dlTempV">3500K</b></label>
-      <div class="chips3"><button data-dlk="3000">전구색 3000K</button><button data-dlk="4000">주백색 4000K</button><button data-dlk="5700">주광색 5700K</button></div>
-      <div class="hintline">저녁 조명에서 켜져요. 조절하면 자동으로 저녁 조명으로 바뀌어요.</div>
+      <div class="hintline" style="margin-top:0">밝기와 색온도는 아래 도구의 <b>조명</b> 버튼에서 바꿔요.</div>
     </div>
     <div class="sec"><h4>화질</h4>
       <div class="seg" id="qualMode"><button data-q="auto" class="on">자동</button><button data-q="low">낮음</button><button data-q="mid">보통</button><button data-q="high">높음</button></div>
@@ -476,7 +491,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 <div id="fatal"></div>
 
 <script type="text/plain" data-file="HANDOFF.md" id="handoff">
-# 우리집 3D 도면 — 작업 인계 문서 (17차까지 반영)
+# 우리집 3D 도면 — 작업 인계 문서 (18차까지 반영)
 
 이 문서는 `house-3d.html` 안에 들어 있다. **이 HTML 파일 하나만 있으면** 소스 전부를 꺼내 수정하고 다시 빌드할 수 있다. (`house-plan.html`은 같은 소스에서 함께 만들어지므로 따로 들고 다닐 필요 없음.)
 
@@ -598,21 +613,21 @@ LG 워시콤보 FC2521UX6CX (700 × 990 × 885).
 ### UI에 대한 사용자 결정
 - 보기 옵션 시트: '옷 예시'·'평면 지도' 항목 없음. 시트에서 배치안을 눌러도 **시트가 닫히지 않고 설명 카드도 자동으로 뜨지 않음**(설명은 링크/‘설명’ 버튼으로만).
 - **이름표(라벨)는 기본 꺼짐**, 보기 옵션에서 켬 (8차).
-- 하단 도크: 방 바로가기(전체·평면·현관·거실·주방·침실·서재·옷방) + 도구(보기 옵션·창·높이·거리 재기·평면 지도).
+- 하단 도크: 방 바로가기(전체·평면·현관·거실·주방·침실·서재·옷방) + 도구(보기 옵션·창·높이·거리 재기·조명·평면 지도).
 - **10차: 벽 전개도 기능 제거** (도구 버튼·시트·카드의 전개도 버튼·`08-elev.js` 모두 삭제. 다시 넣지 말 것).
 - **10차: 메모는 왼쪽 위 '우리집 3D' 칸에 통합** — 칸 전체가 버튼이고(안에 ⚠ 메모 + 경고 개수), 누르면 메모 시트가 열린다. 오른쪽 위에는 메모 버튼 대신 **'집 소개 영상' 재생 버튼**(눈에 띄는 주황색, 맥박 + 반짝임).
 
 ### 창 · 커튼 · 창밖 풍경 · 공개 주소 (14차)
 - **거실 전면창**: y 0~355 전체가 창(벽 없음, 사용자 확인). `windows[].splits`로 창짝 나눔(넓은 창 + 좁은 창, 사진 비율). 침실 앞 발코니 창은 이음새(355~365) 바로 뒤 365부터.
 - **전동 커튼** (사용자 요청): 거실 = 속커튼(내지) + 겉커튼(겉지), 침실 = 겉커튼(겉지). 데이터 `type: 'curtain'`(`span`, `layers`, `motor`), 모델은 `04-furniture.js`의 커튼 블록(천 한 쪽 = 주름 판, 레일 방향 `scale.z`로 걷힘). 보기 옵션의 '전동 커튼'(열림 / 속커튼만 / 모두 닫힘) → `curtainSet(mode)`, 그리기 루프의 `curtainStep`이 약 3초에 걸쳐 움직임. 소개 영상 중에는 열어 둠. 색·주름·레일·모터 위치는 가정.
-- **창밖 풍경** (`05-env.js` `paintCity`): 사용자가 준 현장 사진 2장(거실 뷰, 세탁실 뷰)을 참고한 그림. 방향각 az는 0 = 남 · 90 = 동 · 180 = 북 · 270 = 서. 서쪽(거실·침실 창): 단풍 든 능선(오른쪽 = 북서로 갈수록 높음), 흰 아파트 단지, 앞쪽 붉은 벽돌 + 초록 지붕 학교, 오른쪽 가까이에 같은 단지 동. 동쪽(세탁실·주방·서재 창): 붉은 단풍 숲과 초록 지붕 저층, **롯데월드타워는 az 48(동남)** — 세탁실 창에서 오른쪽으로 보이고 주방에서 정면으로는 안 보임(사용자 확인), 그 오른쪽에 짙은 유리 고층. 눈높이 지상 55m 가정.
+- **창밖 풍경** (`05-env.js` `paintCity`): 사용자가 준 현장 사진 2장(거실 뷰, 세탁실 뷰)을 참고한 그림. 방향각 az는 0 = 남 · 90 = 동 · 180 = 북 · 270 = 서. 서쪽(거실·침실 창): 단풍 든 능선(오른쪽 = 북서로 갈수록 높음), 흰 아파트 단지, 앞쪽 붉은 벽돌 + 초록 지붕 학교, 오른쪽 가까이에 같은 단지 동. 동쪽(세탁실·주방·서재 창): 붉은 단풍 숲과 초록 지붕 저층, **롯데월드타워는 az 62(동남), 거리 1600** (18차에 '너무 오른쪽' 지적으로 가운데 쪽으로 · 가까이) — 세탁실 창에서 오른쪽으로 보이고 주방에서 정면으로는 안 보임(사용자 확인), 그 오른쪽에 짙은 유리 고층. 눈높이 지상 55m 가정.
 - **소개 영상 바로가기**: 주소 뒤 `?film=1` (로컬 파일도 동일). 공개 사이트에서는 `/film`.
 - **공개 주소**: https://garak303.vercel.app (Vercel 프로젝트 `woorijip-3d`, 사용자 계정). `out/house-3d.html` → `index.html`, `out/house-plan.html` → `plan.html`로 복사하고 아래 `vercel.json`과 함께 `vercel deploy --prod`로 올림(저장소 자동 연결 아님, 올릴 때마다 사용자가 `vercel login` 기기 인증). 실사 렌더(경로 추적) 시험은 사용자 요청으로 제외함 — 다시 넣지 말 것.
   `vercel.json`: `{"headers":[{"source":"/(.*)","headers":[{"key":"X-Robots-Tag","value":"noindex, nofollow"}]}],"redirects":[{"source":"/film","destination":"/?film=1","permanent":false}]}`
 
 ### 조명 (17차)
 - **3인치 다운라이트 31개**: 사용자가 평면 캡처에 표시한 자리(`house-data.js`의 `lightGroups` — 거실 10 · 서재 8 · 주방 7 · 복도 1 · 침실 3 · 욕실 2). 표시를 좌표로 옮긴 값이라 ±10cm 오차, 줄·간격만 가지런히 맞춤. **옷방은 다운라이트가 아니라 일반 중앙등**(`ceilingLamps`, 사용자 확인. 모양은 가정).
-- **밝기 · 색온도 조절** (사용자 요청): 보기 옵션의 슬라이더 → 전역 `dl = { b: 0~1, k: 2700~6500 }` (`05-env.js`), `applyRig()`가 저녁 실내등 색·세기와 다운라이트 면 색에 반영. 조절하면 자동으로 저녁 조명으로 바뀜. 값은 localStorage `house3d.dl`에 저장.
+- **밝기 · 색온도 조절** (사용자 요청): 하단 도구의 **'조명' 버튼**(18차, 사용자 요청으로 보기 옵션 밖으로 뺌) → 화면을 가리지 않는 조명 패널(`#lightPanel`: 낮/저녁, 밝기, 색온도, 전구색·주백색·주광색 버튼) → 전역 `dl = { b: 0~1, k: 2700~6500 }` (`05-env.js`), `applyRig()`가 저녁 실내등 색·세기와 다운라이트 면 색에 반영. 조절하면 자동으로 저녁 조명으로 바뀜. 값은 localStorage `house3d.dl`에 저장.
 - 실제 빛 계산은 묶음(`lightGroups`의 한 줄)마다 점광원 하나로 근사 + 옷방 중앙등 + 표시가 없던 현관·세탁실 기본등(가정). 색온도는 근사식(`kelvinRGB`)에 눈의 적응을 감안해 흰색 쪽으로 절반 당김.
 
 ## 5. 가정 (메모 패널에도 표시 — H.memo가 최신)
@@ -643,7 +658,7 @@ LG 워시콤보 FC2521UX6CX (700 × 990 × 885).
 - 검증: `window.__house.film.seek(초, true)` → 그 시각에서 멈춘 화면(글자 애니메이션도 그 시각 상태). 장면 시작 시각: 오프닝 0 / 현관 14 / 거실 21.5 / 주방 31 / 서재 39.5 / 옷방 48 / 마감재 55.5 / 침실 63.5 / 엔딩 72.5. `window.__house.fx`로 효과 값을 직접 바꿔 볼 수 있다.
 
 ## 8. 작업 이력
-1차 v2 전체 재작성(사용성·그래픽) → 2차 평면도 개선 → 3차 주방 깊이·냉장고장·키큰장·욕실 배치·소파/침대 디테일·테이블·서재안·화장대 → 4차 발코니 문 2곳(PVC, 모루/백사틴) → 5차 침실 TV 스탠드, 서재안 새로 → 6차 시트 동작, 소파 재제작, 주방 표준 모듈, 러그·협탁·커튼 → 7차 TV 스탠드를 화장대와 방문 사이로, 이 인계 문서 내장 → 8차 이름표 기본 꺼짐, 서재 A안 창 아래 장 → 9차 A안 책상·장 간섭 정리 → 10차 집 소개 영상 추가, 벽 전개도 제거, 메모를 '우리집 3D' 칸에 통합 → 11차 영상 품질 개편(후처리에 빛 번짐·초점 흐림·색보정·입자, 벽 물결 올리기 셰이더, 세로 화면 구도, 위치 지도, 마감재 장면, 영상 코드를 4개 파일로 분리) → 12차 영상의 서재는 A안만 → 17차 3인치 다운라이트 31개를 사용자가 표시한 자리에, 옷방 중앙등, 밝기·색온도 조절 → 16차 벽지 색을 사용자가 준 LX지인 견본 이미지(평균 RGB 233·229·222, 따뜻한 아이보리)에 맞춤(`01-textures.js` wallC 바탕 #ece6da, 얼룩 은은하게 + 약한 세로 결), **천장도 같은 벽지**(사용자 요청, `MAT.ceiling`), 실내 보조광 색을 따뜻하게(0xfff3e4) → 15차 벽지가 실제보다 어둡다는 지적으로 실내 주변광(`applyRig` 낮·실내 hemi 0.3 / env 0.6, 보조광 0.92, AO 0.82)과 벽지 바탕색(#f4f2ed)을 밝게 — 벽지 색은 견본 사진 없이 이름으로 짐작한 근사임 → 14차 거실 창을 벽 없이 전체 창으로, 전동 커튼(거실 2중 · 침실 겉지), 창밖 풍경을 현장 사진 기준으로 다시 그림, 영상 바로가기(?film=1), Vercel 공개 → 13차 가구 업체 실측 메모 반영(주방 상하부장·냉장고장·키큰장·신발장·앞 베란다 장 치수, 주방 베란다 장 추가, 인덕션을 후드 아래로, 식기세척기 위치 추정).
+1차 v2 전체 재작성(사용성·그래픽) → 2차 평면도 개선 → 3차 주방 깊이·냉장고장·키큰장·욕실 배치·소파/침대 디테일·테이블·서재안·화장대 → 4차 발코니 문 2곳(PVC, 모루/백사틴) → 5차 침실 TV 스탠드, 서재안 새로 → 6차 시트 동작, 소파 재제작, 주방 표준 모듈, 러그·협탁·커튼 → 7차 TV 스탠드를 화장대와 방문 사이로, 이 인계 문서 내장 → 8차 이름표 기본 꺼짐, 서재 A안 창 아래 장 → 9차 A안 책상·장 간섭 정리 → 10차 집 소개 영상 추가, 벽 전개도 제거, 메모를 '우리집 3D' 칸에 통합 → 11차 영상 품질 개편(후처리에 빛 번짐·초점 흐림·색보정·입자, 벽 물결 올리기 셰이더, 세로 화면 구도, 위치 지도, 마감재 장면, 영상 코드를 4개 파일로 분리) → 12차 영상의 서재는 A안만 → 18차 조명 조절을 도구의 '조명' 버튼 + 패널로, 롯데타워를 조금 가운데 · 가까이 → 17차 3인치 다운라이트 31개를 사용자가 표시한 자리에, 옷방 중앙등, 밝기·색온도 조절 → 16차 벽지 색을 사용자가 준 LX지인 견본 이미지(평균 RGB 233·229·222, 따뜻한 아이보리)에 맞춤(`01-textures.js` wallC 바탕 #ece6da, 얼룩 은은하게 + 약한 세로 결), **천장도 같은 벽지**(사용자 요청, `MAT.ceiling`), 실내 보조광 색을 따뜻하게(0xfff3e4) → 15차 벽지가 실제보다 어둡다는 지적으로 실내 주변광(`applyRig` 낮·실내 hemi 0.3 / env 0.6, 보조광 0.92, AO 0.82)과 벽지 바탕색(#f4f2ed)을 밝게 — 벽지 색은 견본 사진 없이 이름으로 짐작한 근사임 → 14차 거실 창을 벽 없이 전체 창으로, 전동 커튼(거실 2중 · 침실 겉지), 창밖 풍경을 현장 사진 기준으로 다시 그림, 영상 바로가기(?film=1), Vercel 공개 → 13차 가구 업체 실측 메모 반영(주방 상하부장·냉장고장·키큰장·신발장·앞 베란다 장 치수, 주방 베란다 장 추가, 인덕션을 후드 아래로, 식기세척기 위치 추정).
 
 ## 9. 남은 한계
 실제 휴대폰에서 성능 미검증(헤드리스 소프트웨어 렌더러로만 확인 — 소개 영상도 마찬가지, 영상의 빛 번짐·초점 흐림은 기기에 따라 무거울 수 있고 느리면 자동 화질이 한 단계 낮춤) · 소개 영상에 소리 없음 · 실시간 근사 조명(간접광 없음, 보조광은 벽을 조금 통과, 스탠드·무드등은 빛나 보이기만 함) · 가까운 얇은 부재의 음영 얼룩 · 텍스처는 캔버스로 그린 근사 · 모루 유리는 굴절 없이 골 반사만 · 거리 재기에 스냅 없음 · 욕실/발코니/세탁실은 참고 수준.
@@ -892,7 +907,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 #card .pc ul{margin:2px 0 0;padding-left:17px}
 .lnk{color:var(--acc);font-weight:700;text-decoration:underline;font-size:12px;padding:6px 2px}
 .propbar .ib{flex:none;height:38px;padding:0 12px;border-radius:10px;background:#f1eee8;font-size:12.5px;font-weight:700;color:var(--ink2)}
-#tools{display:grid;grid-template-columns:repeat(4,1fr);padding:4px;gap:2px}
+#tools{display:grid;grid-template-columns:repeat(5,1fr);padding:4px;gap:2px}
 #tools button{height:52px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11.5px;font-weight:700;color:var(--ink2)}
 #tools button svg{width:21px;height:21px}
 #tools button.on{background:var(--acc-soft);color:var(--acc)}
@@ -967,6 +982,16 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 .memo td{padding:6px 4px;border-top:1px solid var(--line);vertical-align:top;line-height:1.4}
 .memo td:first-child{white-space:nowrap;color:var(--mute);padding-right:10px}
 .sw{display:inline-block;width:14px;height:14px;border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.12);vertical-align:-2px;margin-right:6px}
+
+/* ---------- 조명 패널 (도구의 '조명' 버튼) ---------- */
+#lightPanel{position:fixed;left:10px;right:10px;bottom:calc(var(--sab) + 132px);z-index:6;max-width:560px;margin:0 auto;background:rgba(255,254,251,.96);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-radius:var(--r);box-shadow:0 8px 30px rgba(40,30,15,.2),0 0 0 1px rgba(40,30,15,.06);padding:8px 12px 12px 14px;display:none}
+#lightPanel.on{display:block;animation:pop .18s ease-out}
+.lp-h{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.lp-h b{font-size:15px;font-weight:800;flex:none}
+.lp-h .seg{flex:1;max-width:210px;margin-left:auto}
+.lp-h .seg button{height:36px;font-size:13px}
+.lp-h .x{flex:none;width:40px;height:40px;border-radius:12px;font-size:20px;color:var(--mute)}
+body.film #lightPanel{display:none!important}
 
 /* ---------- 거리 재기 바 / 토스트 ---------- */
 #measBar{position:fixed;left:10px;right:10px;bottom:calc(var(--sab) + 132px);z-index:6;max-width:560px;margin:0 auto;background:var(--ink);color:#fff;border-radius:var(--r);padding:8px 8px 8px 14px;display:none;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
@@ -1156,6 +1181,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
   #dock{padding-bottom:16px}
   #dock>*{width:auto;min-width:520px}
   #card,#measBar{left:auto;right:16px;bottom:16px;width:360px;margin:0}
+  #lightPanel{left:16px;right:auto;bottom:16px;width:360px;margin:0}
   #measBar{right:auto;left:50%;transform:translateX(-50%);bottom:150px;width:440px}
   .sheet{left:auto;right:16px;bottom:16px;width:420px;border-radius:22px;max-height:calc(100vh - 100px);margin:0;transform:translateY(calc(100% + 30px))}
   #scrim.on{opacity:0;pointer-events:none}
@@ -1191,6 +1217,12 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 <div id="toast"></div>
 
 <div id="card"></div>
+<div id="lightPanel" aria-label="조명 조절">
+  <div class="lp-h"><b>조명</b><div class="seg" id="lightMode2"><button data-l="day" class="on">낮</button><button data-l="night">저녁</button></div><button class="x" id="lightClose" aria-label="닫기">×</button></div>
+  <label class="sl"><span>밝기</span><input type="range" id="dlBright" min="0" max="100" step="5" value="80"><b id="dlBrightV">80%</b></label>
+  <label class="sl"><span>색온도</span><input type="range" id="dlTemp" min="2700" max="6500" step="100" value="3500" class="temp"><b id="dlTempV">3500K</b></label>
+  <div class="chips3"><button data-dlk="3000">전구색 3000K</button><button data-dlk="4000">주백색 4000K</button><button data-dlk="5700">주광색 5700K</button></div>
+</div>
 <div id="measBar"><div id="measText">잴 곳의 첫 번째 점을 탭하세요</div><button id="measClear">지우기</button><button id="measDone">끝</button></div>
 
 <nav id="dock">
@@ -1201,6 +1233,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
     <button id="tOpt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>보기 옵션</button>
     <button id="tDims"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M3 6l3-3 3 3M3 18l3 3 3-3"/><rect x="12" y="6" width="9" height="12" rx="1"/><path d="M16.5 6v12"/></svg>창·높이</button>
     <button id="tMeas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 14-14 4 4L7 21z"/><path d="m7 13 2 2M10 10l2 2M13 7l2 2"/></svg>거리 재기</button>
+    <button id="tLight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/></svg>조명</button>
     <button id="tMap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h8v6H3zM11 5h10v9H11zM3 11h8v8H3zM11 14h10v5H11z"/></svg>평면 지도</button>
   </div>
 </nav>
@@ -1230,10 +1263,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
       <div class="seg" id="lightMode"><button data-l="day" class="on">낮 (햇빛)</button><button data-l="night">저녁 (실내등)</button></div>
     </div>
     <div class="sec"><h4>다운라이트 (3인치 31개) · 옷방 중앙등</h4>
-      <label class="sl"><span>밝기</span><input type="range" id="dlBright" min="0" max="100" step="5" value="80"><b id="dlBrightV">80%</b></label>
-      <label class="sl"><span>색온도</span><input type="range" id="dlTemp" min="2700" max="6500" step="100" value="3500" class="temp"><b id="dlTempV">3500K</b></label>
-      <div class="chips3"><button data-dlk="3000">전구색 3000K</button><button data-dlk="4000">주백색 4000K</button><button data-dlk="5700">주광색 5700K</button></div>
-      <div class="hintline">저녁 조명에서 켜져요. 조절하면 자동으로 저녁 조명으로 바뀌어요.</div>
+      <div class="hintline" style="margin-top:0">밝기와 색온도는 아래 도구의 <b>조명</b> 버튼에서 바꿔요.</div>
     </div>
     <div class="sec"><h4>화질</h4>
       <div class="seg" id="qualMode"><button data-q="auto" class="on">자동</button><button data-q="low">낮음</button><button data-q="mid">보통</button><button data-q="high">높음</button></div>
@@ -3528,7 +3558,7 @@ window.HOUSE = (function () {
     { title: '조명 (17차)', kind: 'new', items: [
       '3인치 다운라이트 31개를 평면 캡처에 표시해 주신 자리에 넣었어요: 거실 10 · 서재 8 · 주방 7 · 복도 1 · 침실 3 · 욕실 2. 표시를 좌표로 옮긴 것이라 ±10cm쯤 오차가 있고, 줄과 간격은 가지런히 맞췄어요.',
       '옷방은 다운라이트가 아니라 일반 중앙등이에요 (지름 50 원형은 가정).',
-      '보기 옵션의 "다운라이트"에서 밝기와 색온도(2700K 전구색 ~ 6500K 주광색)를 바꿀 수 있어요. 저녁 조명에서 켜지고, 조절하면 자동으로 저녁 조명으로 바뀌어요.',
+      '아래 도구의 "조명" 버튼을 누르면 화면을 가리지 않는 작은 패널에서 밝기와 색온도(2700K 전구색 ~ 6500K 주광색), 낮 / 저녁을 바꿀 수 있어요. 저녁 조명에서 켜지고, 조절하면 자동으로 저녁 조명으로 바뀌어요.',
       '실제 빛 계산은 다운라이트 하나하나가 아니라 묶음(방마다 1~4개)으로 근사해요. 표시가 없던 현관 · 세탁실은 기본등이 있다고 보고 약한 빛만 뒀어요.',
     ] },
     { title: '창 · 커튼 · 창밖 풍경 (14차)', kind: 'new', items: [
@@ -5120,7 +5150,7 @@ const SKY_R = 110, SKY_Y0 = -70, SKY_Y1 = 86, EYE_ALT = 55;      // 눈높이가
 // 방향각 az: 0 = 아래(남) · 90 = 오른쪽(동: 세탁실 · 주방 · 서재 창) · 180 = 위(북) · 270 = 왼쪽(서: 거실 · 침실 창)
 //   창밖을 볼 때: 동쪽 창에서 오른쪽 = az가 작아지는 쪽(남), 서쪽 창에서 오른쪽 = az가 작아지는 쪽(북)
 //   서쪽(거실 사진): 단풍 든 산 능선, 흰 아파트 단지, 앞쪽에 붉은 벽돌 + 초록 지붕 학교, 오른쪽 가까이에 같은 단지 동
-//   동쪽(세탁실 사진): 붉은 단풍 숲, 앞쪽에 초록 지붕 저층. 롯데월드타워는 정동이 아니라 오른쪽(동남, az 48)으로 비껴 있어
+//   동쪽(세탁실 사진): 붉은 단풍 숲, 앞쪽에 초록 지붕 저층. 롯데월드타워는 정동이 아니라 오른쪽(동남, az 62)으로 비껴 있어
 //   세탁실 창에서 오른쪽을 보면 보이고 주방에서 정면으로는 안 보인다 (사용자 확인). 그 오른쪽에 짙은 유리 고층
 function paintCity(night) {
   const W = tierName === 'low' ? 2048 : 4096, Hc = W / 4;
@@ -5191,9 +5221,9 @@ function paintCity(night) {
     }
     for (let i = 0; i < 9; i++) list.push({ az: 240 + i * 8.5 + r() * 4, dist: 125 + r() * 110, h: 15 + r() * 5, w: 44 + r() * 30, d: 16, tall: false, c: r(), k: 0.9, col: [158, 86, 66], roof: [74, 150, 104], win: [236, 232, 222] });   // 서쪽 앞: 붉은 벽돌 학교
     list.push({ az: 236, dist: 56, h: 84, w: 22, d: 14, tall: true, c: 0, k: 0.9, col: [232, 232, 228], near: true });                                // 서쪽 오른편 가까이: 같은 단지 동
-    for (let i = 0; i < 8; i++) list.push({ az: 40 - i * 3.6 - r() * 1.5, dist: 480 + r() * 300, h: 96 + r() * 24, w: 26 + r() * 9, d: 20, tall: true, c: 0, k: 0.9, col: [62, 72, 86], win: [150, 170, 190], roof: [50, 58, 70] });   // 동쪽 오른편: 짙은 유리 고층
+    for (let i = 0; i < 8; i++) list.push({ az: 50 - i * 3.6 - r() * 1.5, dist: 480 + r() * 300, h: 96 + r() * 24, w: 26 + r() * 9, d: 20, tall: true, c: 0, k: 0.9, col: [62, 72, 86], win: [150, 170, 190], roof: [50, 58, 70] });   // 동쪽 오른편: 짙은 유리 고층
     list.push({ az: 7, dist: 330, h: 80, w: 26, d: 14, tall: true, c: 0, k: 0.9, col: [226, 226, 222] });
-    list.push({ lotte: true, az: 48, dist: 2000 });
+    list.push({ lotte: true, az: 62, dist: 1600 });
     for (let i = 0; i < 90; i++) { const e = i % 2, az = (e ? 72 : 272) + (r() - 0.5) * 150; list.push({ trees: true, east: !!e, az, dist: 130 + Math.pow(r(), 1.4) * 520, w: 30 + r() * 60, c: r() }); }   // 단풍 숲
     list.sort((a, b) => b.dist - a.dist);
     const wallCols = [[236, 232, 224], [226, 226, 222], [214, 208, 198], [240, 236, 226], [205, 198, 190]], roofCols = [[150, 152, 150], [110, 150, 120], [120, 140, 165], [172, 168, 160], [150, 120, 100]];
@@ -5795,7 +5825,7 @@ let cardActs = {};
 function showCard(html, acts) {
   cardActs = acts || {};
   card.innerHTML = `<button class="x" data-a="close" aria-label="닫기">×</button>${html}`;
-  card.classList.add('on');
+  card.classList.add('on'); lightPanelSet(false);
   if (window.innerWidth < 760) card.style.bottom = (window.innerHeight - $('dock').getBoundingClientRect().top + 8) + 'px'; else card.style.bottom = '';
 }
 function hideCard() { if (card.classList.contains('on')) { card.classList.remove('on'); select(null); } }
@@ -5989,7 +6019,7 @@ $('mapHint').addEventListener('click', () => { MAP.big = false; mapAuto(); });
 
 // ---------- 시트 ----------
 const sheets = ['sheetOpt', 'sheetMemo'].map($);
-function openSheet(id) { sheets.forEach(s => s.classList.toggle('on', s.id === id)); $('scrim').classList.add('on'); hideCard(); }
+function openSheet(id) { sheets.forEach(s => s.classList.toggle('on', s.id === id)); $('scrim').classList.add('on'); hideCard(); lightPanelSet(false); }
 function closeSheets() { sheets.forEach(s => s.classList.remove('on')); $('scrim').classList.remove('on'); }
 $('scrim').addEventListener('click', closeSheets);
 document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeSheets));
@@ -6102,7 +6132,18 @@ function propBarUpdate() {
 $('tMap').addEventListener('click', () => { if (MAP.big) { MAP.big = false; mapAuto(); } else mapSet(true, true); });
 $('tMeas').addEventListener('click', () => setMeasuring(!state.measuring));
 $('measClear').addEventListener('click', measClear); $('measDone').addEventListener('click', () => setMeasuring(false));
-segInit('lightMode', 'l', v => { light.night = v === 'night'; applyRig(); });
+// 낮 / 저녁: 보기 옵션과 조명 패널 두 곳의 버튼을 같이 맞춤
+function setNight(on) { light.night = !!on; ['lightMode', 'lightMode2'].forEach(id => segSet(id, 'l', on ? 'night' : 'day')); applyRig(); }
+segInit('lightMode', 'l', v => setNight(v === 'night'));
+segInit('lightMode2', 'l', v => setNight(v === 'night'));
+// 조명 패널: 화면을 가리지 않고 밝기 · 색온도를 바꿔 볼 수 있게 도구 줄 위에 뜸
+const lightPanel = $('lightPanel');
+function lightPanelSet(on) {
+  lightPanel.classList.toggle('on', on); $('tLight').classList.toggle('on', on);
+  if (on) { hideCard(); if (state.measuring) setMeasuring(false); if (window.innerWidth < 760) lightPanel.style.bottom = (window.innerHeight - $('dock').getBoundingClientRect().top + 8) + 'px'; else lightPanel.style.bottom = ''; }
+}
+$('tLight').addEventListener('click', () => lightPanelSet(!lightPanel.classList.contains('on')));
+$('lightClose').addEventListener('click', () => lightPanelSet(false));
 // 다운라이트 밝기 · 색온도 (저녁 조명에서 보이므로 조절하면 저녁으로 바꿈)
 (function dlUI() {
   const bEl = $('dlBright'), kEl = $('dlTemp'), name = k => (k <= 3200 ? '전구색' : k <= 4500 ? '주백색' : '주광색');
@@ -6111,8 +6152,7 @@ segInit('lightMode', 'l', v => { light.night = v === 'night'; applyRig(); });
   const on = () => {
     dl.b = clamp(+bEl.value / 100, 0, 1); dl.k = clamp(+kEl.value, 2700, 6500); show();
     try { localStorage.setItem('house3d.dl', JSON.stringify(dl)); } catch (e) { /* 무시 */ }
-    if (!light.night) { light.night = true; segSet('lightMode', 'l', 'night'); toast('다운라이트가 보이도록 저녁 조명으로 바꿨어요', 2200); }
-    applyRig();
+    if (!light.night) { setNight(true); toast('다운라이트가 보이도록 저녁 조명으로 바꿨어요', 2200); } else applyRig();
   };
   bEl.addEventListener('input', on); kEl.addEventListener('input', on);
   document.querySelectorAll('[data-dlk]').forEach(b => b.addEventListener('click', () => { kEl.value = b.dataset.dlk; on(); }));
@@ -6692,7 +6732,7 @@ function filmPause(p, quiet) {
 }
 function filmStart() {
   if (film.on) return;
-  hideCard(); closeSheets(); if (state.measuring) setMeasuring(false);
+  hideCard(); closeSheets(); lightPanelSet(false); if (state.measuring) setMeasuring(false);
   MAP.big = false; mapSet(false, false);
   tween = null; walk.path = null; walk.vy = walk.vp = 0; controls.enabled = false;
   film.saved = { night: light.night, wallPref: state.wallPref, study: proposals.study.cur, curtain: curtainMode };
@@ -6813,7 +6853,7 @@ collectMats();
 applyWalls(); applyRig();
 const startView = QS.get('v');
 if (startView && spaceById(startView)) goSpace(startView, true); else goOrbit(startView === 'plan' ? 'plan' : 'all', true);
-if (QS.get('night')) { light.night = true; segSet('lightMode', 'l', 'night'); applyRig(); }
+if (QS.get('night')) setNight(true);
 markRooms(); qualNote();
 setTimeout(() => toast('방 이름을 누르면 안으로 들어가요<br><b>가구·가전·창을 탭</b>하면 정보가 떠요', 4800), 700);
 requestAnimationFrame(frame);

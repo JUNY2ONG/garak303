@@ -91,7 +91,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 #card .pc ul{margin:2px 0 0;padding-left:17px}
 .lnk{color:var(--acc);font-weight:700;text-decoration:underline;font-size:12px;padding:6px 2px}
 .propbar .ib{flex:none;height:38px;padding:0 12px;border-radius:10px;background:#f1eee8;font-size:12.5px;font-weight:700;color:var(--ink2)}
-#tools{display:grid;grid-template-columns:repeat(4,1fr);padding:4px;gap:2px}
+#tools{display:grid;grid-template-columns:repeat(5,1fr);padding:4px;gap:2px}
 #tools button{height:52px;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11.5px;font-weight:700;color:var(--ink2)}
 #tools button svg{width:21px;height:21px}
 #tools button.on{background:var(--acc-soft);color:var(--acc)}
@@ -166,6 +166,16 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 .memo td{padding:6px 4px;border-top:1px solid var(--line);vertical-align:top;line-height:1.4}
 .memo td:first-child{white-space:nowrap;color:var(--mute);padding-right:10px}
 .sw{display:inline-block;width:14px;height:14px;border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.12);vertical-align:-2px;margin-right:6px}
+
+/* ---------- 조명 패널 (도구의 '조명' 버튼) ---------- */
+#lightPanel{position:fixed;left:10px;right:10px;bottom:calc(var(--sab) + 132px);z-index:6;max-width:560px;margin:0 auto;background:rgba(255,254,251,.96);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-radius:var(--r);box-shadow:0 8px 30px rgba(40,30,15,.2),0 0 0 1px rgba(40,30,15,.06);padding:8px 12px 12px 14px;display:none}
+#lightPanel.on{display:block;animation:pop .18s ease-out}
+.lp-h{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.lp-h b{font-size:15px;font-weight:800;flex:none}
+.lp-h .seg{flex:1;max-width:210px;margin-left:auto}
+.lp-h .seg button{height:36px;font-size:13px}
+.lp-h .x{flex:none;width:40px;height:40px;border-radius:12px;font-size:20px;color:var(--mute)}
+body.film #lightPanel{display:none!important}
 
 /* ---------- 거리 재기 바 / 토스트 ---------- */
 #measBar{position:fixed;left:10px;right:10px;bottom:calc(var(--sab) + 132px);z-index:6;max-width:560px;margin:0 auto;background:var(--ink);color:#fff;border-radius:var(--r);padding:8px 8px 8px 14px;display:none;align-items:center;gap:8px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
@@ -355,6 +365,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
   #dock{padding-bottom:16px}
   #dock>*{width:auto;min-width:520px}
   #card,#measBar{left:auto;right:16px;bottom:16px;width:360px;margin:0}
+  #lightPanel{left:16px;right:auto;bottom:16px;width:360px;margin:0}
   #measBar{right:auto;left:50%;transform:translateX(-50%);bottom:150px;width:440px}
   .sheet{left:auto;right:16px;bottom:16px;width:420px;border-radius:22px;max-height:calc(100vh - 100px);margin:0;transform:translateY(calc(100% + 30px))}
   #scrim.on{opacity:0;pointer-events:none}
@@ -390,6 +401,12 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 <div id="toast"></div>
 
 <div id="card"></div>
+<div id="lightPanel" aria-label="조명 조절">
+  <div class="lp-h"><b>조명</b><div class="seg" id="lightMode2"><button data-l="day" class="on">낮</button><button data-l="night">저녁</button></div><button class="x" id="lightClose" aria-label="닫기">×</button></div>
+  <label class="sl"><span>밝기</span><input type="range" id="dlBright" min="0" max="100" step="5" value="80"><b id="dlBrightV">80%</b></label>
+  <label class="sl"><span>색온도</span><input type="range" id="dlTemp" min="2700" max="6500" step="100" value="3500" class="temp"><b id="dlTempV">3500K</b></label>
+  <div class="chips3"><button data-dlk="3000">전구색 3000K</button><button data-dlk="4000">주백색 4000K</button><button data-dlk="5700">주광색 5700K</button></div>
+</div>
 <div id="measBar"><div id="measText">잴 곳의 첫 번째 점을 탭하세요</div><button id="measClear">지우기</button><button id="measDone">끝</button></div>
 
 <nav id="dock">
@@ -400,6 +417,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
     <button id="tOpt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg>보기 옵션</button>
     <button id="tDims"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M3 6l3-3 3 3M3 18l3 3 3-3"/><rect x="12" y="6" width="9" height="12" rx="1"/><path d="M16.5 6v12"/></svg>창·높이</button>
     <button id="tMeas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 14-14 4 4L7 21z"/><path d="m7 13 2 2M10 10l2 2M13 7l2 2"/></svg>거리 재기</button>
+    <button id="tLight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/></svg>조명</button>
     <button id="tMap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h8v6H3zM11 5h10v9H11zM3 11h8v8H3zM11 14h10v5H11z"/></svg>평면 지도</button>
   </div>
 </nav>
@@ -429,10 +447,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
       <div class="seg" id="lightMode"><button data-l="day" class="on">낮 (햇빛)</button><button data-l="night">저녁 (실내등)</button></div>
     </div>
     <div class="sec"><h4>다운라이트 (3인치 31개) · 옷방 중앙등</h4>
-      <label class="sl"><span>밝기</span><input type="range" id="dlBright" min="0" max="100" step="5" value="80"><b id="dlBrightV">80%</b></label>
-      <label class="sl"><span>색온도</span><input type="range" id="dlTemp" min="2700" max="6500" step="100" value="3500" class="temp"><b id="dlTempV">3500K</b></label>
-      <div class="chips3"><button data-dlk="3000">전구색 3000K</button><button data-dlk="4000">주백색 4000K</button><button data-dlk="5700">주광색 5700K</button></div>
-      <div class="hintline">저녁 조명에서 켜져요. 조절하면 자동으로 저녁 조명으로 바뀌어요.</div>
+      <div class="hintline" style="margin-top:0">밝기와 색온도는 아래 도구의 <b>조명</b> 버튼에서 바꿔요.</div>
     </div>
     <div class="sec"><h4>화질</h4>
       <div class="seg" id="qualMode"><button data-q="auto" class="on">자동</button><button data-q="low">낮음</button><button data-q="mid">보통</button><button data-q="high">높음</button></div>
