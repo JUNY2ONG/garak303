@@ -16,7 +16,7 @@ const perf = {
 let lastNow = performance.now(), firstFrame = true;
 function frame(now) {
   requestAnimationFrame(frame);
-  const dt = Math.min(0.05, (now - lastNow) / 1000); lastNow = now;
+  const rawDt = (now - lastNow) / 1000, dt = Math.min(0.05, rawDt); lastNow = now;
   const moving = film.on ? filmStep(now) : stepNav(now, dt);
   let doorMoving = false;
   if (!film.on) doorObjs.forEach(d => {
@@ -26,6 +26,7 @@ function frame(now) {
     d.pivot.rotation.y = d.cur; doorMoving = true;
   });
   if (doorMoving) shadowDirty();
+  if (curtainStep(Math.min(0.3, rawDt))) { doorMoving = true; shadowDirty(); }           // 전동 커튼이 움직이는 동안 계속 그림
   updateCutaway();
   if (needRender <= 0) { perf.lastT = 0; return; }
   needRender--;
@@ -55,4 +56,4 @@ requestAnimationFrame(frame);
 if (QS.get('film')) setTimeout(filmStart, 300);
 
 // 검증용 훅
-window.__house = { look: (px, py, ph, lx, ly, lh, fov) => goWalk(new V3(CM(px), CM(ph), CM(py)), new V3(CM(lx), CM(lh), CM(ly)), fov || photoFov(74), { instant: true }), setProposal, hemi, sun, fills, lamps, MAT, getMats: () => allMats, shadowDirty, state, goSpace, goOrbit, enterAt, walkTo, setTier, invalidate, camera, light, applyRig, renderer, GRID, pickAt, tierName: () => tierName, post, mapSet, setMeasuring, measAdd, cardFurn, cardWin, walk, applyWalkCam, fx, film: { start: filmStart, stop: filmStop, seek: filmSeek, go: filmGo, pause: filmPause, state: film, scenes: SCENES } };
+window.__house = { look: (px, py, ph, lx, ly, lh, fov) => goWalk(new V3(CM(px), CM(ph), CM(py)), new V3(CM(lx), CM(lh), CM(ly)), fov || photoFov(74), { instant: true }), setProposal, hemi, sun, fills, lamps, MAT, getMats: () => allMats, shadowDirty, state, goSpace, goOrbit, enterAt, walkTo, setTier, invalidate, camera, light, applyRig, renderer, GRID, pickAt, tierName: () => tierName, post, mapSet, setMeasuring, measAdd, cardFurn, cardWin, walk, applyWalkCam, fx, curtainSet, film: { start: filmStart, stop: filmStop, seek: filmSeek, go: filmGo, pause: filmPause, state: film, scenes: SCENES } };

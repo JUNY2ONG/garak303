@@ -410,6 +410,9 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
     </div>
     <div class="sec"><h4>서재 배치안 (2인 · 32인치 모니터 2대)</h4><div class="seg" data-prop="study"></div><div class="hintline"><span data-propnote="study"></span> <button class="lnk" data-propinfo="study">장단점·치수 보기</button></div></div>
     <div class="sec"><h4>화장대 위치 제안</h4><div class="seg" data-prop="vanity"></div><div class="hintline"><span data-propnote="vanity"></span> <button class="lnk" data-propinfo="vanity">이유·치수 보기</button></div></div>
+    <div class="sec"><h4>전동 커튼 (거실 속커튼 + 겉커튼 · 침실 겉커튼)</h4>
+      <div class="seg" id="curtainMode"><button data-c="open" class="on">열림</button><button data-c="sheer">속커튼만</button><button data-c="closed">모두 닫힘</button></div>
+    </div>
     <div class="sec"><h4>조명</h4>
       <div class="seg" id="lightMode"><button data-l="day" class="on">낮 (햇빛)</button><button data-l="night">저녁 (실내등)</button></div>
     </div>
@@ -455,7 +458,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 <div id="fatal"></div>
 
 <script type="text/plain" data-file="HANDOFF.md" id="handoff">
-# 우리집 3D 도면 — 작업 인계 문서 (13차까지 반영)
+# 우리집 3D 도면 — 작업 인계 문서 (14차까지 반영)
 
 이 문서는 `house-3d.html` 안에 들어 있다. **이 HTML 파일 하나만 있으면** 소스 전부를 꺼내 수정하고 다시 빌드할 수 있다. (`house-plan.html`은 같은 소스에서 함께 만들어지므로 따로 들고 다닐 필요 없음.)
 
@@ -529,7 +532,7 @@ for rel, text in files.items():
 ### 실측 (핑크) — 사용자 평면도에서
 거실 310 × 355 / 왼쪽 확장 발코니 폭 100 / 경계 내력벽 두께 25 (2곳, 평면도 빨간 원) / 서재 383 × 215 (확장 포함) / 침실 303 × 335, 윗벽 220 (문 자리 제외) / 옷방 280 × 220, 윗벽 180 (문 자리 제외). 도면 바깥쪽 수치는 신뢰 불가라 제외. 계산값: 주방 깊이 245.
 ### 사진 원근으로 계산 (실측 폭을 기준자로)
-천장고 서재 230 · 침실 227 → 230 적용. 창턱/창 위 끝: 서재 112/228 (벽 4~211, 거의 전체 폭), 침실 79/226 (폭 243), 옷방 약 78/228 (폭 약 140, 문 쪽 벽에서 4), 거실 약 10/225 (폭 약 227, 바깥에 난간). 사진 찍은 눈높이 서재 158 · 침실 147. 오차 ±10cm.
+천장고 서재 230 · 침실 227 → 230 적용. 창턱/창 위 끝: 서재 112/228 (벽 4~211, 거의 전체 폭), 침실 79/226 (폭 243), 옷방 약 78/228 (폭 약 140, 문 쪽 벽에서 4), 거실 약 10/225 (바깥에 난간. 폭은 14차에 사용자 확인으로 확장부 전체 355 — 양옆에 벽 없이 모두 창, 발코니 쪽은 얇은 이음새 10 뒤로 발코니 창이 이어짐). 사진 찍은 눈높이 서재 158 · 침실 147. 오차 ±10cm.
 ### 문
 서재 = 왼쪽 벽 아래 끝, 침실 = 오른쪽 벽 위 끝, 옷방 = 위쪽 벽 왼쪽 끝. 셋 다 방 안으로 열리고 열면 문짝이 모서리 쪽 벽에 붙음. 문짝 폭은 추정.
 - 현관 중문: 유리 여닫이, 흰 프레임, 간유리, 긴 바 손잡이(현장 사진). 현관에서 볼 때 왼쪽(동쪽) 칸은 천장까지 신발장. 현관 단차 12(추정). 도어락 아카라 L100 (78×264×80).
@@ -581,6 +584,14 @@ LG 워시콤보 FC2521UX6CX (700 × 990 × 885).
 - **10차: 벽 전개도 기능 제거** (도구 버튼·시트·카드의 전개도 버튼·`08-elev.js` 모두 삭제. 다시 넣지 말 것).
 - **10차: 메모는 왼쪽 위 '우리집 3D' 칸에 통합** — 칸 전체가 버튼이고(안에 ⚠ 메모 + 경고 개수), 누르면 메모 시트가 열린다. 오른쪽 위에는 메모 버튼 대신 **'집 소개 영상' 재생 버튼**(눈에 띄는 주황색, 맥박 + 반짝임).
 
+### 창 · 커튼 · 창밖 풍경 · 공개 주소 (14차)
+- **거실 전면창**: y 0~355 전체가 창(벽 없음, 사용자 확인). `windows[].splits`로 창짝 나눔(넓은 창 + 좁은 창, 사진 비율). 침실 앞 발코니 창은 이음새(355~365) 바로 뒤 365부터.
+- **전동 커튼** (사용자 요청): 거실 = 속커튼(내지) + 겉커튼(겉지), 침실 = 겉커튼(겉지). 데이터 `type: 'curtain'`(`span`, `layers`, `motor`), 모델은 `04-furniture.js`의 커튼 블록(천 한 쪽 = 주름 판, 레일 방향 `scale.z`로 걷힘). 보기 옵션의 '전동 커튼'(열림 / 속커튼만 / 모두 닫힘) → `curtainSet(mode)`, 그리기 루프의 `curtainStep`이 약 3초에 걸쳐 움직임. 소개 영상 중에는 열어 둠. 색·주름·레일·모터 위치는 가정.
+- **창밖 풍경** (`05-env.js` `paintCity`): 사용자가 준 현장 사진 2장(거실 뷰, 세탁실 뷰)을 참고한 그림. 방향각 az는 0 = 남 · 90 = 동 · 180 = 북 · 270 = 서. 서쪽(거실·침실 창): 단풍 든 능선(오른쪽 = 북서로 갈수록 높음), 흰 아파트 단지, 앞쪽 붉은 벽돌 + 초록 지붕 학교, 오른쪽 가까이에 같은 단지 동. 동쪽(세탁실·주방·서재 창): 붉은 단풍 숲과 초록 지붕 저층, **롯데월드타워는 az 48(동남)** — 세탁실 창에서 오른쪽으로 보이고 주방에서 정면으로는 안 보임(사용자 확인), 그 오른쪽에 짙은 유리 고층. 눈높이 지상 55m 가정.
+- **소개 영상 바로가기**: 주소 뒤 `?film=1` (로컬 파일도 동일). 공개 사이트에서는 `/film`.
+- **공개 주소**: https://garak303.vercel.app (Vercel 프로젝트 `woorijip-3d`, 사용자 계정). `out/house-3d.html` → `index.html`, `out/house-plan.html` → `plan.html`로 복사하고 아래 `vercel.json`과 함께 `vercel deploy --prod`로 올림(저장소 자동 연결 아님, 올릴 때마다 사용자가 `vercel login` 기기 인증). 실사 렌더(경로 추적) 시험은 사용자 요청으로 제외함 — 다시 넣지 말 것.
+  `vercel.json`: `{"headers":[{"source":"/(.*)","headers":[{"key":"X-Robots-Tag","value":"noindex, nofollow"}]}],"redirects":[{"source":"/film","destination":"/?film=1","permanent":false}]}`
+
 ## 5. 가정 (메모 패널에도 표시 — H.memo가 최신)
 욕실 폭 150, 오른쪽 발코니 폭 120, 현관 약 100 × 105, 벽 두께(외벽 20 · 내벽 10), 문 높이 210, 문짝 폭, 발코니 바깥 창 3곳, 세탁실 문 위치, 협탁 크기, 침대 크기 2200 × 2000, 주방 타일 범위(메인 카운터 뒤 상판~상부장), TV 높이(화면 아래 75), 중문 열림 방향, 메인 카운터 왼쪽 끝 뒤 가벽(두께 4), 주방 수전 모양, 냉장고장 옆판 2 · 화이트, 키큰장 오픈 칸 90~135, 욕실 기구 크기, 테이블 위치(소파에서 48), 사이드 테이블 디자인, 러그 220 × 160, 속커튼, 리클라이너·모션베드 펼친 각도, 소파 좌석 2분할, 서재 가구 크기 전부, 서재 창 아래 라디에이터·배관 없음, TV 스탠드 크기, PVC 문 프레임 폭, 모루 유리 골 간격, 창밖 풍경(연출), 다운라이트 위치.
 
@@ -609,7 +620,7 @@ LG 워시콤보 FC2521UX6CX (700 × 990 × 885).
 - 검증: `window.__house.film.seek(초, true)` → 그 시각에서 멈춘 화면(글자 애니메이션도 그 시각 상태). 장면 시작 시각: 오프닝 0 / 현관 14 / 거실 21.5 / 주방 31 / 서재 39.5 / 옷방 48 / 마감재 55.5 / 침실 63.5 / 엔딩 72.5. `window.__house.fx`로 효과 값을 직접 바꿔 볼 수 있다.
 
 ## 8. 작업 이력
-1차 v2 전체 재작성(사용성·그래픽) → 2차 평면도 개선 → 3차 주방 깊이·냉장고장·키큰장·욕실 배치·소파/침대 디테일·테이블·서재안·화장대 → 4차 발코니 문 2곳(PVC, 모루/백사틴) → 5차 침실 TV 스탠드, 서재안 새로 → 6차 시트 동작, 소파 재제작, 주방 표준 모듈, 러그·협탁·커튼 → 7차 TV 스탠드를 화장대와 방문 사이로, 이 인계 문서 내장 → 8차 이름표 기본 꺼짐, 서재 A안 창 아래 장 → 9차 A안 책상·장 간섭 정리 → 10차 집 소개 영상 추가, 벽 전개도 제거, 메모를 '우리집 3D' 칸에 통합 → 11차 영상 품질 개편(후처리에 빛 번짐·초점 흐림·색보정·입자, 벽 물결 올리기 셰이더, 세로 화면 구도, 위치 지도, 마감재 장면, 영상 코드를 4개 파일로 분리) → 12차 영상의 서재는 A안만 → 13차 가구 업체 실측 메모 반영(주방 상하부장·냉장고장·키큰장·신발장·앞 베란다 장 치수, 주방 베란다 장 추가, 인덕션을 후드 아래로, 식기세척기 위치 추정).
+1차 v2 전체 재작성(사용성·그래픽) → 2차 평면도 개선 → 3차 주방 깊이·냉장고장·키큰장·욕실 배치·소파/침대 디테일·테이블·서재안·화장대 → 4차 발코니 문 2곳(PVC, 모루/백사틴) → 5차 침실 TV 스탠드, 서재안 새로 → 6차 시트 동작, 소파 재제작, 주방 표준 모듈, 러그·협탁·커튼 → 7차 TV 스탠드를 화장대와 방문 사이로, 이 인계 문서 내장 → 8차 이름표 기본 꺼짐, 서재 A안 창 아래 장 → 9차 A안 책상·장 간섭 정리 → 10차 집 소개 영상 추가, 벽 전개도 제거, 메모를 '우리집 3D' 칸에 통합 → 11차 영상 품질 개편(후처리에 빛 번짐·초점 흐림·색보정·입자, 벽 물결 올리기 셰이더, 세로 화면 구도, 위치 지도, 마감재 장면, 영상 코드를 4개 파일로 분리) → 12차 영상의 서재는 A안만 → 14차 거실 창을 벽 없이 전체 창으로, 전동 커튼(거실 2중 · 침실 겉지), 창밖 풍경을 현장 사진 기준으로 다시 그림, 영상 바로가기(?film=1), Vercel 공개 → 13차 가구 업체 실측 메모 반영(주방 상하부장·냉장고장·키큰장·신발장·앞 베란다 장 치수, 주방 베란다 장 추가, 인덕션을 후드 아래로, 식기세척기 위치 추정).
 
 ## 9. 남은 한계
 실제 휴대폰에서 성능 미검증(헤드리스 소프트웨어 렌더러로만 확인 — 소개 영상도 마찬가지, 영상의 빛 번짐·초점 흐림은 기기에 따라 무거울 수 있고 느리면 자동 화질이 한 단계 낮춤) · 소개 영상에 소리 없음 · 실시간 근사 조명(간접광 없음, 보조광은 벽을 조금 통과, 스탠드·무드등은 빛나 보이기만 함) · 가까운 얇은 부재의 음영 얼룩 · 텍스처는 캔버스로 그린 근사 · 모루 유리는 굴절 없이 골 반사만 · 거리 재기에 스냅 없음 · 욕실/발코니/세탁실은 참고 수준.
@@ -1177,6 +1188,9 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
     </div>
     <div class="sec"><h4>서재 배치안 (2인 · 32인치 모니터 2대)</h4><div class="seg" data-prop="study"></div><div class="hintline"><span data-propnote="study"></span> <button class="lnk" data-propinfo="study">장단점·치수 보기</button></div></div>
     <div class="sec"><h4>화장대 위치 제안</h4><div class="seg" data-prop="vanity"></div><div class="hintline"><span data-propnote="vanity"></span> <button class="lnk" data-propinfo="vanity">이유·치수 보기</button></div></div>
+    <div class="sec"><h4>전동 커튼 (거실 속커튼 + 겉커튼 · 침실 겉커튼)</h4>
+      <div class="seg" id="curtainMode"><button data-c="open" class="on">열림</button><button data-c="sheer">속커튼만</button><button data-c="closed">모두 닫힘</button></div>
+    </div>
     <div class="sec"><h4>조명</h4>
       <div class="seg" id="lightMode"><button data-l="day" class="on">낮 (햇빛)</button><button data-l="night">저녁 (실내등)</button></div>
     </div>
@@ -3143,8 +3157,10 @@ window.HOUSE = (function () {
   // sill/top: 바닥에서 창 아래/위 높이(cm). src: photo = 사진으로 추정, est = 도면 추정
   const windows = [
     // id: 고유 이름 / inner: 실내 쪽 방향(+1 = x 증가 쪽, -1 = x 감소 쪽) / rail: 바깥 난간(사진) / room: 속한 방
-    { id: 'w-living', x0: -20, y0: 64, x1: 0, y1: 291, sill: 10, top: 225, src: 'photo', name: '거실 전면창', inner: 1, rail: true, room: 'living' },
-    { id: 'w-balcony', x0: -20, y0: 385, x1: 0, y1: 620, sill: 90, top: 220, src: 'est', name: '침실 앞 발코니 창', inner: 1, room: 'balcony' },
+    // 거실 전면창: 양옆에 벽 없이 확장부 전체 폭(윗벽 ~ 발코니 경계)이 모두 창 (사용자 확인). 왼쪽(아래) 끝은 발코니 벽이 얇은 이음새(10)로만 남고 바로 발코니 창이 이어짐
+    //   splits: 창짝을 나누는 자리(창 폭 대비, y0 쪽부터). 사진의 넓은 고정창 + 좁은 창짝
+    { id: 'w-living', x0: -20, y0: 0, x1: 0, y1: 355, sill: 10, top: 225, src: 'photo', name: '거실 전면창', inner: 1, rail: true, room: 'living', splits: [0.73] },
+    { id: 'w-balcony', x0: -20, y0: 365, x1: 0, y1: 620, sill: 90, top: 220, src: 'est', name: '침실 앞 발코니 창', inner: 1, room: 'balcony' },
     { id: 'w-bed', x0: 100, y0: 383, x1: 125, y1: 626, sill: 79, top: 226, src: 'photo', name: '침실 창', inner: 1, room: 'bed' },
     { id: 'w-study', x0: 981, y0: 4, x1: 1001, y1: 211, sill: 112, top: 228, src: 'photo', name: '서재 창', inner: -1, room: 'study' },
     { id: 'w-kitchen', x0: 1018, y0: 270, x1: 1038, y1: 455, sill: 90, top: 220, src: 'est', name: '주방 확장부 창', inner: -1, room: 'kitchen' },
@@ -3223,7 +3239,10 @@ window.HOUSE = (function () {
     { id: 'tv', pid: 'tv', type: 'tv', poly: r(194.2, 353.4, 365.8, 354.5), h0: 75, h1: 173.4, h: 173.4, face: 'N', label: 'TV 77"' },
     // 거실 러그 (220 × 160, 아이보리 텍스처) · 전면창 속커튼 — 분위기용 제안
     { id: 'lrug', pid: 'decor', type: 'rug', poly: r(170, 100, 390, 260), h: 1, face: 'S', tone: 'ivory', flat: true },
-    { id: 'curtain', pid: 'decor', type: 'curtain', poly: r(2, 62, 12, 293), h: 227, flat: true, bunches: [[64, 102], [253, 291]] },
+    // 전동 커튼 (사용자 요청): 거실 = 속커튼(내지) + 겉커튼(겉지) 2중, 침실 = 겉커튼(겉지). 레일을 따라 양쪽에서 가운데로 닫힘. 색 · 주름 · 레일 위치는 가정
+    //   span: 레일 범위(y) / layers: 겹마다 kind(sheer = 내지, drape = 겉지)와 레일 x / motor: 모터가 달린 쪽 끝(N = 위, S = 아래)
+    { id: 'curtain-l', pid: 'curtainL', type: 'curtain', poly: r(1.5, 1, 11.5, 354), h: 227, flat: true, span: [2, 353], layers: [{ kind: 'sheer', x: 4 }, { kind: 'drape', x: 8.6 }], motor: 'S' },
+    { id: 'curtain-b', pid: 'curtainB', type: 'curtain', poly: r(125.3, 378, 130, 632), h: 227, flat: true, span: [379, 631], layers: [{ kind: 'drape', x: 127.6 }], motor: 'S' },
     { id: 'sofa', pid: 'sofa', type: 'sofa', poly: r(181.5, 4, 378.5, 117), h: 100, face: 'S', label: '소파' },
     // 소파 앞 테이블 (무인양품 호두나무 리빙 다이닝 테이블 2: 130 × 65 × 60) / 소파 옆 사이드 테이블 (디자인 가정)
     { id: 'ltable', pid: 'ltable', type: 'ltable', poly: r(215, 165, 345, 230), h: 60, label: '테이블' },
@@ -3280,6 +3299,8 @@ window.HOUSE = (function () {
     shelf: { name: '오픈 책장 (제안)', size: '폭은 배치안마다 다름 · 깊이 320~350 · 높이 2000 mm (가정)', note: '서재 배치 제안. 책·소품은 분위기용.' },
     sideboard: { name: '낮은 수납장 (제안)', size: '높이 780 mm · 깊이 380~420 (A안 창 아래 장은 2150 × 320 × 1100) (가정)', note: '서재 배치 제안. 프린터·서류·멀티탭 정리용.' },
     wshelf: { name: '벽 선반 + 간접조명 (제안)', size: '깊이 220 · 바닥에서 1500 mm (가정)', note: '선반 아래 LED 간접조명. 책·화분·액자는 분위기용 소품.' },
+    curtainL: { name: '거실 전동 커튼', size: '레일 약 351 cm · 속커튼(내지) + 겉커튼(겉지) 2중', finish: '속커튼 화이트 쉬어 · 겉커튼 웜 그레이 (색 가정)', note: '전동 레일. 보기 옵션의 "전동 커튼"에서 열림 / 속커튼만 / 모두 닫힘을 바꿔 볼 수 있어요. 색 · 주름 · 레일 위치 · 모터 자리는 가정.' },
+    curtainB: { name: '침실 전동 커튼', size: '레일 약 252 cm · 겉커튼(겉지)', finish: '웜 그레이 (색 가정)', note: '전동 레일. 보기 옵션의 "전동 커튼"을 "모두 닫힘"으로 하면 닫혀요. 화장대 ① 위치에서는 커튼이 화장대 옆을 스쳐요. 색 · 주름 · 레일 위치는 가정.' },
     decor: { name: '조명 · 소품 (제안)', note: '플로어 스탠드, 화분, 액자, 러그, 커튼은 분위기를 보기 위한 제안이에요.' },
     tvstand: { name: '이동식 TV 스탠드 + 50인치 TV', size: 'TV 약 1120 × 650 mm · 받침 지름 480 · 전체 높이 약 1480 mm (가정)', finish: '화이트 원형 받침 + 원기둥 폴 + 작은 선반 (참고 사진)', note: '침실 위쪽 벽 앞, 화장대와 방문 사이. 화면이 침대 쪽(아래쪽)을 봐요. 받침 ~ 침대 발치 통로 83cm, 베개에서 화면까지 약 260cm. 화장대 후보를 바꾸면 TV도 같이 옮겨져요 (치수는 화장대 위치 설명 참고).' },
     vanity: { name: '화장대', size: '950 × 400 × 1350 mm', finish: '화이트 · 나무 다리', note: '상부: 왼쪽 오픈 선반 + 거울 + 오른쪽 도어 수납 / 하부: 왼쪽 서랍 · 오른쪽 도어 · 가운데 무릎 공간 + 선반 (참고 사진 기준). 위치는 제안이에요.' },
@@ -3407,7 +3428,7 @@ window.HOUSE = (function () {
     ] },
     { title: '사진 원근으로 계산한 높이', kind: 'photo', items: [
       '천장고: 서재 230, 침실 227 → 230 적용 (실측 폭을 기준자로 계산)',
-      '창턱 / 창 위: 서재 112 / 228, 침실 79 / 226, 옷방 약 78 / 228, 거실 약 10 / 225',
+      '창턱 / 창 위: 서재 112 / 228, 침실 79 / 226, 옷방 약 78 / 228, 거실 약 10 / 225 (거실 창 폭은 14차에 약 355, 벽 없이 전체 창)',
       '사진 속 높이는 ±10cm 정도 오차가 있을 수 있어요.',
     ] },
     { title: '가전 · 가구 (보내준 목록 기준)', kind: 'info', items: [
@@ -3441,7 +3462,7 @@ window.HOUSE = (function () {
       '회색 반투명 칸은 원 도면의 X 표시 (덕트 · 설비 추정)',
     ] },
     { title: '이번 버전에서 새로 정한 것', kind: 'new', items: [
-      '창밖 풍경은 거실 사진을 참고해 그린 연출용 그림이에요 (실제 전망 아님). 햇빛 방향도 연출용.',
+      '창밖 풍경은 보내 준 사진 2장을 참고해 그린 그림이에요 (14차). 거실 · 침실 쪽(왼쪽)은 단풍 든 산과 흰 아파트 단지 · 붉은 벽돌 학교, 세탁실 · 주방 · 서재 쪽(오른쪽)은 붉은 단풍 숲과 저층 건물, 그리고 세탁실 창에서 오른쪽으로 비껴 보이는 롯데월드타워와 짙은 유리 고층 (주방에서 정면으로는 안 보임). 건물 위치 · 크기는 근사이고 햇빛 방향은 연출용.',
       '거실 전면창 바깥 난간은 거실 사진을 보고 넣었어요 (높이 약 110 가정).',
       '창호 프레임 모양 · 창짝 개수, 다운라이트 위치와 개수는 가정.',
       '침대 헤드보드 (높이 100) · 이불 · 베개 모양, 소파 쿠션 모양과 색은 제품 사진 기준 근사.',
@@ -3450,6 +3471,12 @@ window.HOUSE = (function () {
       '메인 카운터 왼쪽 끝 뒤 가벽 (두께 4cm).',
       '옷방 시점은 사진 자리가 지금 장 자리라 방문 바로 안쪽으로 옮겼어요.',
       '둘러보기 눈높이는 사진 높이 (147~158), 바닥을 탭해 이동할 때도 그대로 유지돼요.',
+    ] },
+    { title: '창 · 커튼 · 창밖 풍경 (14차)', kind: 'new', items: [
+      '거실 전면창은 양옆에 벽 없이 확장부 전체 폭(약 355)이 모두 창이에요 (알려 주신 내용). 왼쪽 끝은 발코니 벽이 얇은 이음새(10cm)로만 남고 바로 발코니 창으로 이어져요. 창짝 나눔(넓은 창 + 좁은 창)은 사진 비율 근사.',
+      '침실 앞 발코니 창의 창턱(90) · 높이는 여전히 추정이에요.',
+      '전동 커튼: 거실은 속커튼(내지) + 겉커튼(겉지) 2중, 침실은 겉커튼(겉지). 보기 옵션에서 열고 닫을 수 있어요. 색(화이트 쉬어 / 웜 그레이) · 주름 · 레일과 모터 위치는 가정.',
+      '소개 영상으로 바로 가는 주소: 주소 뒤에 ?film=1 을 붙이면 열리자마자 영상이 재생돼요 (올려 둔 사이트에서는 /film).',
     ] },
     { title: '업체 실측 메모 반영 (13차, 11/20 메모)', kind: 'new', items: [
       '가구 업체의 손 메모(신발장 · 앞 베란다 · 주방 베란다 · 주방 상하부장 · 키큰장)의 가로 치수를 그대로 넣었어요. 메모에는 문이 빠져 있어 문짝 · 서랍은 가정이에요.',
@@ -3473,7 +3500,7 @@ window.HOUSE = (function () {
       '서재 A안 창 아래 낮은 장: 폭 215(창 벽 전체) × 깊이 32 × 상판 윗면 높이 110, 화이트 몸통 + 오크 상판. 창턱(112) 바로 밑 (창틀과 2cm 여유). 창 아래에 라디에이터·배관이 없다고 가정 (바닥 난방). 책상과 간섭을 줄이려고 상판을 280 → 240(1인당 120)으로 줄이고 장과 54cm 띄움, 그 모서리에 플로어 스탠드.',
       '이름표는 처음에 꺼져 있어요 (보기 옵션에서 켜기).',
       '소파는 사진처럼 좌석 2분할로 그림 (3인 폭 197에서 좌석 하나 약 76cm, 팔걸이 22). 베이지 쿠션 2개 추가.',
-      '거실 러그 220 × 160 (아이보리 텍스처), 전면창 속커튼(양쪽으로 걷은 상태) — 분위기용 제안.',
+      '거실 러그 220 × 160 (아이보리 텍스처) — 분위기용 제안. 커튼은 14차에 전동 커튼으로 바뀜.',
       '협탁은 지름 40 오크 원형 + 작은 무드등으로 디자인만 바꿈 (자리·크기 가정은 그대로).',
       '저녁 조명에서 스탠드·무드등·간접조명은 빛나 보이기만 하고 실제 빛 계산에는 일부만 반영돼요.',
     ] },
@@ -4332,12 +4359,13 @@ function buildStructure(cut) {
     if (full) fr(MAT.frame, I.a0, I.a1, t - F, t, pm - dp, pm + dp);
     fr(MAT.frame, I.a0, I.a0 + F, win.sill, t, pm - dp, pm + dp);
     fr(MAT.frame, I.a1 - F, I.a1, win.sill, t, pm - dp, pm + dp);
-    const n = win.panes || Math.max(2, Math.round((I.a1 - I.a0) / 110));
-    const in0 = I.a0 + F, in1 = I.a1 - F, step = (in1 - in0) / n, S = 4.5, ov = 2.2;
+    const n = win.splits ? win.splits.length + 1 : win.panes || Math.max(2, Math.round((I.a1 - I.a0) / 110));
+    const in0 = I.a0 + F, in1 = I.a1 - F, S = 4.5, ov = 2.2;
+    const edges = win.splits ? [0, ...win.splits, 1] : Array.from({ length: n + 1 }, (_, i) => i / n);      // 창짝 경계 (0~1)
     const h0 = win.sill + F, h1 = t - (full ? F : 0);
     for (let i = 0; i < n; i++) {
       const q = pm + (i % 2 ? 2.4 : -2.4);            // 번갈아 앞·뒤 레일
-      const s0 = in0 + i * step - (i ? ov : 0), s1 = in0 + (i + 1) * step + (i < n - 1 ? ov : 0);
+      const s0 = lerp(in0, in1, edges[i]) - (i ? ov : 0), s1 = lerp(in0, in1, edges[i + 1]) + (i < n - 1 ? ov : 0);
       fr(MAT.frame, s0, s0 + S, h0, h1, q - 1.8, q + 1.8); fr(MAT.frame, s1 - S, s1, h0, h1, q - 1.8, q + 1.8);
       fr(MAT.frame, s0 + S, s1 - S, h0, h0 + S, q - 1.8, q + 1.8);
       if (full) fr(MAT.frame, s0 + S, s1 - S, h1 - S, h1, q - 1.8, q + 1.8);
@@ -4832,15 +4860,6 @@ const BUILD_F = {
     putBooks(b, L + 0.05, L + seg, y + 0.03, 0, D); putPlant(b, L + seg * 1.45, y + 0.03, D / 2, 0.7);
     putFrame(b, L + seg * 2.0, L + seg * 2.0 + 0.24, y + 0.03, y + 0.33, 0.03, 1); putBooks(b, L + seg * 2.9, R - 0.25, y + 0.03, 0, D); putFrame(b, R - 0.2, R - 0.04, y + 0.03, y + 0.24, 0.03, 2);
   },
-  curtain(f, b) {                                                    // 속커튼: 양쪽으로 걷은 주름 + 레일
-    const [x0, x1, y0, y1] = bboxOf(f.poly), xm = CM((x0 + x1) / 2), top = CM(f.h);
-    b.boxC(MAT.white, x0 + 3, x0 + 6, f.h, f.h + 2.5, y0, y1, { cast: false });
-    f.bunches.forEach(([a0, a1]) => {
-      const n = 28, g = new THREE.PlaneGeometry(CM(a1 - a0), top - 0.03, n, 6); const p = g.attributes.position;
-      for (let i = 0; i < p.count; i++) { const u = p.getX(i) / CM(a1 - a0) + 0.5, v = p.getY(i) / (top - 0.03) + 0.5; p.setZ(i, Math.sin(u * Math.PI * 9) * 0.028 * (0.75 + 0.25 * v)); p.setX(i, p.getX(i) * (0.86 + 0.14 * v)); }
-      g.computeVertexNormals(); g.rotateY(Math.PI / 2); g.translate(xm, (top + 0.03) / 2, CM((a0 + a1) / 2)); b.geo(MATX.curtain, g, { cast: false });
-    });
-  },
   rug(f, b, W, D) { b.box(f.tone === 'ivory' ? MATX.rugIvory : f.tone === 'gray' ? MATX.rugGray : MATX.rugBeige, -W / 2, W / 2, 0.002, 0.014, 0, D, { r: 0.005, seg: 1, cast: false }); },
   frame(f, b, W) {                                                   // 벽 액자 2~3개
     const y0 = CM(f.h0), y1 = CM(f.h), n = W > 1.2 ? 3 : 2, w = (W - 0.06 * (n - 1)) / n;
@@ -4881,12 +4900,11 @@ const BUILD_F = {
 };
 function buildFaced(f, parent) {
   let fr;
-  if (f.type === 'curtain') fr = { m: null, W: 0, D: 0 };
-  else if (f.at) { const m = new THREE.Matrix4().makeRotationY(f.rot != null ? THREE.MathUtils.degToRad(f.rot) : ({ S: 0, N: Math.PI, E: Math.PI / 2, W: -Math.PI / 2 }[f.face] || 0)); m.setPosition(CM(f.at[0]), 0, CM(f.at[1])); fr = { m, W: 0, D: 0 }; }
+  if (f.at) { const m = new THREE.Matrix4().makeRotationY(f.rot != null ? THREE.MathUtils.degToRad(f.rot) : ({ S: 0, N: Math.PI, E: Math.PI / 2, W: -Math.PI / 2 }[f.face] || 0)); m.setPosition(CM(f.at[0]), 0, CM(f.at[1])); fr = { m, W: 0, D: 0 }; }
   else fr = faceFrame(f.poly, f.face);
   const b = new Batch(fr.m);
   BUILD_F[f.type](f, b, fr.W, fr.D);
-  const pickable = f.type !== 'rug' && f.type !== 'curtain';
+  const pickable = f.type !== 'rug';
   const g = b.build(parent, pickable ? { kind: 'furn', id: f.id } : null);
   furnGroups[f.id] = g; if (pickable) pickRoots.push(g);
   return g;
@@ -4961,6 +4979,59 @@ H.furniture.forEach(f => {
   [CLa, CLb].forEach(b => { const g = b.build(furn); clothesGroups.push(g); });
 })();
 
+// ---------- 전동 커튼: 속커튼(내지) · 겉커튼(겉지). 레일(y 방향)을 따라 양쪽에서 가운데로 닫힘 ----------
+// 천 한 쪽 = 닫힌 길이로 펼친 주름 판. 걷히는 쪽 끝이 원점이라 레일 방향으로 줄이면(scale.z) 주름이 촘촘해지며 걷힌다.
+MATX.sheer = M(0xfbf9f4, { roughness: 1, side: THREE.DoubleSide, envMapIntensity: 0.2, transparent: true, opacity: 0.5, depthWrite: false });
+MATX.drape = M(0xb9b1a4, { roughness: 0.96, side: THREE.DoubleSide, bumpMap: TEX.weave, bumpScale: 0.0015, envMapIntensity: 0.25 });
+const curtains = [], CURTAIN_OPEN = 0.15;
+const CURTAIN_MODES = { open: { sheer: 0, drape: 0 }, sheer: { sheer: 1, drape: 0 }, closed: { sheer: 1, drape: 1 } };
+let curtainMode = 'open';
+const curtainCur = { sheer: 0, drape: 0 };
+function curtainPanel(len, h, kind) {
+  const drape = kind === 'drape', lam = drape ? 0.15 : 0.085, amp = drape ? 0.022 : 0.012;
+  const g = new THREE.PlaneGeometry(len, h, Math.max(24, Math.round(len / lam * 8)), 4), p = g.attributes.position, uv = g.attributes.uv;
+  for (let i = 0; i < p.count; i++) {
+    const z = p.getX(i) + len / 2, y = p.getY(i) + h / 2;
+    p.setXYZ(i, Math.sin(z / lam * 6.2832) * amp * (1 - 0.3 * y / h) + Math.sin(z * 3.1 + y * 1.7) * 0.003, y, z); uv.setXY(i, z, y);
+  }
+  g.computeVertexNormals();
+  return g;
+}
+H.furniture.filter(f => f.type === 'curtain').forEach(f => {
+  const g = new THREE.Group(), [a, c] = f.span, half = CM(c - a) / 2, h = CM(f.h) - 0.03, b = new Batch(), C = { f, panels: [] };
+  f.layers.forEach(L => {
+    b.boxC(MAT.white, L.x - 1.2, L.x + 1.2, f.h, f.h + 2.4, a - 2, c + 2, { cast: false });                       // 레일
+    const geo = curtainPanel(half, h, L.kind), mat = L.kind === 'drape' ? MATX.drape : MATX.sheer;
+    [[a, 0], [c, Math.PI]].forEach(([y, rot]) => {
+      const pg = new THREE.Group(), m = new THREE.Mesh(geo, mat);
+      m.castShadow = L.kind === 'drape'; m.receiveShadow = true; m.customDepthMaterial = RISE_DEPTH;
+      pg.add(m); pg.position.set(CM(L.x), 0.02, CM(y)); pg.rotation.y = rot; g.add(pg); C.panels.push({ g: pg, kind: L.kind });
+    });
+  });
+  const my = f.motor === 'N' ? a - 2 : c + 2, mx = f.layers[f.layers.length - 1].x;                                 // 전동 모터 (레일 끝)
+  b.boxC(MAT.white, f.layers[0].x - 2.2, mx + 2.2, f.h - 4.5, f.h + 2.4, Math.min(my, my + (f.motor === 'N' ? -7 : 7)), Math.max(my, my + (f.motor === 'N' ? -7 : 7)), { r: 0.6, cast: false });
+  b.build(g); g.userData.pick = { kind: 'furn', id: f.id }; furn.add(g);
+  furnGroups[f.id] = g; pickRoots.push(g); curtains.push(C);
+});
+function curtainApply() {
+  curtains.forEach(C => C.panels.forEach(p => { const k = curtainCur[p.kind]; p.g.scale.z = lerp(CURTAIN_OPEN, 1, k * k * (3 - 2 * k)); }));
+}
+function curtainSet(mode, instant) {
+  if (!CURTAIN_MODES[mode]) return;
+  curtainMode = mode;
+  if (instant) { Object.assign(curtainCur, CURTAIN_MODES[mode]); curtainApply(); }
+}
+function curtainStep(dt) {        // 모터처럼 일정한 속도로 (전체 약 3초)
+  let moving = false;
+  for (const kd of ['sheer', 'drape']) {
+    const tg = CURTAIN_MODES[curtainMode][kd], cur = curtainCur[kd]; if (cur === tg) continue;
+    const sp = dt / 3; curtainCur[kd] = Math.abs(tg - cur) <= sp ? tg : cur + Math.sign(tg - cur) * sp; moving = true;
+  }
+  if (moving) curtainApply();
+  return moving;
+}
+curtainApply();
+
 // ---------- 배치 제안: 서재 배치안 · 화장대 위치 (버튼으로 전환) ----------
 const propG = new THREE.Group(); furn.add(propG);
 const proposals = { study: { cur: 'A', groups: {} }, vanity: { cur: '1', groups: {} } };
@@ -4977,70 +5048,122 @@ applyProposals();
 /* ==== END FILE: src/3d/04-furniture.js ==== */
 /* ==== FILE: src/3d/05-env.js ==== */
 // ===== 05 env: 하늘·도시 배경 · 조명 =====
-const SKY_R = 110, SKY_Y0 = -70, SKY_Y1 = 86, EYE_ALT = 45;      // 눈높이가 지상 45m쯤(고층)이라고 보고 그림 (연출)
+const SKY_R = 110, SKY_Y0 = -70, SKY_Y1 = 86, EYE_ALT = 55;      // 눈높이가 지상 55m쯤(20층)이라고 보고 그림
+// 창밖 풍경: 보내 준 현장 사진 2장을 참고해 그린 그림 (근사, 실제 건물 위치와 같지는 않음).
+// 방향각 az: 0 = 아래(남) · 90 = 오른쪽(동: 세탁실 · 주방 · 서재 창) · 180 = 위(북) · 270 = 왼쪽(서: 거실 · 침실 창)
+//   창밖을 볼 때: 동쪽 창에서 오른쪽 = az가 작아지는 쪽(남), 서쪽 창에서 오른쪽 = az가 작아지는 쪽(북)
+//   서쪽(거실 사진): 단풍 든 산 능선, 흰 아파트 단지, 앞쪽에 붉은 벽돌 + 초록 지붕 학교, 오른쪽 가까이에 같은 단지 동
+//   동쪽(세탁실 사진): 붉은 단풍 숲, 앞쪽에 초록 지붕 저층. 롯데월드타워는 정동이 아니라 오른쪽(동남, az 48)으로 비껴 있어
+//   세탁실 창에서 오른쪽을 보면 보이고 주방에서 정면으로는 안 보인다 (사용자 확인). 그 오른쪽에 짙은 유리 고층
 function paintCity(night) {
   const W = tierName === 'low' ? 2048 : 4096, Hc = W / 4;
   return canvasOf(W, Hc, g => {
-    const r = rng(night ? 97 : 97), pxm = Hc / (SKY_Y1 - SKY_Y0);            // px per m (세로)
+    const r = rng(97), pxm = Hc / (SKY_Y1 - SKY_Y0);                         // px per m (세로)
     const yh = Hc * (1 - (1.5 - SKY_Y0) / (SKY_Y1 - SKY_Y0));               // 지평선
     const yAt = slope => yh - slope * SKY_R * pxm;                            // slope = 높이/거리
     const xAt = az => az / 360 * W, wAt = (m, dist) => (m / dist) / (2 * Math.PI) * W;
+    const dAz = (a, c) => { const d = Math.abs(a - c) % 360; return d > 180 ? 360 - d : d; };
+    const lobe = (a, c, w) => Math.exp(-Math.pow(dAz(a, c) / w, 2));          // 방향 c 근처에서 1, 멀어지면 0
+    const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
     // 하늘
     const sky = g.createLinearGradient(0, 0, 0, yh);
     if (night) { sky.addColorStop(0, '#0b1222'); sky.addColorStop(0.7, '#1b2742'); sky.addColorStop(1, '#3a3f58'); }
-    else { sky.addColorStop(0, '#6ea6dd'); sky.addColorStop(0.55, '#a9cbe8'); sky.addColorStop(1, '#dbe7ef'); }
+    else { sky.addColorStop(0, '#5f9bd8'); sky.addColorStop(0.55, '#9fc4e6'); sky.addColorStop(1, '#d6e4ee'); }
     g.fillStyle = sky; g.fillRect(0, 0, W, yh + 2);
     if (!night) {                                                            // 해 쪽 하늘을 밝게 + 엷은 구름
       const sx = xAt(288), gr = g.createRadialGradient(sx, yh - Hc * 0.2, 0, sx, yh - Hc * 0.2, Hc * 0.75);
       gr.addColorStop(0, 'rgba(255,246,225,0.75)'); gr.addColorStop(1, 'rgba(255,246,225,0)');
       g.fillStyle = gr; g.fillRect(sx - Hc, 0, Hc * 2, yh);
-      for (let i = 0; i < 26; i++) {
+      for (let i = 0; i < 22; i++) {
         const cx = r() * W, cy = yh * (0.12 + r() * 0.62), cw = W * (0.03 + r() * 0.07), ch = Hc * (0.012 + r() * 0.02);
         for (let k = 0; k < 7; k++) {
           const px = cx + (r() - 0.5) * cw * 1.6, py = cy + (r() - 0.5) * ch * 2, rad = cw * (0.25 + r() * 0.35);
-          for (const ox of [-W, 0, W]) { const gr2 = g.createRadialGradient(px + ox, py, 0, px + ox, py, rad); gr2.addColorStop(0, 'rgba(255,255,255,0.22)'); gr2.addColorStop(1, 'rgba(255,255,255,0)'); g.save(); g.translate(0, py); g.scale(1, 0.32); g.translate(0, -py); g.fillStyle = gr2; g.fillRect(px + ox - rad, py - rad, rad * 2, rad * 2); g.restore(); }
+          for (const ox of [-W, 0, W]) { const gr2 = g.createRadialGradient(px + ox, py, 0, px + ox, py, rad); gr2.addColorStop(0, 'rgba(255,255,255,0.2)'); gr2.addColorStop(1, 'rgba(255,255,255,0)'); g.save(); g.translate(0, py); g.scale(1, 0.32); g.translate(0, -py); g.fillStyle = gr2; g.fillRect(px + ox - rad, py - rad, rad * 2, rad * 2); g.restore(); }
         }
       }
     } else {
       for (let i = 0; i < 260; i++) { g.fillStyle = `rgba(255,255,255,${0.2 + r() * 0.5})`; g.fillRect(r() * W, r() * yh * 0.8, 1.3, 1.3); }
       const gr = g.createLinearGradient(0, yh - Hc * 0.22, 0, yh); gr.addColorStop(0, 'rgba(255,170,90,0)'); gr.addColorStop(1, 'rgba(255,170,90,0.22)'); g.fillStyle = gr; g.fillRect(0, yh - Hc * 0.22, W, Hc * 0.22);
     }
-    // 산 (능선 3겹, 주기 함수라 이음매 없음)
-    const ridge = (base, amp, seed, col0, col1) => {
+    // 산 (능선 3겹, 주기 함수라 이음매 없음). bump: 방향에 따라 더 높게, tint: 그 위에 덧칠할 단풍빛
+    const ridge = (base, amp, col0, col1, bump, tint) => {
       const ph = [0, 1, 2, 3, 4].map(() => r() * 6.283), fr = [3, 5, 8, 13, 21];
       g.beginPath(); g.moveTo(0, yh + 4);
       for (let x = 0; x <= W; x += 4) {
         const a = x / W * 6.283; let h = 0;
         fr.forEach((f, i) => { h += Math.sin(a * f + ph[i]) / (i + 1.2); });
-        g.lineTo(x, yAt(base + amp * (0.55 + 0.45 * h)));
+        g.lineTo(x, yAt(base + amp * (0.55 + 0.45 * h) + (bump ? bump(x / W * 360) : 0)));
       }
       g.lineTo(W, yh + 4); g.closePath();
-      const gr = g.createLinearGradient(0, yAt(base + amp * 1.3), 0, yh); gr.addColorStop(0, col0); gr.addColorStop(1, col1);
+      const gr = g.createLinearGradient(0, yAt(base + amp * 1.6), 0, yh); gr.addColorStop(0, col0); gr.addColorStop(1, col1);
       g.fillStyle = gr; g.fill();
+      if (tint) { const gx = g.createLinearGradient(0, 0, W, 0); for (let i = 0; i <= 24; i++) gx.addColorStop(i / 24, tint(i * 15)); g.fillStyle = gx; g.fill(); }
     };
-    if (night) { ridge(0.06, 0.035, 1, '#141b2c', '#1a2236'); ridge(0.035, 0.03, 2, '#101726', '#161e30'); }
-    else { ridge(0.07, 0.035, 1, '#a9bccd', '#c3d0da'); ridge(0.045, 0.03, 2, '#8fa3a6', '#b4bfbc'); ridge(0.022, 0.022, 3, '#8a8f78', '#a9a48d'); }
+    const westUp = k => az => k * (lobe(az, 228, 42) + 0.45 * lobe(az, 292, 30));      // 서쪽 창에서 오른쪽(북서)으로 갈수록 능선이 높음
+    if (night) { ridge(0.06, 0.035, '#141b2c', '#1a2236', westUp(0.03)); ridge(0.035, 0.03, '#101726', '#161e30', westUp(0.035)); }
+    else {
+      ridge(0.07, 0.035, '#a3b7ca', '#c0cdd8', westUp(0.03));
+      ridge(0.045, 0.03, '#8f9fa3', '#b3bdbb', westUp(0.04), az => `rgba(168,124,90,${(0.32 * lobe(az, 295, 60)).toFixed(3)})`);
+      ridge(0.022, 0.022, '#8a8f78', '#a9a48d', westUp(0.03), az => `rgba(176,118,74,${(0.4 * lobe(az, 290, 70) + 0.22 * lobe(az, 70, 60)).toFixed(3)})`);
+    }
     // 땅 (멀수록 뿌옇게)
     const gd = g.createLinearGradient(0, yh, 0, Hc);
     if (night) { gd.addColorStop(0, '#20263a'); gd.addColorStop(0.3, '#151a28'); gd.addColorStop(1, '#0e1119'); }
     else { gd.addColorStop(0, '#c2c9cc'); gd.addColorStop(0.12, '#a9aea8'); gd.addColorStop(0.5, '#8d8f86'); gd.addColorStop(1, '#75776f'); }
     g.fillStyle = gd; g.fillRect(0, yh, W, Hc - yh);
-    // 건물
-    const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+    // 건물 · 나무 목록 (먼 것부터 그림)
     const haze = night ? [34, 40, 60] : [200, 210, 218];
     const list = [];
     for (let i = 0; i < 1500; i++) {
-      const u = r(), dist = 110 + Math.pow(u, 1.7) * 3400, tall = dist > 420 && r() < (dist > 800 ? 0.55 : 0.3);
-      list.push({ az: r() * 360, dist, h: tall ? 38 + r() * 46 : 5 + r() * 16, w: tall ? 22 + r() * 50 : 9 + r() * 22, d: 11 + r() * 8, tall, c: r(), k: r() });
+      const u = r(), az = r() * 360, dist = 110 + Math.pow(u, 1.7) * 3400, west = lobe(az, 275, 65), east = lobe(az, 92, 60);
+      const tall = dist > 300 && r() < (dist > 800 ? 0.55 : 0.3) * (1 + 0.7 * west);
+      const B = { az, dist, h: tall ? 42 + r() * 44 : 5 + r() * 16, w: tall ? 22 + r() * 50 : 9 + r() * 22, d: 11 + r() * 8, tall, c: r(), k: r() };
+      if (tall && west > 0.4 && r() < 0.7) B.col = [238, 236, 228];                                            // 서쪽: 흰 아파트 단지
+      if (!tall && dist < 420 && r() < 0.35 + 0.3 * (west + east)) B.roof = [74, 150, 104];                      // 초록 방수 지붕
+      list.push(B);
     }
+    for (let i = 0; i < 9; i++) list.push({ az: 240 + i * 8.5 + r() * 4, dist: 125 + r() * 110, h: 15 + r() * 5, w: 44 + r() * 30, d: 16, tall: false, c: r(), k: 0.9, col: [158, 86, 66], roof: [74, 150, 104], win: [236, 232, 222] });   // 서쪽 앞: 붉은 벽돌 학교
+    list.push({ az: 236, dist: 56, h: 84, w: 22, d: 14, tall: true, c: 0, k: 0.9, col: [232, 232, 228], near: true });                                // 서쪽 오른편 가까이: 같은 단지 동
+    for (let i = 0; i < 8; i++) list.push({ az: 40 - i * 3.6 - r() * 1.5, dist: 480 + r() * 300, h: 96 + r() * 24, w: 26 + r() * 9, d: 20, tall: true, c: 0, k: 0.9, col: [62, 72, 86], win: [150, 170, 190], roof: [50, 58, 70] });   // 동쪽 오른편: 짙은 유리 고층
+    list.push({ az: 7, dist: 330, h: 80, w: 26, d: 14, tall: true, c: 0, k: 0.9, col: [226, 226, 222] });
+    list.push({ lotte: true, az: 48, dist: 2000 });
+    for (let i = 0; i < 90; i++) { const e = i % 2, az = (e ? 72 : 272) + (r() - 0.5) * 150; list.push({ trees: true, east: !!e, az, dist: 130 + Math.pow(r(), 1.4) * 520, w: 30 + r() * 60, c: r() }); }   // 단풍 숲
     list.sort((a, b) => b.dist - a.dist);
     const wallCols = [[236, 232, 224], [226, 226, 222], [214, 208, 198], [240, 236, 226], [205, 198, 190]], roofCols = [[150, 152, 150], [110, 150, 120], [120, 140, 165], [172, 168, 160], [150, 120, 100]];
+    const blobs = (cx, y, w, tr, cols, n, hz) => { for (let k = 0; k < n; k++) { const ts = mix(cols[Math.floor(r() * cols.length)], haze, hz); for (const ox of [-W, 0, W]) { g.fillStyle = `rgb(${ts})`; g.beginPath(); g.arc(cx + ox + (r() - 0.5) * w, y - tr * (0.2 + r() * 0.5), tr * (0.7 + r() * 0.6), 0, 6.283); g.fill(); } } };
     list.forEach(B => {
-      const hz = 1 - Math.exp(-B.dist / 1500), cx = xAt(B.az), w = Math.max(1.5, wAt(B.w, B.dist));
+      const hz = 1 - Math.exp(-B.dist / 1500), cx = xAt(B.az);
+      if (B.trees) {                                                                                             // 단풍 숲 (동쪽은 붉게, 서쪽은 노랗게)
+        if (night) return;
+        const cols = B.east ? [[150, 52, 44], [176, 72, 48], [196, 110, 52], [120, 60, 46]] : [[214, 170, 60], [200, 128, 50], [226, 190, 80], [124, 140, 80]];
+        blobs(cx, yAt(-EYE_ALT / B.dist), Math.max(6, wAt(B.w, B.dist)), Math.max(2, wAt(7, B.dist)), cols, 12, hz * 0.8); return;
+      }
+      if (B.lotte) {                                                                                             // 롯데월드타워 (555m): 위로 갈수록 가늘어지고 끝이 둘로 갈라짐
+        const yB = yAt(-EYE_ALT / B.dist), yT = yAt((555 - EYE_ALT) / B.dist), hw = wAt(74, B.dist) / 2, Ht = yB - yT, hk = 0.42;
+        const half = t => hw * (1 - 0.74 * Math.pow(t, 1.6));
+        const body = night ? [34, 44, 70] : mix([150, 178, 208], haze, hk), dark = night ? [22, 28, 46] : mix([104, 134, 172], haze, hk), lite = night ? [60, 80, 120] : mix([196, 216, 236], haze, hk);
+        for (const ox of [-W, 0, W]) {
+          const x0 = cx + ox;
+          g.beginPath(); g.moveTo(x0 - hw, yB);
+          for (let i = 0; i <= 24; i++) { const t = i / 24; g.lineTo(x0 - half(t), yB - Ht * t); }
+          g.lineTo(x0 - hw * 0.07, yT + Ht * 0.012); g.lineTo(x0, yT + Ht * 0.03); g.lineTo(x0 + hw * 0.07, yT + Ht * 0.012);
+          for (let i = 24; i >= 0; i--) { const t = i / 24; g.lineTo(x0 + half(t), yB - Ht * t); }
+          g.closePath();
+          const gr = g.createLinearGradient(x0 - hw, 0, x0 + hw, 0); gr.addColorStop(0, `rgb(${lite})`); gr.addColorStop(0.45, `rgb(${body})`); gr.addColorStop(0.55, `rgb(${dark})`); gr.addColorStop(1, `rgb(${body})`);
+          g.fillStyle = gr; g.fill();
+          g.strokeStyle = `rgba(${night ? '150,190,255' : mix([70, 96, 132], haze, hk)},${night ? 0.7 : 0.55})`; g.lineWidth = Math.max(1, hw * 0.07);
+          g.beginPath(); g.moveTo(x0, yB - Ht * 0.06); g.lineTo(x0, yT + Ht * 0.03); g.stroke();                 // 가운데 이음선
+          [0.16, 0.33, 0.5, 0.66, 0.8, 0.9].forEach(t => { const h2 = half(t) * 0.82; g.fillStyle = night ? 'rgba(210,225,255,0.85)' : `rgba(${mix([78, 100, 130], haze, hk)},0.7)`; g.fillRect(x0 - h2, yB - Ht * t, h2 * 2, Math.max(1, Ht * 0.008)); });   // 기계층 띠
+          if (night) { const gl = g.createRadialGradient(x0, yT, 0, x0, yT, hw * 3); gl.addColorStop(0, 'rgba(190,215,255,0.6)'); gl.addColorStop(1, 'rgba(190,215,255,0)'); g.fillStyle = gl; g.fillRect(x0 - hw * 3, yT - hw * 3, hw * 6, hw * 6); }
+        }
+        return;
+      }
+      const w = Math.max(1.5, wAt(B.w, B.dist));
       const yTop = yAt((B.h - EYE_ALT) / B.dist), yBot = yAt(-EYE_ALT / B.dist), yRoof = yAt((B.h - EYE_ALT) / (B.dist + B.d));
-      let col = wallCols[Math.floor(B.c * wallCols.length)], roof = roofCols[Math.floor(B.k * roofCols.length)];
-      if (night) { col = [26, 30, 42]; roof = [20, 23, 33]; } else if (!B.tall) col = mix(col, [170, 165, 155], 0.25);
+      let col = B.col || wallCols[Math.floor(B.c * wallCols.length)], roof = B.roof || roofCols[Math.floor(B.k * roofCols.length)];
+      if (night) { col = [26, 30, 42]; roof = [20, 23, 33]; } else if (!B.tall && !B.col) col = mix(col, [170, 165, 155], 0.25);
       const cs = mix(col, haze, hz), rs = mix(roof, haze, hz), sd = mix(mix(col, [90, 95, 105], 0.35), haze, hz);
+      const wc = night ? null : mix(B.win || [96, 112, 128], haze, hz);
       for (const ox of [-W, 0, W]) {
         const x = cx + ox - w / 2; if (x > W || x + w < 0) continue;
         if (yRoof < yTop) { g.fillStyle = `rgb(${rs})`; g.fillRect(x, yRoof, w, yTop - yRoof + 1); }
@@ -5049,20 +5172,17 @@ function paintCity(night) {
         const fl = B.tall ? 2.9 : 3.2, rows = Math.floor(B.h / fl), rh = (yBot - yTop) / Math.max(1, rows);
         if (rh > 2.2 && w > 10) {                                                               // 창
           const cols = Math.max(2, Math.floor(B.w / 3.4)), cw = w * 0.72 / cols;
-          for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+          for (let j = 0; j < rows; j++) { if (yTop + j * rh > Hc) break; for (let i = 0; i < cols; i++) {
             if (night) { if (r() < 0.38) { g.fillStyle = r() < 0.75 ? 'rgba(255,214,140,0.9)' : 'rgba(220,235,255,0.85)'; g.fillRect(x + i * cw + cw * 0.2, yTop + j * rh + rh * 0.25, cw * 0.6, rh * 0.5); } }
-            else { g.fillStyle = `rgba(${mix([96, 112, 128], haze, hz)},${0.55 - hz * 0.3})`; g.fillRect(x + i * cw + cw * 0.18, yTop + j * rh + rh * 0.28, cw * 0.64, rh * 0.46); }
-          }
+            else { g.fillStyle = `rgba(${wc},${B.near ? 0.75 : 0.55 - hz * 0.3})`; g.fillRect(x + i * cw + cw * 0.18, yTop + j * rh + rh * 0.28, cw * 0.64, rh * 0.46); if (B.near) { g.fillStyle = 'rgba(255,255,255,0.5)'; g.fillRect(x + i * cw + cw * 0.1, yTop + j * rh + rh * 0.8, cw * 0.8, rh * 0.12); } }
+          } }
         } else if (night && r() < 0.8) {
           for (let k = 0; k < Math.max(2, w * (yBot - yTop) / 30); k++) if (r() < 0.5) { g.fillStyle = 'rgba(255,214,140,0.8)'; g.fillRect(x + r() * w, yTop + r() * (yBot - yTop), 1.2, 1.2); }
         }
       }
-      if (!night && !B.tall && B.dist < 900 && B.k < 0.5) {                                     // 가로수 (가을빛)
-        const tc = [[196, 120, 48], [214, 170, 60], [120, 140, 80], [176, 90, 50]][Math.floor(B.c * 4)], ts = mix(tc, haze, hz), tr = Math.max(1.5, wAt(5, B.dist));
-        for (let k = 0; k < 4; k++) for (const ox of [-W, 0, W]) { g.fillStyle = `rgb(${ts})`; g.beginPath(); g.arc(cx + ox + (r() - 0.5) * w * 2.4, yBot - tr * 0.4, tr * (0.7 + r() * 0.6), 0, 6.283); g.fill(); }
-      }
+      if (!night && !B.tall && B.dist < 900 && B.k < 0.5) blobs(cx, yBot, w * 2.4, Math.max(1.5, wAt(5, B.dist)), [[196, 120, 48], [214, 170, 60], [120, 140, 80], [176, 90, 50]], 4, hz);      // 가로수 (가을빛)
     });
-    if (!night) { const hz2 = g.createLinearGradient(0, yh - Hc * 0.05, 0, yh + Hc * 0.1); hz2.addColorStop(0, 'rgba(222,230,236,0)'); hz2.addColorStop(0.35, 'rgba(222,230,236,0.5)'); hz2.addColorStop(1, 'rgba(222,230,236,0)'); g.fillStyle = hz2; g.fillRect(0, yh - Hc * 0.05, W, Hc * 0.15); }
+    if (!night) { const hz2 = g.createLinearGradient(0, yh - Hc * 0.05, 0, yh + Hc * 0.1); hz2.addColorStop(0, 'rgba(222,230,236,0)'); hz2.addColorStop(0.35, 'rgba(222,230,236,0.42)'); hz2.addColorStop(1, 'rgba(222,230,236,0)'); g.fillStyle = hz2; g.fillRect(0, yh - Hc * 0.05, W, Hc * 0.15); }
   });
 }
 const backdrop = new THREE.Group(); backdrop.visible = false; scene.add(backdrop);
@@ -5527,7 +5647,7 @@ H.furniture.forEach(f => {
 });
 propItems.forEach(f => { if (!f.label || f.noLabel) return; const [x0, x1, y0, y1] = bboxOf(f.poly); const L = addLabel(esc(f.label) + ' <span style="opacity:.6">제안</span>', (x0 + x1) / 2, (y0 + y1) / 2, Math.min(f.h + 12, 158), 'tag', 1.3); L.fid = f.id; L.grp = furnGroups[f.id]; });
 const ray = new THREE.Raycaster(), tmpV = new V3(), tmpV2 = new V3();
-const furnBoxes = Object.keys(furnGroups).filter(id => !['faucet', 'induction', 'robot', 'sink', 'hood', 'dw', 'closet-l', 'closet-r'].includes(id)).map(id => ({ id, box: new THREE.Box3().setFromObject(furnGroups[id]).expandByScalar(-0.03) }));
+const furnBoxes = Object.keys(furnGroups).filter(id => !['faucet', 'induction', 'robot', 'sink', 'hood', 'dw', 'closet-l', 'closet-r', 'curtain-l', 'curtain-b'].includes(id)).map(id => ({ id, box: new THREE.Box3().setFromObject(furnGroups[id]).expandByScalar(-0.03) }));
 let lastOcc = 0;
 function updateOcclusion(now) {
   if (now - lastOcc < 160) return;
@@ -5900,6 +6020,7 @@ $('tMap').addEventListener('click', () => { if (MAP.big) { MAP.big = false; mapA
 $('tMeas').addEventListener('click', () => setMeasuring(!state.measuring));
 $('measClear').addEventListener('click', measClear); $('measDone').addEventListener('click', () => setMeasuring(false));
 segInit('lightMode', 'l', v => { light.night = v === 'night'; applyRig(); });
+segInit('curtainMode', 'c', v => { curtainSet(v); invalidate(); toast(v === 'open' ? '전동 커튼을 열어요' : v === 'sheer' ? '거실 속커튼만 닫아요' : '커튼을 모두 닫아요', 1800); });
 function qualNote() { $('qualNote').textContent = (qualPref === 'auto' ? '자동 → 지금은 ' : '지금은 ') + tier.name + (post.active ? ' (부드러운 그림자 + 음영 + 계단 현상 제거)' : ' (기본 그림자)') + (qualPref === 'auto' ? '. 느리면 알아서 낮춰요.' : ''); }
 segInit('qualMode', 'q', v => {
   qualPref = v; try { localStorage.setItem('house3d.q', v); } catch (e) { /* 무시 */ }
@@ -6333,7 +6454,8 @@ const SCENES = [
   { id: 'living', ch: CH.living, dur: 9.5, cut: false, inside: true, night: false, fx: 'day',
     enter() {
       filmDoors(F_OPEN);
-      callout([2, 177, 150], 2.4, 4.8, '거실 전면창', '폭 227 · 창턱 10 cm (사진 계산)', { rise: 20 });
+      const lw = H.windows.find(q => q.id === 'w-living');
+      callout([2, 190, 150], 2.4, 4.8, '거실 전면창', `폭 약 ${Math.round(lw.y1 - lw.y0)} · 창턱 ${lw.sill} cm · 전동 커튼`, { rise: 20 });
       coProd('sofa', [280, 62, 98], 5.1, 7.2, { rise: 46 });
       coProd('ltable', [280, 197, 61], 6.5, 7.8, { title: '소파 앞 테이블', sub: '무인양품 호두나무 130 × 65', up: false, rise: 30 });
       coProd('tv', [280, 353, 172], 7.9, 9.4, { rise: 30 });
@@ -6435,6 +6557,7 @@ function filmEnter(i) {
 function filmSetup() {            // 가림막이 화면을 다 덮은 뒤 한 번
   film.ready = true;
   state.wallPref = 'full'; furn.visible = true; dimG.visible = false;
+  curtainSet('open', true);                                             // 영상에서는 커튼을 열어 둠
   if (proposals.study.cur !== 'A') setProposal('study', 'A');          // 영상에서 서재는 A안만 (끝나면 보던 안으로 되돌림)
   camera.clearViewOffset(); viewOffY = 0; film.offKey = '';
 }
@@ -6475,7 +6598,7 @@ function filmStart() {
   hideCard(); closeSheets(); if (state.measuring) setMeasuring(false);
   MAP.big = false; mapSet(false, false);
   tween = null; walk.path = null; walk.vy = walk.vp = 0; controls.enabled = false;
-  film.saved = { night: light.night, wallPref: state.wallPref, study: proposals.study.cur };
+  film.saved = { night: light.night, wallPref: state.wallPref, study: proposals.study.cur, curtain: curtainMode };
   document.body.classList.add('film'); filmEl.classList.add('on'); filmEl.classList.remove('lt', 'shade');
   film.on = true; film.ready = false; film.closing = false; film.idx = -1; film.t = -0.72; film.last = performance.now();
   filmPause(false, true); film.bars.forEach(b => { b._k = 0; b.style.transform = 'scaleX(0)'; });
@@ -6490,6 +6613,7 @@ function filmRestore() {          // 영상이 바꾼 것을 모두 원래대로
   if (film.ready) {
     state.wallPref = film.saved.wallPref; light.night = film.saved.night;
     if (proposals.study.cur !== film.saved.study) setProposal('study', film.saved.study);
+    curtainSet(film.saved.curtain, true);
     furn.visible = state.showFurn; dimG.visible = state.showDims;
   }
   film.on = false; film.ready = false; film.closing = false;
@@ -6559,7 +6683,7 @@ const perf = {
 let lastNow = performance.now(), firstFrame = true;
 function frame(now) {
   requestAnimationFrame(frame);
-  const dt = Math.min(0.05, (now - lastNow) / 1000); lastNow = now;
+  const rawDt = (now - lastNow) / 1000, dt = Math.min(0.05, rawDt); lastNow = now;
   const moving = film.on ? filmStep(now) : stepNav(now, dt);
   let doorMoving = false;
   if (!film.on) doorObjs.forEach(d => {
@@ -6569,6 +6693,7 @@ function frame(now) {
     d.pivot.rotation.y = d.cur; doorMoving = true;
   });
   if (doorMoving) shadowDirty();
+  if (curtainStep(Math.min(0.3, rawDt))) { doorMoving = true; shadowDirty(); }           // 전동 커튼이 움직이는 동안 계속 그림
   updateCutaway();
   if (needRender <= 0) { perf.lastT = 0; return; }
   needRender--;
@@ -6598,7 +6723,7 @@ requestAnimationFrame(frame);
 if (QS.get('film')) setTimeout(filmStart, 300);
 
 // 검증용 훅
-window.__house = { look: (px, py, ph, lx, ly, lh, fov) => goWalk(new V3(CM(px), CM(ph), CM(py)), new V3(CM(lx), CM(lh), CM(ly)), fov || photoFov(74), { instant: true }), setProposal, hemi, sun, fills, lamps, MAT, getMats: () => allMats, shadowDirty, state, goSpace, goOrbit, enterAt, walkTo, setTier, invalidate, camera, light, applyRig, renderer, GRID, pickAt, tierName: () => tierName, post, mapSet, setMeasuring, measAdd, cardFurn, cardWin, walk, applyWalkCam, fx, film: { start: filmStart, stop: filmStop, seek: filmSeek, go: filmGo, pause: filmPause, state: film, scenes: SCENES } };
+window.__house = { look: (px, py, ph, lx, ly, lh, fov) => goWalk(new V3(CM(px), CM(ph), CM(py)), new V3(CM(lx), CM(lh), CM(ly)), fov || photoFov(74), { instant: true }), setProposal, hemi, sun, fills, lamps, MAT, getMats: () => allMats, shadowDirty, state, goSpace, goOrbit, enterAt, walkTo, setTier, invalidate, camera, light, applyRig, renderer, GRID, pickAt, tierName: () => tierName, post, mapSet, setMeasuring, measAdd, cardFurn, cardWin, walk, applyWalkCam, fx, curtainSet, film: { start: filmStart, stop: filmStop, seek: filmSeek, go: filmGo, pause: filmPause, state: film, scenes: SCENES } };
 
 /* ==== END FILE: src/3d/09-main.js ==== */
 })();

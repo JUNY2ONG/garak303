@@ -40,7 +40,7 @@ H.furniture.forEach(f => {
 });
 propItems.forEach(f => { if (!f.label || f.noLabel) return; const [x0, x1, y0, y1] = bboxOf(f.poly); const L = addLabel(esc(f.label) + ' <span style="opacity:.6">제안</span>', (x0 + x1) / 2, (y0 + y1) / 2, Math.min(f.h + 12, 158), 'tag', 1.3); L.fid = f.id; L.grp = furnGroups[f.id]; });
 const ray = new THREE.Raycaster(), tmpV = new V3(), tmpV2 = new V3();
-const furnBoxes = Object.keys(furnGroups).filter(id => !['faucet', 'induction', 'robot', 'sink', 'hood', 'dw', 'closet-l', 'closet-r'].includes(id)).map(id => ({ id, box: new THREE.Box3().setFromObject(furnGroups[id]).expandByScalar(-0.03) }));
+const furnBoxes = Object.keys(furnGroups).filter(id => !['faucet', 'induction', 'robot', 'sink', 'hood', 'dw', 'closet-l', 'closet-r', 'curtain-l', 'curtain-b'].includes(id)).map(id => ({ id, box: new THREE.Box3().setFromObject(furnGroups[id]).expandByScalar(-0.03) }));
 let lastOcc = 0;
 function updateOcclusion(now) {
   if (now - lastOcc < 160) return;
@@ -413,6 +413,7 @@ $('tMap').addEventListener('click', () => { if (MAP.big) { MAP.big = false; mapA
 $('tMeas').addEventListener('click', () => setMeasuring(!state.measuring));
 $('measClear').addEventListener('click', measClear); $('measDone').addEventListener('click', () => setMeasuring(false));
 segInit('lightMode', 'l', v => { light.night = v === 'night'; applyRig(); });
+segInit('curtainMode', 'c', v => { curtainSet(v); invalidate(); toast(v === 'open' ? '전동 커튼을 열어요' : v === 'sheer' ? '거실 속커튼만 닫아요' : '커튼을 모두 닫아요', 1800); });
 function qualNote() { $('qualNote').textContent = (qualPref === 'auto' ? '자동 → 지금은 ' : '지금은 ') + tier.name + (post.active ? ' (부드러운 그림자 + 음영 + 계단 현상 제거)' : ' (기본 그림자)') + (qualPref === 'auto' ? '. 느리면 알아서 낮춰요.' : ''); }
 segInit('qualMode', 'q', v => {
   qualPref = v; try { localStorage.setItem('house3d.q', v); } catch (e) { /* 무시 */ }

@@ -409,15 +409,6 @@ const BUILD_F = {
     putBooks(b, L + 0.05, L + seg, y + 0.03, 0, D); putPlant(b, L + seg * 1.45, y + 0.03, D / 2, 0.7);
     putFrame(b, L + seg * 2.0, L + seg * 2.0 + 0.24, y + 0.03, y + 0.33, 0.03, 1); putBooks(b, L + seg * 2.9, R - 0.25, y + 0.03, 0, D); putFrame(b, R - 0.2, R - 0.04, y + 0.03, y + 0.24, 0.03, 2);
   },
-  curtain(f, b) {                                                    // 속커튼: 양쪽으로 걷은 주름 + 레일
-    const [x0, x1, y0, y1] = bboxOf(f.poly), xm = CM((x0 + x1) / 2), top = CM(f.h);
-    b.boxC(MAT.white, x0 + 3, x0 + 6, f.h, f.h + 2.5, y0, y1, { cast: false });
-    f.bunches.forEach(([a0, a1]) => {
-      const n = 28, g = new THREE.PlaneGeometry(CM(a1 - a0), top - 0.03, n, 6); const p = g.attributes.position;
-      for (let i = 0; i < p.count; i++) { const u = p.getX(i) / CM(a1 - a0) + 0.5, v = p.getY(i) / (top - 0.03) + 0.5; p.setZ(i, Math.sin(u * Math.PI * 9) * 0.028 * (0.75 + 0.25 * v)); p.setX(i, p.getX(i) * (0.86 + 0.14 * v)); }
-      g.computeVertexNormals(); g.rotateY(Math.PI / 2); g.translate(xm, (top + 0.03) / 2, CM((a0 + a1) / 2)); b.geo(MATX.curtain, g, { cast: false });
-    });
-  },
   rug(f, b, W, D) { b.box(f.tone === 'ivory' ? MATX.rugIvory : f.tone === 'gray' ? MATX.rugGray : MATX.rugBeige, -W / 2, W / 2, 0.002, 0.014, 0, D, { r: 0.005, seg: 1, cast: false }); },
   frame(f, b, W) {                                                   // 벽 액자 2~3개
     const y0 = CM(f.h0), y1 = CM(f.h), n = W > 1.2 ? 3 : 2, w = (W - 0.06 * (n - 1)) / n;
@@ -458,12 +449,11 @@ const BUILD_F = {
 };
 function buildFaced(f, parent) {
   let fr;
-  if (f.type === 'curtain') fr = { m: null, W: 0, D: 0 };
-  else if (f.at) { const m = new THREE.Matrix4().makeRotationY(f.rot != null ? THREE.MathUtils.degToRad(f.rot) : ({ S: 0, N: Math.PI, E: Math.PI / 2, W: -Math.PI / 2 }[f.face] || 0)); m.setPosition(CM(f.at[0]), 0, CM(f.at[1])); fr = { m, W: 0, D: 0 }; }
+  if (f.at) { const m = new THREE.Matrix4().makeRotationY(f.rot != null ? THREE.MathUtils.degToRad(f.rot) : ({ S: 0, N: Math.PI, E: Math.PI / 2, W: -Math.PI / 2 }[f.face] || 0)); m.setPosition(CM(f.at[0]), 0, CM(f.at[1])); fr = { m, W: 0, D: 0 }; }
   else fr = faceFrame(f.poly, f.face);
   const b = new Batch(fr.m);
   BUILD_F[f.type](f, b, fr.W, fr.D);
-  const pickable = f.type !== 'rug' && f.type !== 'curtain';
+  const pickable = f.type !== 'rug';
   const g = b.build(parent, pickable ? { kind: 'furn', id: f.id } : null);
   furnGroups[f.id] = g; if (pickable) pickRoots.push(g);
   return g;
@@ -537,6 +527,59 @@ H.furniture.forEach(f => {
   [['closet-l', L], ['closet-r', R], ['styler', ST], ['drawer', DR]].forEach(([id, b]) => { const g = b.build(furn, { kind: 'furn', id }); furnGroups[id] = g; pickRoots.push(g); });
   [CLa, CLb].forEach(b => { const g = b.build(furn); clothesGroups.push(g); });
 })();
+
+// ---------- 전동 커튼: 속커튼(내지) · 겉커튼(겉지). 레일(y 방향)을 따라 양쪽에서 가운데로 닫힘 ----------
+// 천 한 쪽 = 닫힌 길이로 펼친 주름 판. 걷히는 쪽 끝이 원점이라 레일 방향으로 줄이면(scale.z) 주름이 촘촘해지며 걷힌다.
+MATX.sheer = M(0xfbf9f4, { roughness: 1, side: THREE.DoubleSide, envMapIntensity: 0.2, transparent: true, opacity: 0.5, depthWrite: false });
+MATX.drape = M(0xb9b1a4, { roughness: 0.96, side: THREE.DoubleSide, bumpMap: TEX.weave, bumpScale: 0.0015, envMapIntensity: 0.25 });
+const curtains = [], CURTAIN_OPEN = 0.15;
+const CURTAIN_MODES = { open: { sheer: 0, drape: 0 }, sheer: { sheer: 1, drape: 0 }, closed: { sheer: 1, drape: 1 } };
+let curtainMode = 'open';
+const curtainCur = { sheer: 0, drape: 0 };
+function curtainPanel(len, h, kind) {
+  const drape = kind === 'drape', lam = drape ? 0.15 : 0.085, amp = drape ? 0.022 : 0.012;
+  const g = new THREE.PlaneGeometry(len, h, Math.max(24, Math.round(len / lam * 8)), 4), p = g.attributes.position, uv = g.attributes.uv;
+  for (let i = 0; i < p.count; i++) {
+    const z = p.getX(i) + len / 2, y = p.getY(i) + h / 2;
+    p.setXYZ(i, Math.sin(z / lam * 6.2832) * amp * (1 - 0.3 * y / h) + Math.sin(z * 3.1 + y * 1.7) * 0.003, y, z); uv.setXY(i, z, y);
+  }
+  g.computeVertexNormals();
+  return g;
+}
+H.furniture.filter(f => f.type === 'curtain').forEach(f => {
+  const g = new THREE.Group(), [a, c] = f.span, half = CM(c - a) / 2, h = CM(f.h) - 0.03, b = new Batch(), C = { f, panels: [] };
+  f.layers.forEach(L => {
+    b.boxC(MAT.white, L.x - 1.2, L.x + 1.2, f.h, f.h + 2.4, a - 2, c + 2, { cast: false });                       // 레일
+    const geo = curtainPanel(half, h, L.kind), mat = L.kind === 'drape' ? MATX.drape : MATX.sheer;
+    [[a, 0], [c, Math.PI]].forEach(([y, rot]) => {
+      const pg = new THREE.Group(), m = new THREE.Mesh(geo, mat);
+      m.castShadow = L.kind === 'drape'; m.receiveShadow = true; m.customDepthMaterial = RISE_DEPTH;
+      pg.add(m); pg.position.set(CM(L.x), 0.02, CM(y)); pg.rotation.y = rot; g.add(pg); C.panels.push({ g: pg, kind: L.kind });
+    });
+  });
+  const my = f.motor === 'N' ? a - 2 : c + 2, mx = f.layers[f.layers.length - 1].x;                                 // 전동 모터 (레일 끝)
+  b.boxC(MAT.white, f.layers[0].x - 2.2, mx + 2.2, f.h - 4.5, f.h + 2.4, Math.min(my, my + (f.motor === 'N' ? -7 : 7)), Math.max(my, my + (f.motor === 'N' ? -7 : 7)), { r: 0.6, cast: false });
+  b.build(g); g.userData.pick = { kind: 'furn', id: f.id }; furn.add(g);
+  furnGroups[f.id] = g; pickRoots.push(g); curtains.push(C);
+});
+function curtainApply() {
+  curtains.forEach(C => C.panels.forEach(p => { const k = curtainCur[p.kind]; p.g.scale.z = lerp(CURTAIN_OPEN, 1, k * k * (3 - 2 * k)); }));
+}
+function curtainSet(mode, instant) {
+  if (!CURTAIN_MODES[mode]) return;
+  curtainMode = mode;
+  if (instant) { Object.assign(curtainCur, CURTAIN_MODES[mode]); curtainApply(); }
+}
+function curtainStep(dt) {        // 모터처럼 일정한 속도로 (전체 약 3초)
+  let moving = false;
+  for (const kd of ['sheer', 'drape']) {
+    const tg = CURTAIN_MODES[curtainMode][kd], cur = curtainCur[kd]; if (cur === tg) continue;
+    const sp = dt / 3; curtainCur[kd] = Math.abs(tg - cur) <= sp ? tg : cur + Math.sign(tg - cur) * sp; moving = true;
+  }
+  if (moving) curtainApply();
+  return moving;
+}
+curtainApply();
 
 // ---------- 배치 제안: 서재 배치안 · 화장대 위치 (버튼으로 전환) ----------
 const propG = new THREE.Group(); furn.add(propG);

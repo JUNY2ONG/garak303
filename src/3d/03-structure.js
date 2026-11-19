@@ -161,12 +161,13 @@ function buildStructure(cut) {
     if (full) fr(MAT.frame, I.a0, I.a1, t - F, t, pm - dp, pm + dp);
     fr(MAT.frame, I.a0, I.a0 + F, win.sill, t, pm - dp, pm + dp);
     fr(MAT.frame, I.a1 - F, I.a1, win.sill, t, pm - dp, pm + dp);
-    const n = win.panes || Math.max(2, Math.round((I.a1 - I.a0) / 110));
-    const in0 = I.a0 + F, in1 = I.a1 - F, step = (in1 - in0) / n, S = 4.5, ov = 2.2;
+    const n = win.splits ? win.splits.length + 1 : win.panes || Math.max(2, Math.round((I.a1 - I.a0) / 110));
+    const in0 = I.a0 + F, in1 = I.a1 - F, S = 4.5, ov = 2.2;
+    const edges = win.splits ? [0, ...win.splits, 1] : Array.from({ length: n + 1 }, (_, i) => i / n);      // 창짝 경계 (0~1)
     const h0 = win.sill + F, h1 = t - (full ? F : 0);
     for (let i = 0; i < n; i++) {
       const q = pm + (i % 2 ? 2.4 : -2.4);            // 번갈아 앞·뒤 레일
-      const s0 = in0 + i * step - (i ? ov : 0), s1 = in0 + (i + 1) * step + (i < n - 1 ? ov : 0);
+      const s0 = lerp(in0, in1, edges[i]) - (i ? ov : 0), s1 = lerp(in0, in1, edges[i + 1]) + (i < n - 1 ? ov : 0);
       fr(MAT.frame, s0, s0 + S, h0, h1, q - 1.8, q + 1.8); fr(MAT.frame, s1 - S, s1, h0, h1, q - 1.8, q + 1.8);
       fr(MAT.frame, s0 + S, s1 - S, h0, h0 + S, q - 1.8, q + 1.8);
       if (full) fr(MAT.frame, s0 + S, s1 - S, h1 - S, h1, q - 1.8, q + 1.8);

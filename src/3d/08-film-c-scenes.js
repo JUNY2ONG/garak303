@@ -99,7 +99,8 @@ const SCENES = [
   { id: 'living', ch: CH.living, dur: 9.5, cut: false, inside: true, night: false, fx: 'day',
     enter() {
       filmDoors(F_OPEN);
-      callout([2, 177, 150], 2.4, 4.8, '거실 전면창', '폭 227 · 창턱 10 cm (사진 계산)', { rise: 20 });
+      const lw = H.windows.find(q => q.id === 'w-living');
+      callout([2, 190, 150], 2.4, 4.8, '거실 전면창', `폭 약 ${Math.round(lw.y1 - lw.y0)} · 창턱 ${lw.sill} cm · 전동 커튼`, { rise: 20 });
       coProd('sofa', [280, 62, 98], 5.1, 7.2, { rise: 46 });
       coProd('ltable', [280, 197, 61], 6.5, 7.8, { title: '소파 앞 테이블', sub: '무인양품 호두나무 130 × 65', up: false, rise: 30 });
       coProd('tv', [280, 353, 172], 7.9, 9.4, { rise: 30 });

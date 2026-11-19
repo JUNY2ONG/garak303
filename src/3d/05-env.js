@@ -1,68 +1,120 @@
 // ===== 05 env: 하늘·도시 배경 · 조명 =====
-const SKY_R = 110, SKY_Y0 = -70, SKY_Y1 = 86, EYE_ALT = 45;      // 눈높이가 지상 45m쯤(고층)이라고 보고 그림 (연출)
+const SKY_R = 110, SKY_Y0 = -70, SKY_Y1 = 86, EYE_ALT = 55;      // 눈높이가 지상 55m쯤(20층)이라고 보고 그림
+// 창밖 풍경: 보내 준 현장 사진 2장을 참고해 그린 그림 (근사, 실제 건물 위치와 같지는 않음).
+// 방향각 az: 0 = 아래(남) · 90 = 오른쪽(동: 세탁실 · 주방 · 서재 창) · 180 = 위(북) · 270 = 왼쪽(서: 거실 · 침실 창)
+//   창밖을 볼 때: 동쪽 창에서 오른쪽 = az가 작아지는 쪽(남), 서쪽 창에서 오른쪽 = az가 작아지는 쪽(북)
+//   서쪽(거실 사진): 단풍 든 산 능선, 흰 아파트 단지, 앞쪽에 붉은 벽돌 + 초록 지붕 학교, 오른쪽 가까이에 같은 단지 동
+//   동쪽(세탁실 사진): 붉은 단풍 숲, 앞쪽에 초록 지붕 저층. 롯데월드타워는 정동이 아니라 오른쪽(동남, az 48)으로 비껴 있어
+//   세탁실 창에서 오른쪽을 보면 보이고 주방에서 정면으로는 안 보인다 (사용자 확인). 그 오른쪽에 짙은 유리 고층
 function paintCity(night) {
   const W = tierName === 'low' ? 2048 : 4096, Hc = W / 4;
   return canvasOf(W, Hc, g => {
-    const r = rng(night ? 97 : 97), pxm = Hc / (SKY_Y1 - SKY_Y0);            // px per m (세로)
+    const r = rng(97), pxm = Hc / (SKY_Y1 - SKY_Y0);                         // px per m (세로)
     const yh = Hc * (1 - (1.5 - SKY_Y0) / (SKY_Y1 - SKY_Y0));               // 지평선
     const yAt = slope => yh - slope * SKY_R * pxm;                            // slope = 높이/거리
     const xAt = az => az / 360 * W, wAt = (m, dist) => (m / dist) / (2 * Math.PI) * W;
+    const dAz = (a, c) => { const d = Math.abs(a - c) % 360; return d > 180 ? 360 - d : d; };
+    const lobe = (a, c, w) => Math.exp(-Math.pow(dAz(a, c) / w, 2));          // 방향 c 근처에서 1, 멀어지면 0
+    const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
     // 하늘
     const sky = g.createLinearGradient(0, 0, 0, yh);
     if (night) { sky.addColorStop(0, '#0b1222'); sky.addColorStop(0.7, '#1b2742'); sky.addColorStop(1, '#3a3f58'); }
-    else { sky.addColorStop(0, '#6ea6dd'); sky.addColorStop(0.55, '#a9cbe8'); sky.addColorStop(1, '#dbe7ef'); }
+    else { sky.addColorStop(0, '#5f9bd8'); sky.addColorStop(0.55, '#9fc4e6'); sky.addColorStop(1, '#d6e4ee'); }
     g.fillStyle = sky; g.fillRect(0, 0, W, yh + 2);
     if (!night) {                                                            // 해 쪽 하늘을 밝게 + 엷은 구름
       const sx = xAt(288), gr = g.createRadialGradient(sx, yh - Hc * 0.2, 0, sx, yh - Hc * 0.2, Hc * 0.75);
       gr.addColorStop(0, 'rgba(255,246,225,0.75)'); gr.addColorStop(1, 'rgba(255,246,225,0)');
       g.fillStyle = gr; g.fillRect(sx - Hc, 0, Hc * 2, yh);
-      for (let i = 0; i < 26; i++) {
+      for (let i = 0; i < 22; i++) {
         const cx = r() * W, cy = yh * (0.12 + r() * 0.62), cw = W * (0.03 + r() * 0.07), ch = Hc * (0.012 + r() * 0.02);
         for (let k = 0; k < 7; k++) {
           const px = cx + (r() - 0.5) * cw * 1.6, py = cy + (r() - 0.5) * ch * 2, rad = cw * (0.25 + r() * 0.35);
-          for (const ox of [-W, 0, W]) { const gr2 = g.createRadialGradient(px + ox, py, 0, px + ox, py, rad); gr2.addColorStop(0, 'rgba(255,255,255,0.22)'); gr2.addColorStop(1, 'rgba(255,255,255,0)'); g.save(); g.translate(0, py); g.scale(1, 0.32); g.translate(0, -py); g.fillStyle = gr2; g.fillRect(px + ox - rad, py - rad, rad * 2, rad * 2); g.restore(); }
+          for (const ox of [-W, 0, W]) { const gr2 = g.createRadialGradient(px + ox, py, 0, px + ox, py, rad); gr2.addColorStop(0, 'rgba(255,255,255,0.2)'); gr2.addColorStop(1, 'rgba(255,255,255,0)'); g.save(); g.translate(0, py); g.scale(1, 0.32); g.translate(0, -py); g.fillStyle = gr2; g.fillRect(px + ox - rad, py - rad, rad * 2, rad * 2); g.restore(); }
         }
       }
     } else {
       for (let i = 0; i < 260; i++) { g.fillStyle = `rgba(255,255,255,${0.2 + r() * 0.5})`; g.fillRect(r() * W, r() * yh * 0.8, 1.3, 1.3); }
       const gr = g.createLinearGradient(0, yh - Hc * 0.22, 0, yh); gr.addColorStop(0, 'rgba(255,170,90,0)'); gr.addColorStop(1, 'rgba(255,170,90,0.22)'); g.fillStyle = gr; g.fillRect(0, yh - Hc * 0.22, W, Hc * 0.22);
     }
-    // 산 (능선 3겹, 주기 함수라 이음매 없음)
-    const ridge = (base, amp, seed, col0, col1) => {
+    // 산 (능선 3겹, 주기 함수라 이음매 없음). bump: 방향에 따라 더 높게, tint: 그 위에 덧칠할 단풍빛
+    const ridge = (base, amp, col0, col1, bump, tint) => {
       const ph = [0, 1, 2, 3, 4].map(() => r() * 6.283), fr = [3, 5, 8, 13, 21];
       g.beginPath(); g.moveTo(0, yh + 4);
       for (let x = 0; x <= W; x += 4) {
         const a = x / W * 6.283; let h = 0;
         fr.forEach((f, i) => { h += Math.sin(a * f + ph[i]) / (i + 1.2); });
-        g.lineTo(x, yAt(base + amp * (0.55 + 0.45 * h)));
+        g.lineTo(x, yAt(base + amp * (0.55 + 0.45 * h) + (bump ? bump(x / W * 360) : 0)));
       }
       g.lineTo(W, yh + 4); g.closePath();
-      const gr = g.createLinearGradient(0, yAt(base + amp * 1.3), 0, yh); gr.addColorStop(0, col0); gr.addColorStop(1, col1);
+      const gr = g.createLinearGradient(0, yAt(base + amp * 1.6), 0, yh); gr.addColorStop(0, col0); gr.addColorStop(1, col1);
       g.fillStyle = gr; g.fill();
+      if (tint) { const gx = g.createLinearGradient(0, 0, W, 0); for (let i = 0; i <= 24; i++) gx.addColorStop(i / 24, tint(i * 15)); g.fillStyle = gx; g.fill(); }
     };
-    if (night) { ridge(0.06, 0.035, 1, '#141b2c', '#1a2236'); ridge(0.035, 0.03, 2, '#101726', '#161e30'); }
-    else { ridge(0.07, 0.035, 1, '#a9bccd', '#c3d0da'); ridge(0.045, 0.03, 2, '#8fa3a6', '#b4bfbc'); ridge(0.022, 0.022, 3, '#8a8f78', '#a9a48d'); }
+    const westUp = k => az => k * (lobe(az, 228, 42) + 0.45 * lobe(az, 292, 30));      // 서쪽 창에서 오른쪽(북서)으로 갈수록 능선이 높음
+    if (night) { ridge(0.06, 0.035, '#141b2c', '#1a2236', westUp(0.03)); ridge(0.035, 0.03, '#101726', '#161e30', westUp(0.035)); }
+    else {
+      ridge(0.07, 0.035, '#a3b7ca', '#c0cdd8', westUp(0.03));
+      ridge(0.045, 0.03, '#8f9fa3', '#b3bdbb', westUp(0.04), az => `rgba(168,124,90,${(0.32 * lobe(az, 295, 60)).toFixed(3)})`);
+      ridge(0.022, 0.022, '#8a8f78', '#a9a48d', westUp(0.03), az => `rgba(176,118,74,${(0.4 * lobe(az, 290, 70) + 0.22 * lobe(az, 70, 60)).toFixed(3)})`);
+    }
     // 땅 (멀수록 뿌옇게)
     const gd = g.createLinearGradient(0, yh, 0, Hc);
     if (night) { gd.addColorStop(0, '#20263a'); gd.addColorStop(0.3, '#151a28'); gd.addColorStop(1, '#0e1119'); }
     else { gd.addColorStop(0, '#c2c9cc'); gd.addColorStop(0.12, '#a9aea8'); gd.addColorStop(0.5, '#8d8f86'); gd.addColorStop(1, '#75776f'); }
     g.fillStyle = gd; g.fillRect(0, yh, W, Hc - yh);
-    // 건물
-    const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+    // 건물 · 나무 목록 (먼 것부터 그림)
     const haze = night ? [34, 40, 60] : [200, 210, 218];
     const list = [];
     for (let i = 0; i < 1500; i++) {
-      const u = r(), dist = 110 + Math.pow(u, 1.7) * 3400, tall = dist > 420 && r() < (dist > 800 ? 0.55 : 0.3);
-      list.push({ az: r() * 360, dist, h: tall ? 38 + r() * 46 : 5 + r() * 16, w: tall ? 22 + r() * 50 : 9 + r() * 22, d: 11 + r() * 8, tall, c: r(), k: r() });
+      const u = r(), az = r() * 360, dist = 110 + Math.pow(u, 1.7) * 3400, west = lobe(az, 275, 65), east = lobe(az, 92, 60);
+      const tall = dist > 300 && r() < (dist > 800 ? 0.55 : 0.3) * (1 + 0.7 * west);
+      const B = { az, dist, h: tall ? 42 + r() * 44 : 5 + r() * 16, w: tall ? 22 + r() * 50 : 9 + r() * 22, d: 11 + r() * 8, tall, c: r(), k: r() };
+      if (tall && west > 0.4 && r() < 0.7) B.col = [238, 236, 228];                                            // 서쪽: 흰 아파트 단지
+      if (!tall && dist < 420 && r() < 0.35 + 0.3 * (west + east)) B.roof = [74, 150, 104];                      // 초록 방수 지붕
+      list.push(B);
     }
+    for (let i = 0; i < 9; i++) list.push({ az: 240 + i * 8.5 + r() * 4, dist: 125 + r() * 110, h: 15 + r() * 5, w: 44 + r() * 30, d: 16, tall: false, c: r(), k: 0.9, col: [158, 86, 66], roof: [74, 150, 104], win: [236, 232, 222] });   // 서쪽 앞: 붉은 벽돌 학교
+    list.push({ az: 236, dist: 56, h: 84, w: 22, d: 14, tall: true, c: 0, k: 0.9, col: [232, 232, 228], near: true });                                // 서쪽 오른편 가까이: 같은 단지 동
+    for (let i = 0; i < 8; i++) list.push({ az: 40 - i * 3.6 - r() * 1.5, dist: 480 + r() * 300, h: 96 + r() * 24, w: 26 + r() * 9, d: 20, tall: true, c: 0, k: 0.9, col: [62, 72, 86], win: [150, 170, 190], roof: [50, 58, 70] });   // 동쪽 오른편: 짙은 유리 고층
+    list.push({ az: 7, dist: 330, h: 80, w: 26, d: 14, tall: true, c: 0, k: 0.9, col: [226, 226, 222] });
+    list.push({ lotte: true, az: 48, dist: 2000 });
+    for (let i = 0; i < 90; i++) { const e = i % 2, az = (e ? 72 : 272) + (r() - 0.5) * 150; list.push({ trees: true, east: !!e, az, dist: 130 + Math.pow(r(), 1.4) * 520, w: 30 + r() * 60, c: r() }); }   // 단풍 숲
     list.sort((a, b) => b.dist - a.dist);
     const wallCols = [[236, 232, 224], [226, 226, 222], [214, 208, 198], [240, 236, 226], [205, 198, 190]], roofCols = [[150, 152, 150], [110, 150, 120], [120, 140, 165], [172, 168, 160], [150, 120, 100]];
+    const blobs = (cx, y, w, tr, cols, n, hz) => { for (let k = 0; k < n; k++) { const ts = mix(cols[Math.floor(r() * cols.length)], haze, hz); for (const ox of [-W, 0, W]) { g.fillStyle = `rgb(${ts})`; g.beginPath(); g.arc(cx + ox + (r() - 0.5) * w, y - tr * (0.2 + r() * 0.5), tr * (0.7 + r() * 0.6), 0, 6.283); g.fill(); } } };
     list.forEach(B => {
-      const hz = 1 - Math.exp(-B.dist / 1500), cx = xAt(B.az), w = Math.max(1.5, wAt(B.w, B.dist));
+      const hz = 1 - Math.exp(-B.dist / 1500), cx = xAt(B.az);
+      if (B.trees) {                                                                                             // 단풍 숲 (동쪽은 붉게, 서쪽은 노랗게)
+        if (night) return;
+        const cols = B.east ? [[150, 52, 44], [176, 72, 48], [196, 110, 52], [120, 60, 46]] : [[214, 170, 60], [200, 128, 50], [226, 190, 80], [124, 140, 80]];
+        blobs(cx, yAt(-EYE_ALT / B.dist), Math.max(6, wAt(B.w, B.dist)), Math.max(2, wAt(7, B.dist)), cols, 12, hz * 0.8); return;
+      }
+      if (B.lotte) {                                                                                             // 롯데월드타워 (555m): 위로 갈수록 가늘어지고 끝이 둘로 갈라짐
+        const yB = yAt(-EYE_ALT / B.dist), yT = yAt((555 - EYE_ALT) / B.dist), hw = wAt(74, B.dist) / 2, Ht = yB - yT, hk = 0.42;
+        const half = t => hw * (1 - 0.74 * Math.pow(t, 1.6));
+        const body = night ? [34, 44, 70] : mix([150, 178, 208], haze, hk), dark = night ? [22, 28, 46] : mix([104, 134, 172], haze, hk), lite = night ? [60, 80, 120] : mix([196, 216, 236], haze, hk);
+        for (const ox of [-W, 0, W]) {
+          const x0 = cx + ox;
+          g.beginPath(); g.moveTo(x0 - hw, yB);
+          for (let i = 0; i <= 24; i++) { const t = i / 24; g.lineTo(x0 - half(t), yB - Ht * t); }
+          g.lineTo(x0 - hw * 0.07, yT + Ht * 0.012); g.lineTo(x0, yT + Ht * 0.03); g.lineTo(x0 + hw * 0.07, yT + Ht * 0.012);
+          for (let i = 24; i >= 0; i--) { const t = i / 24; g.lineTo(x0 + half(t), yB - Ht * t); }
+          g.closePath();
+          const gr = g.createLinearGradient(x0 - hw, 0, x0 + hw, 0); gr.addColorStop(0, `rgb(${lite})`); gr.addColorStop(0.45, `rgb(${body})`); gr.addColorStop(0.55, `rgb(${dark})`); gr.addColorStop(1, `rgb(${body})`);
+          g.fillStyle = gr; g.fill();
+          g.strokeStyle = `rgba(${night ? '150,190,255' : mix([70, 96, 132], haze, hk)},${night ? 0.7 : 0.55})`; g.lineWidth = Math.max(1, hw * 0.07);
+          g.beginPath(); g.moveTo(x0, yB - Ht * 0.06); g.lineTo(x0, yT + Ht * 0.03); g.stroke();                 // 가운데 이음선
+          [0.16, 0.33, 0.5, 0.66, 0.8, 0.9].forEach(t => { const h2 = half(t) * 0.82; g.fillStyle = night ? 'rgba(210,225,255,0.85)' : `rgba(${mix([78, 100, 130], haze, hk)},0.7)`; g.fillRect(x0 - h2, yB - Ht * t, h2 * 2, Math.max(1, Ht * 0.008)); });   // 기계층 띠
+          if (night) { const gl = g.createRadialGradient(x0, yT, 0, x0, yT, hw * 3); gl.addColorStop(0, 'rgba(190,215,255,0.6)'); gl.addColorStop(1, 'rgba(190,215,255,0)'); g.fillStyle = gl; g.fillRect(x0 - hw * 3, yT - hw * 3, hw * 6, hw * 6); }
+        }
+        return;
+      }
+      const w = Math.max(1.5, wAt(B.w, B.dist));
       const yTop = yAt((B.h - EYE_ALT) / B.dist), yBot = yAt(-EYE_ALT / B.dist), yRoof = yAt((B.h - EYE_ALT) / (B.dist + B.d));
-      let col = wallCols[Math.floor(B.c * wallCols.length)], roof = roofCols[Math.floor(B.k * roofCols.length)];
-      if (night) { col = [26, 30, 42]; roof = [20, 23, 33]; } else if (!B.tall) col = mix(col, [170, 165, 155], 0.25);
+      let col = B.col || wallCols[Math.floor(B.c * wallCols.length)], roof = B.roof || roofCols[Math.floor(B.k * roofCols.length)];
+      if (night) { col = [26, 30, 42]; roof = [20, 23, 33]; } else if (!B.tall && !B.col) col = mix(col, [170, 165, 155], 0.25);
       const cs = mix(col, haze, hz), rs = mix(roof, haze, hz), sd = mix(mix(col, [90, 95, 105], 0.35), haze, hz);
+      const wc = night ? null : mix(B.win || [96, 112, 128], haze, hz);
       for (const ox of [-W, 0, W]) {
         const x = cx + ox - w / 2; if (x > W || x + w < 0) continue;
         if (yRoof < yTop) { g.fillStyle = `rgb(${rs})`; g.fillRect(x, yRoof, w, yTop - yRoof + 1); }
@@ -71,20 +123,17 @@ function paintCity(night) {
         const fl = B.tall ? 2.9 : 3.2, rows = Math.floor(B.h / fl), rh = (yBot - yTop) / Math.max(1, rows);
         if (rh > 2.2 && w > 10) {                                                               // 창
           const cols = Math.max(2, Math.floor(B.w / 3.4)), cw = w * 0.72 / cols;
-          for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+          for (let j = 0; j < rows; j++) { if (yTop + j * rh > Hc) break; for (let i = 0; i < cols; i++) {
             if (night) { if (r() < 0.38) { g.fillStyle = r() < 0.75 ? 'rgba(255,214,140,0.9)' : 'rgba(220,235,255,0.85)'; g.fillRect(x + i * cw + cw * 0.2, yTop + j * rh + rh * 0.25, cw * 0.6, rh * 0.5); } }
-            else { g.fillStyle = `rgba(${mix([96, 112, 128], haze, hz)},${0.55 - hz * 0.3})`; g.fillRect(x + i * cw + cw * 0.18, yTop + j * rh + rh * 0.28, cw * 0.64, rh * 0.46); }
-          }
+            else { g.fillStyle = `rgba(${wc},${B.near ? 0.75 : 0.55 - hz * 0.3})`; g.fillRect(x + i * cw + cw * 0.18, yTop + j * rh + rh * 0.28, cw * 0.64, rh * 0.46); if (B.near) { g.fillStyle = 'rgba(255,255,255,0.5)'; g.fillRect(x + i * cw + cw * 0.1, yTop + j * rh + rh * 0.8, cw * 0.8, rh * 0.12); } }
+          } }
         } else if (night && r() < 0.8) {
           for (let k = 0; k < Math.max(2, w * (yBot - yTop) / 30); k++) if (r() < 0.5) { g.fillStyle = 'rgba(255,214,140,0.8)'; g.fillRect(x + r() * w, yTop + r() * (yBot - yTop), 1.2, 1.2); }
         }
       }
-      if (!night && !B.tall && B.dist < 900 && B.k < 0.5) {                                     // 가로수 (가을빛)
-        const tc = [[196, 120, 48], [214, 170, 60], [120, 140, 80], [176, 90, 50]][Math.floor(B.c * 4)], ts = mix(tc, haze, hz), tr = Math.max(1.5, wAt(5, B.dist));
-        for (let k = 0; k < 4; k++) for (const ox of [-W, 0, W]) { g.fillStyle = `rgb(${ts})`; g.beginPath(); g.arc(cx + ox + (r() - 0.5) * w * 2.4, yBot - tr * 0.4, tr * (0.7 + r() * 0.6), 0, 6.283); g.fill(); }
-      }
+      if (!night && !B.tall && B.dist < 900 && B.k < 0.5) blobs(cx, yBot, w * 2.4, Math.max(1.5, wAt(5, B.dist)), [[196, 120, 48], [214, 170, 60], [120, 140, 80], [176, 90, 50]], 4, hz);      // 가로수 (가을빛)
     });
-    if (!night) { const hz2 = g.createLinearGradient(0, yh - Hc * 0.05, 0, yh + Hc * 0.1); hz2.addColorStop(0, 'rgba(222,230,236,0)'); hz2.addColorStop(0.35, 'rgba(222,230,236,0.5)'); hz2.addColorStop(1, 'rgba(222,230,236,0)'); g.fillStyle = hz2; g.fillRect(0, yh - Hc * 0.05, W, Hc * 0.15); }
+    if (!night) { const hz2 = g.createLinearGradient(0, yh - Hc * 0.05, 0, yh + Hc * 0.1); hz2.addColorStop(0, 'rgba(222,230,236,0)'); hz2.addColorStop(0.35, 'rgba(222,230,236,0.42)'); hz2.addColorStop(1, 'rgba(222,230,236,0)'); g.fillStyle = hz2; g.fillRect(0, yh - Hc * 0.05, W, Hc * 0.15); }
   });
 }
 const backdrop = new THREE.Group(); backdrop.visible = false; scene.add(backdrop);

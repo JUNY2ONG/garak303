@@ -23,6 +23,7 @@ function filmEnter(i) {
 function filmSetup() {            // 가림막이 화면을 다 덮은 뒤 한 번
   film.ready = true;
   state.wallPref = 'full'; furn.visible = true; dimG.visible = false;
+  curtainSet('open', true);                                             // 영상에서는 커튼을 열어 둠
   if (proposals.study.cur !== 'A') setProposal('study', 'A');          // 영상에서 서재는 A안만 (끝나면 보던 안으로 되돌림)
   camera.clearViewOffset(); viewOffY = 0; film.offKey = '';
 }
@@ -63,7 +64,7 @@ function filmStart() {
   hideCard(); closeSheets(); if (state.measuring) setMeasuring(false);
   MAP.big = false; mapSet(false, false);
   tween = null; walk.path = null; walk.vy = walk.vp = 0; controls.enabled = false;
-  film.saved = { night: light.night, wallPref: state.wallPref, study: proposals.study.cur };
+  film.saved = { night: light.night, wallPref: state.wallPref, study: proposals.study.cur, curtain: curtainMode };
   document.body.classList.add('film'); filmEl.classList.add('on'); filmEl.classList.remove('lt', 'shade');
   film.on = true; film.ready = false; film.closing = false; film.idx = -1; film.t = -0.72; film.last = performance.now();
   filmPause(false, true); film.bars.forEach(b => { b._k = 0; b.style.transform = 'scaleX(0)'; });
@@ -78,6 +79,7 @@ function filmRestore() {          // 영상이 바꾼 것을 모두 원래대로
   if (film.ready) {
     state.wallPref = film.saved.wallPref; light.night = film.saved.night;
     if (proposals.study.cur !== film.saved.study) setProposal('study', film.saved.study);
+    curtainSet(film.saved.curtain, true);
     furn.visible = state.showFurn; dimG.visible = state.showDims;
   }
   film.on = false; film.ready = false; film.closing = false;
