@@ -185,16 +185,16 @@ function collectMats() {
   allMats = [...set]; allMats.forEach(m => { if (m.userData.env0 == null) m.userData.env0 = m.envMapIntensity; });
 }
 const light = { night: false, inside: false };
-const LK = { fill: 0.72, lamp: 0.5 };
+const LK = { fill: 0.92, lamp: 0.56 };
 function applyRig() {
   const { night, inside } = light, T = tier;
   if (!allMats) collectMats();
   let env, aoAmt;
   if (!night) {
-    if (inside) { sun.position.set(5 - 11.5, 1 + 8.2, 3.5 + 4.2); sun.intensity = 2.5; sun.color.set(0xffe6c6); hemi.intensity = T.fill ? 0.13 : 0.32; env = T.fill ? 0.44 : 0.66; hemi.color.set(0xfff8ee); hemi.groundColor.set(0xe6d8c4); }
+    if (inside) { sun.position.set(5 - 11.5, 1 + 8.2, 3.5 + 4.2); sun.intensity = 2.5; sun.color.set(0xffe6c6); hemi.intensity = T.fill ? 0.3 : 0.46; env = T.fill ? 0.6 : 0.8; hemi.color.set(0xfff8ee); hemi.groundColor.set(0xe6d8c4); }      // 흰 벽지가 회색으로 보이지 않게 실내 주변광을 올림 (15차)
     else { sun.position.set(5 - 3.0, 13, 3.5 + 4.6); sun.intensity = 0.95; sun.color.set(0xfff1dc); hemi.intensity = 0.1; env = 0.3; hemi.color.set(0xffffff); hemi.groundColor.set(0xc9bca8); }
   } else {
-    if (inside) { sun.intensity = 0; hemi.intensity = T.fill ? 0.07 : 0.3; env = T.fill ? 0.14 : 0.3; hemi.color.set(0xffe9cc); hemi.groundColor.set(0x8a7a66); }
+    if (inside) { sun.intensity = 0; hemi.intensity = T.fill ? 0.1 : 0.34; env = T.fill ? 0.18 : 0.34; hemi.color.set(0xffe9cc); hemi.groundColor.set(0x8a7a66); }
     else { sun.position.set(5 - 3.0, 13, 3.5 + 4.6); sun.intensity = 0.16; sun.color.set(0xbfd0ff); hemi.intensity = T.fill ? 0.07 : 0.25; env = 0.14; hemi.color.set(0xffe9cc); hemi.groundColor.set(0x8a7a66); }
   }
   sun.visible = sun.intensity > 0;

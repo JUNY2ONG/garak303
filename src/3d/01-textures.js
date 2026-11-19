@@ -112,7 +112,7 @@ const TS = tierName === 'low' ? 512 : 1024;
 
   // 벽지: LX 베스띠 디아 회벽 / 블랑 그레이 — 한 장 = 1m
   const wallC = canvasOf(TS, TS, (g, W, Hh) => {
-    const r = rng(5); g.fillStyle = '#efece6'; g.fillRect(0, 0, W, Hh);
+    const r = rng(5); g.fillStyle = '#f4f2ed'; g.fillRect(0, 0, W, Hh);
     clouds(g, W, Hh, r, 70, '255,255,252', 0.07); clouds(g, W, Hh, r, 50, '205,198,186', 0.045);
     clouds(g, W, Hh, r, 500, '200,193,182', 0.05, 0.004, 0.018); clouds(g, W, Hh, r, 500, '255,255,253', 0.08, 0.004, 0.018);
     speckle(g, W, Hh, r, W * 40, ['rgba(186,178,166,0.16)', 'rgba(255,255,255,0.3)'], W / 1100);

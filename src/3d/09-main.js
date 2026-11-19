@@ -31,7 +31,7 @@ function frame(now) {
   if (needRender <= 0) { perf.lastT = 0; return; }
   needRender--;
   if (meas.g.children.length) updateMeasScale();
-  const aoAmt = light.inside ? 1.0 : 0.85;
+  const aoAmt = light.inside ? 0.82 : 0.85;
   post.render(scene, camera, aoAmt);
   updateOcclusion(now); updateLabels(); mapDraw();
   perf.sample(now, moving || doorMoving || ptrs.size > 0);
