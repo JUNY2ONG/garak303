@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>우리집 평면도 (실측 반영)</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#f3f2ef;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#plan{position:fixed;inset:0;width:100%;height:100%;touch-action:none;display:block}
+/* 도면 스타일 (폰트는 화면 기준 크기로 고정) */
+#world{--u:1}
+.w-ext{fill:#2c2c2c}
+.w-int{fill:#4a4a4a}
+.w-bearing{fill:url(#hatch);stroke:#d92d2d;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.w-thin{fill:#9aa3ab}
+.w-solid{fill:#8b8f96}
+.f-pipe{fill:#b45309;stroke:#7c2d12;stroke-width:1;vector-effect:non-scaling-stroke}
+.win{fill:#fff;stroke:#2c2c2c;stroke-width:1;vector-effect:non-scaling-stroke}
+.win-line{stroke:#5b8fb9;stroke-width:1;vector-effect:non-scaling-stroke;fill:none}
+.door-leaf{stroke:#1f2937;stroke-width:2.2;vector-effect:non-scaling-stroke;fill:none;stroke-linecap:round}
+.door-arc{stroke:#6b7280;stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke;fill:none}
+.exp{fill:#5fcf6b;fill-opacity:.28}
+.xbox{fill:#e5e7eb;stroke:#9ca3af;stroke-width:1;vector-effect:non-scaling-stroke}
+.xline{stroke:#9ca3af;stroke-width:1;vector-effect:non-scaling-stroke;fill:none}
+.f-tall,.f-fridgecase,.f-shelf,.f-vanity{fill:#fbfaf5;stroke:#8a7f6e;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.f-ltable,.f-stable{fill:#7a573f;stroke:#4a3222;stroke-width:1;vector-effect:non-scaling-stroke}
+.f-desk2{fill:#d9c29a;stroke:#8a7450;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.f-rug{fill:#b9ad98;fill-opacity:.3;stroke:#a89c88;stroke-width:1;stroke-dasharray:3 2;vector-effect:non-scaling-stroke}
+.f-bookcase,.f-sideboard{fill:#efe2c8;stroke:#8a7450;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.f-wshelf{fill:none;stroke:#8a7450;stroke-width:1;stroke-dasharray:2 2;vector-effect:non-scaling-stroke}
+.f-plant{fill:#7d9a6c;stroke:#4f6b40;stroke-width:1;vector-effect:non-scaling-stroke}
+.f-flamp{fill:#ffe6b8;stroke:#a8842c;stroke-width:1;vector-effect:non-scaling-stroke}
+.f-tvstand{fill:#fff;stroke:#6b7280;stroke-width:1;vector-effect:non-scaling-stroke}
+.f-desk{fill:#e6d3ae;stroke:#8a7450;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.f-chair{fill:#8c8d90;stroke:#55565a;stroke-width:1;vector-effect:non-scaling-stroke}
+.f-vanity{fill:#fff;stroke:#b4532a;stroke-width:1.4}
+.prow{display:flex;gap:6px;align-items:center;justify-content:center;font-size:11.5px;color:#374151;margin-bottom:6px;flex-wrap:wrap}
+.prow .chip{padding:5px 10px}
+.f-counter{fill:#cdb891;fill-opacity:.85;stroke:#7a5532;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.f-sink{fill:#eef2f5;stroke:#7a5532;stroke-width:1;vector-effect:non-scaling-stroke}
+.fx-line{fill:none;stroke:#3f3f46;stroke-width:1;vector-effect:non-scaling-stroke}
+.fx,.f-bath,.f-basin{fill:#fff;stroke:#6b7280;stroke-width:1;vector-effect:non-scaling-stroke}
+.f-shoe{fill:#e7dfd2;stroke:#8a7f6e;stroke-width:1;stroke-dasharray:3 2;vector-effect:non-scaling-stroke}
+.f-closet{fill:#f6efe0;stroke:#8a8070;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.f-styler{fill:#d8d3cb;stroke:#6f6a62;stroke-width:1;vector-effect:non-scaling-stroke}
+.f-tv{fill:#111827}
+.f-sofa{fill:#d9d6d0;stroke:#77726a;stroke-width:1;vector-effect:non-scaling-stroke}
+.f-bed{fill:#f4f2ee;stroke:#6b7280;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.f-fridge{fill:#f1ece3;stroke:#7a5532;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.f-washer{fill:#d3cdc2;stroke:#6b6255;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.f-induction{fill:#fafafa;stroke:#334155;stroke-width:1;vector-effect:non-scaling-stroke}
+.f-hood{fill:none;stroke:#475569;stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
+.f-dw{fill:#e2dccf;stroke:#7a5532;stroke-width:1;vector-effect:non-scaling-stroke}
+.f-robot{display:none}
+.f-upper{fill:none;stroke:#7a5532;stroke-width:1;stroke-dasharray:2 2;vector-effect:non-scaling-stroke}
+.f-cabinet{fill:#efe6d6;stroke:#8a7f6e;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.f-nightstand{fill:#e9e1d3;stroke:#8a7f6e;stroke-width:1;vector-effect:non-scaling-stroke}
+.door-leaf.glass{stroke:#3b82f6}
+.jamb{fill:#9ca3af}
+.f-drawer{fill:#ece5d8;stroke:#8a8070;stroke-width:1;vector-effect:non-scaling-stroke}
+text{dominant-baseline:central;text-anchor:middle;paint-order:stroke;stroke-linejoin:round}
+.rm{font-size:calc(var(--u)*var(--k,1)*14px);font-weight:700;fill:#111827;stroke:#fff;stroke-width:calc(var(--u)*3px)}
+.rm-size{font-size:calc(var(--u)*var(--k,1)*11px);font-weight:600;stroke:#fff;stroke-width:calc(var(--u)*3px)}
+.rm-s{font-size:calc(var(--u)*var(--k,1)*10px);font-weight:600;fill:#4b5563;stroke:#fff;stroke-width:calc(var(--u)*2.5px)}
+.rm-s.c-exp{fill:#15803d}
+.rm-s.c-bearing{fill:#c81e1e}
+.ft{font-size:calc(var(--u)*9.5px);fill:#57534e;stroke:#fff;stroke-width:calc(var(--u)*2.5px)}
+.dim-line{fill:none;stroke-width:1.2;vector-effect:non-scaling-stroke}
+.dim-t{font-size:calc(var(--u)*var(--k,1)*11px);font-weight:700;stroke:#fff;stroke-width:calc(var(--u)*3.5px)}
+.d-real{stroke:#e0457b}
+text.d-real{fill:#d6336c;stroke:#fff}
+.d-calc{stroke:#2563eb}
+text.d-calc{fill:#1d4ed8;stroke:#fff}
+.d-est{stroke:#8a8f98;stroke-dasharray:4 3}
+text.d-est{fill:#6b7280;stroke:#fff;font-style:italic}
+/* UI */
+.hud{position:fixed;left:0;right:0;display:flex;gap:8px;padding:10px 12px;pointer-events:none;z-index:5}
+.hud>*{pointer-events:auto}
+.top{top:0;padding-top:max(10px,env(safe-area-inset-top));justify-content:space-between;align-items:flex-start}
+.title{background:rgba(255,255,255,.95);border-radius:10px;padding:8px 12px;font-weight:700;font-size:14px;color:#111827;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.title span{display:block;font-weight:500;font-size:11px;color:#6b7280;margin-top:2px}
+button{font:inherit;cursor:pointer;border:0;-webkit-appearance:none;appearance:none}
+.tbtn{background:rgba(255,255,255,.95);border-radius:10px;padding:8px 12px;font-size:12.5px;color:#111827;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.bottom{bottom:0;padding-bottom:max(12px,env(safe-area-inset-bottom));flex-direction:column;align-items:center;gap:7px}
+.row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.chip{background:rgba(255,255,255,.97);padding:6px 12px;border-radius:999px;font-size:12px;color:#374151;border:1px solid #d1d5db}
+.chip.on{background:#111827;color:#fff;border-color:#111827}
+.zoom{background:rgba(255,255,255,.97);border:1px solid #d1d5db;border-radius:999px;padding:6px 12px;font-size:12px;color:#374151}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;background:rgba(255,255,255,.95);border-radius:10px;padding:6px 10px;font-size:11px;color:#374151;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.legend i{display:inline-block;width:14px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+#memo{position:fixed;top:calc(max(10px,env(safe-area-inset-top)) + 54px);right:12px;left:12px;max-width:400px;margin-left:auto;background:#fff;border-radius:12px;padding:12px 14px;font-size:12.5px;line-height:1.55;color:#1f2937;box-shadow:0 6px 24px rgba(0,0,0,.16);z-index:6;max-height:70vh;overflow:auto}
+#memo.hidden{display:none}
+#memo h3.warn,#memo li.warn{color:#9a3412}
+#info{position:fixed;left:12px;right:12px;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 186px);max-width:420px;max-height:46vh;overflow:auto;margin:0 auto;background:#fff;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.5;color:#1f2937;box-shadow:0 6px 24px rgba(0,0,0,.2);z-index:6}
+#info.hidden{display:none}
+#info b{font-size:15px;display:block}
+#info .s{color:#4b5563;font-weight:600}
+#info .w{color:#9a3412;font-weight:600;margin-top:4px}
+@media (max-width:560px){#world{--k:.9}}
+@media (max-height:520px){.legend{display:none}.title span{display:none}.title{padding:6px 10px;font-size:13px}.bottom{padding-bottom:max(8px,env(safe-area-inset-bottom))}#world{--k:.9}}
+#memo h3{margin:10px 0 4px;font-size:13px}
+#memo h3:first-child{margin-top:0}
+#memo ul{margin:0;padding-left:16px}
+#memo .muted{color:#6b7280;font-size:11.5px;margin-top:8px}
+</style>
+</head>
+<body>
+<svg id="plan" xmlns="http://www.w3.org/2000/svg"></svg>
+<header class="hud top">
+  <div class="title">우리집 평면도<span>단위 cm · 가구·창을 탭하면 정보</span></div>
+  <button id="memoBtn" class="tbtn">가정·메모</button>
+</header>
+<div id="memo" class="hidden"></div>
+<div id="info" class="hidden"></div>
+<footer class="hud bottom">
+  <div class="legend">
+    <span><i style="background:#e0457b"></i>실측</span>
+    <span><i style="background:#2563eb"></i>계산</span>
+    <span><i style="background:#9ca3af"></i>추정</span>
+    <span><i style="background:rgba(95,207,107,.45)"></i>확장</span>
+    <span><i style="background:repeating-linear-gradient(45deg,#d92d2d 0 2px,#fde2e2 2px 5px)"></i>내력벽</span>
+    <span><i style="background:#cdb891"></i>주방가구</span>
+  </div>
+  <div class="prow" id="pStudy"><b>서재 배치안</b></div>
+  <div class="prow" id="pVanity"><b>화장대 위치</b></div>
+  <div class="row">
+    <button id="tDims" class="chip on">치수</button>
+    <button id="tFurn" class="chip on">가구</button>
+    <button id="tExp" class="chip on">확장 표시</button>
+    <button id="bOut" class="zoom">−</button>
+    <button id="bFit" class="zoom">전체</button>
+    <button id="bIn" class="zoom">+</button>
+  </div>
+</footer>
+<script>/*DATA*/</script>
+<script>/*PLAN*/</script>
+</body>
+</html>
