@@ -6,7 +6,7 @@ const CH = {
   entry: { id: 'entry', no: '01', name: '현관', en: 'ENTRANCE', desc: '유리 중문과 천장까지 닿는 신발장' },
   living: { id: 'living', no: '02', name: '거실', en: 'LIVING ROOM', kind: 'real', desc: '확장 발코니까지 이어지는 전면창, 리클라이너 소파와 77인치 TV' },
   kitchen: { id: 'kitchen', no: '03', name: '주방', en: 'KITCHEN · DINING', kind: 'calc', desc: '냉장고 깊이에 맞춘 상·하부장과 맞은편 키큰장' },
-  study: { id: 'study', no: '04', name: '서재', en: 'STUDY', kind: 'real', desc: '둘이 함께 쓰는 작업실 — 배치안 네 가지' },
+  study: { id: 'study', no: '04', name: '서재', en: 'STUDY', kind: 'real', desc: '둘이 나란히 앉는 우드 스튜디오 (A안)' },
   closet: { id: 'closet', no: '05', name: '옷방', en: 'DRESSING ROOM', kind: 'real', desc: 'ㄱ자 시스템장과 스타일러 자리' },
   bed: { id: 'bed', no: '06', name: '침실', en: 'BEDROOM', kind: 'real', desc: '모션베드와 화장대, 저녁의 침실' },
 };
@@ -38,7 +38,8 @@ const camKitchen = fTrack([
 const camStudy = fTrack([
   [0.0, 546, 181, 154, 700, 140, 122, 1],
   [2.6, 616, 160, 154, 840, 82, 98, 1.06],
-  [9.5, 640, 130, 152, 862, 96, 92, 1.06],
+  [5.6, 630, 142, 152, 868, 92, 94, 1.06],
+  [8.5, 646, 128, 152, 905, 104, 96, 1.06],
 ], true, true);
 const camCloset = fTrack([
   [0.0, 646, 440, 152, 720, 600, 120, 1],
@@ -117,19 +118,18 @@ const SCENES = [
     },
     cues: [[0.6, s => (s.lt = lowerThird(CH.kitchen))]],
     update(tl) { fCamWalk(camKitchen(tl)); } },
-  // ---- 04 서재: 배치안 A → D ----
-  { id: 'study', ch: CH.study, dur: 9.5, inside: true, night: false, fx: 'day',
-    enter(s) { filmDoors(F_OPEN); s.pl = null; },
-    exit() {
-      const g = proposals.study.groups[proposals.study.cur]; g.scale.setScalar(1); g.position.set(0, 0, 0);
-      if (film.saved && proposals.study.cur !== film.saved.study) setProposal('study', film.saved.study);
+  // ---- 04 서재: A안만 보여 줌 (사용자 결정. 영상 내내 A안으로 고정 — filmSetup) ----
+  { id: 'study', ch: CH.study, dur: 8.5, inside: true, night: false, fx: 'day',
+    enter() {
+      filmDoors(F_OPEN);
+      const it = id => H.studyPlans[0].items.find(q => q.id === id), box = id => bboxOf(it(id).poly);
+      const d = box('sA-d'), w = box('sA-w'), sb = box('sA-s');
+      callout([(d[0] + d[1]) / 2, d[3], it('sA-d').h + 2], 2.3, 4.7, '원목 책상 + 32인치 모니터 2대', `상판 ${d[1] - d[0]} × ${d[3] - d[2]} · 1인당 ${(d[1] - d[0]) / 2}`, { up: false, rise: 44 });
+      callout([w[1] - 34, w[3], it('sA-w').h0 + 4], 3.8, 6.0, '벽 선반 + 간접조명', '책상 위 · 바닥에서 150', { rise: 34 });
+      callout([sb[0], (sb[2] + sb[3]) / 2, it('sA-s').h + 2], 5.9, 8.0, '창 아래 장', `폭 ${sb[3] - sb[2]} × 깊이 ${sb[1] - sb[0]} × 높이 ${it('sA-s').h}`, { rise: 40 });
     },
-    cues: [[0.6, s => (s.lt = lowerThird(CH.study))], [1.3, s => filmPlan(s, 0)], [3.4, s => filmPlan(s, 1)], [5.3, s => filmPlan(s, 2)], [7.2, s => filmPlan(s, 3)]],
-    update(tl) {
-      fCamWalk(camStudy(tl));
-      const g = proposals.study.groups[proposals.study.cur], k = film.planT == null ? 1 : fSeg(tl, film.planT, film.planT + 0.5), s = lerp(0.9, 1, eOutBack(k));
-      if (g.scale.x !== s) { g.scale.setScalar(s); g.position.set(7.9 * (1 - s), 0, 1.07 * (1 - s)); film.shadow = true; }       // 서재 가운데 기준으로 살짝 튀어나오듯
-    } },
+    cues: [[0.6, s => (s.lt = lowerThird(CH.study))]],
+    update(tl) { fCamWalk(camStudy(tl)); } },
   // ---- 05 옷방 ----
   { id: 'closet', ch: CH.closet, dur: 7.5, inside: true, night: false, fx: 'day',
     enter() {
@@ -170,11 +170,3 @@ const SCENES = [
       fCamOrbit(0.6, F.base + F.sway * Math.sin((tl - 3) * 0.2), pol, F.iso * (fPortrait() ? 1.45 : 1) * lerp(1.1, 1, eOutCubic(fSeg(tl, 0, 6))), fov);
     } },
 ];
-function filmPlan(s, i) {         // 서재 배치안을 차례로 보여 줌
-  const p = H.studyPlans[i]; if (!p) return;
-  if (proposals.study.cur !== p.id) { const g = proposals.study.groups[proposals.study.cur]; g.scale.setScalar(1); g.position.set(0, 0, 0); setProposal('study', p.id); }
-  film.planT = film.ct;
-  if (!s.pl) { s.pl = document.createElement('div'); s.pl.className = 'f-plan an a-rise'; s.pl.innerHTML = `<div class="dots">${H.studyPlans.map(() => '<i></i>').join('')}</div><div class="nm"></div>`; s.lt.appendChild(s.pl); }
-  s.pl.querySelectorAll('.dots i').forEach((d, k) => d.classList.toggle('on', k === i));
-  const nm = s.pl.querySelector('.nm'); nm.innerHTML = `<span class="an a-up" style="--o:${(-film.ff).toFixed(2)}s">${esc(p.name)}</span>`;
-}

@@ -16,13 +16,14 @@ const F_ICON = { pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6
 function filmEnter(i) {
   const cur = SCENES[film.idx];
   if (cur) { if (cur.exit) cur.exit(); filmClear(); }
-  film.idx = i; film.cue = 0; film.fresh = true; film.planT = null;
+  film.idx = i; film.cue = 0; film.fresh = true;
   const s = SCENES[i];
   $('fChap').textContent = s.ch ? s.ch.no + ' ' + s.ch.name : s.label;
 }
 function filmSetup() {            // 가림막이 화면을 다 덮은 뒤 한 번
   film.ready = true;
   state.wallPref = 'full'; furn.visible = true; dimG.visible = false;
+  if (proposals.study.cur !== 'A') setProposal('study', 'A');          // 영상에서 서재는 A안만 (끝나면 보던 안으로 되돌림)
   camera.clearViewOffset(); viewOffY = 0; film.offKey = '';
 }
 function filmStep(now) {
@@ -76,6 +77,7 @@ function filmRestore() {          // 영상이 바꾼 것을 모두 원래대로
   filmUnitsAt(null); filmRise(null); fxSet(null);
   if (film.ready) {
     state.wallPref = film.saved.wallPref; light.night = film.saved.night;
+    if (proposals.study.cur !== film.saved.study) setProposal('study', film.saved.study);
     furn.visible = state.showFurn; dimG.visible = state.showDims;
   }
   film.on = false; film.ready = false; film.closing = false;
