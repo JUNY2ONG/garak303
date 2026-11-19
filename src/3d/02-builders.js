@@ -74,7 +74,7 @@ class Batch {
     const g = new THREE.Group();
     this.parts.forEach(e => {
       const m = new THREE.Mesh(mergeGeos(e.geos), e.mat);
-      m.castShadow = e.cast && !e.mat.transparent; m.receiveShadow = true;
+      m.castShadow = e.cast && !e.mat.transparent; m.receiveShadow = true; m.customDepthMaterial = RISE_DEPTH;
       g.add(m);
     });
     this.parts.clear();

@@ -283,6 +283,27 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 .f-dm{position:absolute;left:0;top:0;will-change:transform,opacity;font-size:11px;font-weight:800;padding:2px 6px;border-radius:6px;background:#fff;font-variant-numeric:tabular-nums;white-space:nowrap;box-shadow:0 1px 4px rgba(40,30,15,.18)}
 .f-dm.k-real{color:var(--real)}.f-dm.k-calc,.f-dm.k-est{color:var(--est)}
 
+/* 가로 화면: 방 장면에 위아래 검은 띠 (영화 화면비) */
+.f-bars::before,.f-bars::after{content:"";position:absolute;left:0;right:0;height:5.4vh;background:#0d0b08;transform:scaleY(0);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.f-bars::before{top:0;transform-origin:50% 0}.f-bars::after{bottom:0;transform-origin:50% 100%}
+@media (min-aspect-ratio:6/5){#film.shade .f-bars::before,#film.shade .f-bars::after{transform:none}}
+
+/* 위치 지도 */
+#fLoc{position:absolute;right:12px;top:calc(var(--sat) + 80px);box-sizing:content-box;padding:7px;border-radius:13px;background:rgba(22,18,12,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);opacity:0;transform:translateY(-6px);transition:opacity .45s,transform .45s;pointer-events:none}
+#fLoc.on{opacity:1;transform:none}
+
+/* 마감재 판 */
+.f-board{position:absolute;left:0;right:0;bottom:0;padding:0 16px calc(var(--sab) + 20px)}
+.f-board .hd{margin:0 4px 12px}
+.f-board .k{font-size:11px;font-weight:800;letter-spacing:.34em;color:var(--fa)}
+.f-board h3{margin:6px 0 0;font-size:clamp(26px,7.4vmin,44px);font-weight:900;letter-spacing:-.04em;line-height:1.15;overflow:hidden;padding-bottom:.08em}
+.f-board h3 span{display:inline-block}
+.f-board .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.f-board .fsw{background:#fffefb;border-radius:12px;padding:5px 5px 7px;box-shadow:0 4px 14px rgba(40,30,15,.12),0 0 0 1px rgba(40,30,15,.05);min-width:0}
+.f-board .fsw canvas,.f-board .fsw i{display:block;width:100%;height:46px;border-radius:8px;border:1px solid rgba(40,30,15,.1)}
+.f-board .fsw b{display:block;margin:6px 3px 0;font-size:11.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.f-board .fsw span{display:block;margin:1px 3px 0;font-size:10px;line-height:1.3;color:var(--mute);height:2.6em;overflow:hidden}
+
 /* 엔딩 */
 .f-end{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;padding:calc(var(--sat) + 15vh) 24px calc(var(--sab) + 11vh)}
 .f-end .kick{font-size:11px;font-weight:800;letter-spacing:.4em;color:var(--fa);margin-right:-.4em}
@@ -296,22 +317,29 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 .f-end .acts .sec{color:#fff;background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.42)}
 .f-end .acts button:active{transform:scale(.96)}
 @media (min-aspect-ratio:1/1){
+  .f-board{left:max(36px,5.5vw);right:auto;width:min(44vw,540px);bottom:auto;top:54%;transform:translateY(-50%);padding:0}
+  .f-board .fsw canvas,.f-board .fsw i{height:clamp(40px,8vh,70px)}
   .f-end{align-items:flex-start;text-align:left;justify-content:center;gap:34px;padding:0 0 0 max(40px,7vw)}
   .f-end .acts{justify-content:flex-start}
 }
 @media (min-width:760px){
-  .f-lt{padding:0 0 46px 54px;max-width:680px}
+  #fLoc{top:calc(var(--sat) + 8.5vh);right:22px}
+  .f-board .fsw b{font-size:13px}.f-board .fsw span{font-size:11.5px}
+  .f-lt{padding:0 0 calc(5.4vh + 34px) 54px;max-width:680px}
   .f-lt p{max-width:36em}
   .f-cap{bottom:5vh}
   .f-co .bx{font-size:14px}.f-co .bx small{font-size:12px}
   .f-rt{font-size:13.5px}.f-dm{font-size:12.5px}
 }
 @media (max-aspect-ratio:4/5){
-  .f-cap{bottom:calc(var(--sab) + 17vh)}
+  .f-cap{bottom:calc(var(--sab) + 6vh)}
 }
 @media (max-height:520px){
-  .f-lt{padding-bottom:calc(var(--sab) + 14px)}
+  .f-lt{padding-bottom:calc(var(--sab) + 5.4vh + 10px)}
   .f-lt h2{font-size:42px}.f-lt p{display:none}
+  .f-board .fsw span{display:none}.f-board .hd{margin-bottom:8px}.f-board h3{font-size:22px}
+  .f-board{top:58%}.f-board .k{display:none}
+  #fLoc{top:calc(var(--sat) + 66px)}
   .f-cap{bottom:calc(var(--sab) + 10px)}.f-cap h3{font-size:22px}.f-cap .lg{display:none}
   .f-end{padding-top:calc(var(--sat) + 70px);padding-bottom:calc(var(--sab) + 16px)}
   .f-end h2{font-size:40px}.f-end .acts button{height:46px}
@@ -347,7 +375,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
     <button class="playbtn" id="bFilm" aria-label="집 소개 영상 재생">
       <span class="pb-sh"></span>
       <span class="pb-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg></span>
-      <span class="pb-tx"><b>집 소개 영상</b><i>1분 투어 재생</i></span>
+      <span class="pb-tx"><b>집 소개 영상</b><i>1분 20초 투어</i></span>
     </button>
   </div>
 </header>
@@ -412,10 +440,12 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 
 <div id="film" aria-hidden="true">
   <div class="f-shade"></div>
+  <div class="f-bars"></div>
   <svg id="fSvg" aria-hidden="true"></svg>
   <div class="f-zones" id="fZones"><i data-z="prev"></i><i data-z="toggle"></i><i data-z="next"></i></div>
   <div id="fTags"></div>
   <div id="fStage"></div>
+  <canvas id="fLoc" width="10" height="10"></canvas>
   <div class="f-flash" id="fFlash"></div>
   <div class="f-wipe" id="fWipe"><i></i><i></i><i></i><div class="w-txt" id="fWipeTxt"></div></div>
   <div class="f-top">
@@ -431,7 +461,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 <div id="fatal"></div>
 
 <script type="text/plain" data-file="HANDOFF.md" id="handoff">
-# 우리집 3D 도면 — 작업 인계 문서 (10차까지 반영)
+# 우리집 3D 도면 — 작업 인계 문서 (11차까지 반영)
 
 이 문서는 `house-3d.html` 안에 들어 있다. **이 HTML 파일 하나만 있으면** 소스 전부를 꺼내 수정하고 다시 빌드할 수 있다. (`house-plan.html`은 같은 소스에서 함께 만들어지므로 따로 들고 다닐 필요 없음.)
 
@@ -475,15 +505,18 @@ for rel, text in files.items():
 | 경로 | 내용 |
 |---|---|
 | `src/house-data.js` | 단일 데이터 소스 (`window.HOUSE`) |
-| `src/3d/00-core.js` | 렌더러, 화질 단계(low/mid/high, 자동), MSAA + 화면 공간 AO 후처리 |
-| `src/3d/01-textures.js` | 캔버스로 그린 마감재 텍스처, 재질(MAT) |
+| `src/3d/00-core.js` | 렌더러, 화질 단계(low/mid/high, 자동), 후처리: MSAA → AO → (빛 번짐) → 합성(심도·색보정·입자). 효과 값은 `fx`(기본 `FX0` = 평소 화면) |
+| `src/3d/01-textures.js` | 캔버스로 그린 마감재 텍스처, 재질(MAT). 모든 재질에 '벽 물결 올리기' 셰이더 훅(`RISE`, `riseMat`) |
 | `src/3d/02-builders.js` | 재질별로 도형을 합치는 Batch, 실제 크기 UV |
 | `src/3d/03-structure.js` | 바닥·천장·벽·창·문(문짝 종류별) |
 | `src/3d/04-furniture.js` | 가구·가전 모델, 배치 제안(서재안·화장대+TV) |
 | `src/3d/05-env.js` | 창밖 도시 배경(낮/밤), 조명 |
 | `src/3d/06-nav.js` | 시점, 방 안 둘러보기, 바닥 탭 이동(격자 A*), 벽 보기 |
 | `src/3d/07-ui.js` | 이름표, 정보 카드, 치수, 거리 재기, 평면 지도, 시트, 옵션, 메모, 인계 정보 |
-| `src/3d/08-film.js` | 집 소개 영상(모션그래픽 투어): 타임라인, 카메라 동선, 화면 전환, 자막·안내선·치수선 |
+| `src/3d/08-film-a-core.js` | 소개 영상 바탕: 시간 곡선(`fTrack`), 카메라, 문·조명, 화면 효과 묶음(`FXP`), 집 짓기 연출, 전환 가림막 |
+| `src/3d/08-film-b-gfx.js` | 소개 영상 그래픽: 장면 제목, 안내선·치수선·방 이름(3D 위치 추적), 위치 지도, 마감재 판 |
+| `src/3d/08-film-c-scenes.js` | 소개 영상 장면 표 `SCENES`: 카메라 키, 자막, 사건(cues) — **내용을 고칠 때는 주로 이 파일** |
+| `src/3d/08-film-d-player.js` | 소개 영상 재생: 시작·매 프레임·일시정지·건너뛰기·끝내고 되돌리기 |
 | `src/3d/09-main.js` | 그리기 루프, 자동 화질, 시작 |
 | `src/house3d.html` | 3D 페이지 템플릿(HTML+CSS) |
 | `src/plan.html`, `src/plan.js` | SVG 평면도 |
@@ -555,22 +588,24 @@ LG 워시콤보 FC2521UX6CX (700 × 990 × 885).
 - 화장대 ③(서재)은 서재 A·C·D안 책장 자리와 겹침. 화장대 ②에서는 TV를 화장대와 문 사이에 둘 수 없어 창 쪽으로 감.
 
 ## 7. 지금 들어 있는 기능
-**집 소개 영상(약 1분 10초, 오른쪽 위 버튼)** · 방 바로가기(사진 시점) · 방 안 드래그 둘러보기 · 바닥 탭 이동 · 가구/가전/창/문 탭 정보 카드 · 창·높이 치수 · 두 점 거리 재기 · 평면 지도(탭 이동) · 벽 전체/투명/낮게 · 문 열림 · 가구 on/off · 이름표 · 리클라이너·모션베드 펼치기 · 서재 배치안 / 화장대 위치 전환 · 낮/저녁 조명 · 화질 자동/수동 · 메모(가정·주의·인계 정보).
+**집 소개 영상(약 1분 20초, 오른쪽 위 버튼)** · 방 바로가기(사진 시점) · 방 안 드래그 둘러보기 · 바닥 탭 이동 · 가구/가전/창/문 탭 정보 카드 · 창·높이 치수 · 두 점 거리 재기 · 평면 지도(탭 이동) · 벽 전체/투명/낮게 · 문 열림 · 가구 on/off · 이름표 · 리클라이너·모션베드 펼치기 · 서재 배치안 / 화장대 위치 전환 · 낮/저녁 조명 · 화질 자동/수동 · 메모(가정·주의·인계 정보).
 
-## 7-1. 집 소개 영상 (`src/3d/08-film.js`, 10차)
-- 구성(약 71초): 오프닝(제목 → 평면에 벽·실측 치수선이 그려짐 → 벽이 올라감 → 가구가 방 순서대로 등장) → 01 현관(현관문·중문이 열리며 걸어 들어감) → 02 거실(끊지 않고 이어짐) → 03 주방 → 04 서재(배치안 A→D 차례로) → 05 옷방 → 06 침실(저녁 조명) → 엔딩(저녁 전경 + 다시 보기 / 직접 둘러보기).
-- 원리: 영상 시간 `film.t`(초) 하나로 카메라·문·조명·자막이 정해진다. 장면은 `SCENES` 표(`dur`, `enter`, `update(tl)`, `cues: [[초, 함수]]`), 카메라는 `fTrack([[초, 눈 x, y, 높이, 보는 곳 x, y, 높이, 화각 배율], …])` (평면 cm 좌표, 키 사이는 속도가 이어지는 곡선). 재생 중에는 `09-main.js`의 그리기 루프가 `stepNav` 대신 `filmStep`을 부른다.
-- 화면 글자(제목·장면 이름·단계 자막)는 CSS 애니메이션(지연 = `--d` + 건너뛰기 보정 `--o`), 3D 위치를 따라다니는 것(안내선 상자 `callout`/`coProd`, 치수선 `dimLine`, 방 이름 `roomTag`, 도면 벽 `planDraw`)은 매 프레임 계산. 장면 사이는 3겹 가림막(`wipe`)으로 넘어가고 그 사이에 카메라·조명을 바꾼다.
-- 숫자·제품명은 `H.spaces[].size`, `H.dims`, `H.products`에서 읽는다(영상용 문구만 `CH`에 있음). 가구·치수를 바꾸면 영상에도 그대로 반영되지만, **가구 위치를 크게 옮기면 그 방의 카메라 키와 안내선 좌표를 같이 손봐야 한다.**
-- 조작: 화면 왼쪽/오른쪽 탭 = 이전/다음 장면, 가운데 탭 = 일시정지, 위 막대의 ⏸ · ✕, 키보드 ← → Space Esc. 끝나거나 닫으면 조명·서재 배치안·벽 보기·문 상태를 원래대로 되돌리고 전체 보기로 돌아간다(`filmRestore`).
-- 세로(휴대폰)·가로 화면 모두 대응: 화각은 `filmFov`가 화면 비율에 맞춰 넓히고, 엔딩은 가로 화면에서 글자 왼쪽 · 집 오른쪽.
-- 검증: `window.__house.film.seek(초, true)` → 그 시각에서 멈춘 화면(글자 애니메이션도 그 시각 상태). 장면 시작 시각: 오프닝 0 / 현관 14 / 거실 21.5 / 주방 31 / 서재 39.5 / 옷방 49 / 침실 56.5 / 엔딩 65.5.
+## 7-1. 집 소개 영상 (`src/3d/08-film-*.js`, 10차 · 11차에 구조 개편)
+- 구성(약 81초): 오프닝(제목 → 평면에 벽·실측 치수선이 그려짐 → 벽이 현관에서부터 물결처럼 올라옴 → 가구가 방 순서대로 등장) → 01 현관(현관문·중문이 열리며 걸어 들어감) → 02 거실(끊지 않고 이어짐) → 03 주방 → 04 서재(배치안 A→D 차례로) → 05 옷방 → 마감재(실제 재질 무늬 견본 판) → 06 침실(저녁 조명) → 엔딩(저녁 전경 + 다시 보기 / 직접 둘러보기).
+- 원리: 영상 시간 `film.t`(초) 하나로 카메라·문·조명·자막이 정해진다. 장면은 `SCENES` 표(`dur`, `fx`, `enter`, `update(tl)`, `cues: [[초, 함수]]`), 카메라는 `fTrack([[초, 눈 x, y, 높이, 보는 곳 x, y, 높이, 화각 배율], …])` (평면 cm 좌표, 키 사이는 속도가 이어지는 곡선). 재생 중에는 `09-main.js`의 그리기 루프가 `stepNav` 대신 `filmStep`을 부른다.
+- 화면 글자(제목·장면 이름·단계 자막·마감재 판)는 CSS 애니메이션(지연 = `--d` + 건너뛰기 보정 `--o`), 3D 위치를 따라다니는 것(안내선 상자 `callout`/`coProd`, 치수선 `dimLine`, 방 이름 `roomTag`, 도면 벽 `planDraw`)과 위치 지도(`locDraw`)는 매 프레임 계산. 장면 사이는 3겹 가림막(`wipe`)으로 넘어가고 그 사이에 카메라·조명을 바꾼다.
+- **화면 효과(11차)**: `00-core.js`의 후처리에 빛 번짐(1/4·1/8 크기 2단) · 초점 흐림(초점 = 카메라가 보는 곳까지 거리, 자동) · 색보정(대비·따뜻함·채도) · 가장자리 어둡게 · 필름 입자를 넣었다. 값은 전역 `fx`이고 기본 `FX0`이면 예전 화면과 같다. **영상만** 장면마다 `FXP`(open/day/night/end)로 바꾸고 끝나면 되돌린다. 화질 '낮음'(후처리 없음)에서는 캔버스에 CSS 필터로 간단히 보정.
+- **벽 물결 올리기(11차)**: 재질을 만드는 `M()`이 모든 재질에 꼭짓점 셰이더 훅을 단다(`riseMat`). 전역 `RISE.value = (중심 x, z, 진행, 1m당 지연)`의 진행이 0이면 모든 것이 바닥에 붙고, 커지면 중심(현관)에서 가까운 곳부터 올라온다. 평소 값 1000 = 원래 모양. 그림자도 같이 자라도록 `Batch.build`가 모든 메시에 `customDepthMaterial = RISE_DEPTH`를 준다. **`M()`을 거치지 않고 새 MeshStandardMaterial을 만들면 `riseMat()`으로 감쌀 것**(안 감싸면 그 재질만 오프닝에서 먼저 보임).
+- **세로 화면 구도(11차)**: 전체 모습 장면(오프닝·마감재·엔딩)은 세로 화면에서 집을 90° 돌려 왼쪽(서쪽, 거실 창 쪽)에서 본다(`filmFrame`). 긴 쪽이 세로로 놓여 훨씬 크게 보인다. 가로 화면은 평면도와 같은 방향(아래쪽에서 봄). 가로 화면의 방 장면에는 위아래 검은 띠.
+- 숫자·제품명·마감재는 `H.spaces[].size`, `H.dims`, `H.products`, `H.finishes`에서 읽는다(영상용 문구만 `CH`에 있음). 가구·치수를 바꾸면 영상에도 그대로 반영되지만, **가구 위치를 크게 옮기면 그 방의 카메라 키와 안내선 좌표를 같이 손봐야 한다.**
+- 조작: 화면 왼쪽/오른쪽 탭 = 이전/다음 장면, 가운데 탭 = 일시정지, 위 막대의 ⏸ · ✕, 키보드 ← → Space Esc. 끝나거나 닫으면 조명·서재 배치안·벽 보기·문 상태·화면 효과를 원래대로 되돌리고 전체 보기로 돌아간다(`filmRestore`).
+- 검증: `window.__house.film.seek(초, true)` → 그 시각에서 멈춘 화면(글자 애니메이션도 그 시각 상태). 장면 시작 시각: 오프닝 0 / 현관 14 / 거실 21.5 / 주방 31 / 서재 39.5 / 옷방 49 / 마감재 56.5 / 침실 64.5 / 엔딩 73.5. `window.__house.fx`로 효과 값을 직접 바꿔 볼 수 있다.
 
 ## 8. 작업 이력
-1차 v2 전체 재작성(사용성·그래픽) → 2차 평면도 개선 → 3차 주방 깊이·냉장고장·키큰장·욕실 배치·소파/침대 디테일·테이블·서재안·화장대 → 4차 발코니 문 2곳(PVC, 모루/백사틴) → 5차 침실 TV 스탠드, 서재안 새로 → 6차 시트 동작, 소파 재제작, 주방 표준 모듈, 러그·협탁·커튼 → 7차 TV 스탠드를 화장대와 방문 사이로, 이 인계 문서 내장 → 8차 이름표 기본 꺼짐, 서재 A안 창 아래 장 → 9차 A안 책상·장 간섭 정리 → 10차 집 소개 영상 추가, 벽 전개도 제거, 메모를 '우리집 3D' 칸에 통합.
+1차 v2 전체 재작성(사용성·그래픽) → 2차 평면도 개선 → 3차 주방 깊이·냉장고장·키큰장·욕실 배치·소파/침대 디테일·테이블·서재안·화장대 → 4차 발코니 문 2곳(PVC, 모루/백사틴) → 5차 침실 TV 스탠드, 서재안 새로 → 6차 시트 동작, 소파 재제작, 주방 표준 모듈, 러그·협탁·커튼 → 7차 TV 스탠드를 화장대와 방문 사이로, 이 인계 문서 내장 → 8차 이름표 기본 꺼짐, 서재 A안 창 아래 장 → 9차 A안 책상·장 간섭 정리 → 10차 집 소개 영상 추가, 벽 전개도 제거, 메모를 '우리집 3D' 칸에 통합 → 11차 영상 품질 개편(후처리에 빛 번짐·초점 흐림·색보정·입자, 벽 물결 올리기 셰이더, 세로 화면 구도, 위치 지도, 마감재 장면, 영상 코드를 4개 파일로 분리).
 
 ## 9. 남은 한계
-실제 휴대폰에서 성능 미검증(헤드리스 소프트웨어 렌더러로만 확인 — 소개 영상도 마찬가지, 느리면 자동 화질이 한 단계 낮춤) · 소개 영상에 소리 없음 · 실시간 근사 조명(간접광 없음, 보조광은 벽을 조금 통과, 스탠드·무드등은 빛나 보이기만 함) · 가까운 얇은 부재의 음영 얼룩 · 텍스처는 캔버스로 그린 근사 · 모루 유리는 굴절 없이 골 반사만 · 거리 재기에 스냅 없음 · 욕실/발코니/세탁실은 참고 수준.
+실제 휴대폰에서 성능 미검증(헤드리스 소프트웨어 렌더러로만 확인 — 소개 영상도 마찬가지, 영상의 빛 번짐·초점 흐림은 기기에 따라 무거울 수 있고 느리면 자동 화질이 한 단계 낮춤) · 소개 영상에 소리 없음 · 실시간 근사 조명(간접광 없음, 보조광은 벽을 조금 통과, 스탠드·무드등은 빛나 보이기만 함) · 가까운 얇은 부재의 음영 얼룩 · 텍스처는 캔버스로 그린 근사 · 모루 유리는 굴절 없이 골 반사만 · 거리 재기에 스냅 없음 · 욕실/발코니/세탁실은 참고 수준.
 
 </script>
 <script type="text/plain" data-file="build.py">
@@ -1008,6 +1043,27 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 .f-dm{position:absolute;left:0;top:0;will-change:transform,opacity;font-size:11px;font-weight:800;padding:2px 6px;border-radius:6px;background:#fff;font-variant-numeric:tabular-nums;white-space:nowrap;box-shadow:0 1px 4px rgba(40,30,15,.18)}
 .f-dm.k-real{color:var(--real)}.f-dm.k-calc,.f-dm.k-est{color:var(--est)}
 
+/* 가로 화면: 방 장면에 위아래 검은 띠 (영화 화면비) */
+.f-bars::before,.f-bars::after{content:"";position:absolute;left:0;right:0;height:5.4vh;background:#0d0b08;transform:scaleY(0);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.f-bars::before{top:0;transform-origin:50% 0}.f-bars::after{bottom:0;transform-origin:50% 100%}
+@media (min-aspect-ratio:6/5){#film.shade .f-bars::before,#film.shade .f-bars::after{transform:none}}
+
+/* 위치 지도 */
+#fLoc{position:absolute;right:12px;top:calc(var(--sat) + 80px);box-sizing:content-box;padding:7px;border-radius:13px;background:rgba(22,18,12,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);opacity:0;transform:translateY(-6px);transition:opacity .45s,transform .45s;pointer-events:none}
+#fLoc.on{opacity:1;transform:none}
+
+/* 마감재 판 */
+.f-board{position:absolute;left:0;right:0;bottom:0;padding:0 16px calc(var(--sab) + 20px)}
+.f-board .hd{margin:0 4px 12px}
+.f-board .k{font-size:11px;font-weight:800;letter-spacing:.34em;color:var(--fa)}
+.f-board h3{margin:6px 0 0;font-size:clamp(26px,7.4vmin,44px);font-weight:900;letter-spacing:-.04em;line-height:1.15;overflow:hidden;padding-bottom:.08em}
+.f-board h3 span{display:inline-block}
+.f-board .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.f-board .fsw{background:#fffefb;border-radius:12px;padding:5px 5px 7px;box-shadow:0 4px 14px rgba(40,30,15,.12),0 0 0 1px rgba(40,30,15,.05);min-width:0}
+.f-board .fsw canvas,.f-board .fsw i{display:block;width:100%;height:46px;border-radius:8px;border:1px solid rgba(40,30,15,.1)}
+.f-board .fsw b{display:block;margin:6px 3px 0;font-size:11.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.f-board .fsw span{display:block;margin:1px 3px 0;font-size:10px;line-height:1.3;color:var(--mute);height:2.6em;overflow:hidden}
+
 /* 엔딩 */
 .f-end{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;padding:calc(var(--sat) + 15vh) 24px calc(var(--sab) + 11vh)}
 .f-end .kick{font-size:11px;font-weight:800;letter-spacing:.4em;color:var(--fa);margin-right:-.4em}
@@ -1021,22 +1077,29 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 .f-end .acts .sec{color:#fff;background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.42)}
 .f-end .acts button:active{transform:scale(.96)}
 @media (min-aspect-ratio:1/1){
+  .f-board{left:max(36px,5.5vw);right:auto;width:min(44vw,540px);bottom:auto;top:54%;transform:translateY(-50%);padding:0}
+  .f-board .fsw canvas,.f-board .fsw i{height:clamp(40px,8vh,70px)}
   .f-end{align-items:flex-start;text-align:left;justify-content:center;gap:34px;padding:0 0 0 max(40px,7vw)}
   .f-end .acts{justify-content:flex-start}
 }
 @media (min-width:760px){
-  .f-lt{padding:0 0 46px 54px;max-width:680px}
+  #fLoc{top:calc(var(--sat) + 8.5vh);right:22px}
+  .f-board .fsw b{font-size:13px}.f-board .fsw span{font-size:11.5px}
+  .f-lt{padding:0 0 calc(5.4vh + 34px) 54px;max-width:680px}
   .f-lt p{max-width:36em}
   .f-cap{bottom:5vh}
   .f-co .bx{font-size:14px}.f-co .bx small{font-size:12px}
   .f-rt{font-size:13.5px}.f-dm{font-size:12.5px}
 }
 @media (max-aspect-ratio:4/5){
-  .f-cap{bottom:calc(var(--sab) + 17vh)}
+  .f-cap{bottom:calc(var(--sab) + 6vh)}
 }
 @media (max-height:520px){
-  .f-lt{padding-bottom:calc(var(--sab) + 14px)}
+  .f-lt{padding-bottom:calc(var(--sab) + 5.4vh + 10px)}
   .f-lt h2{font-size:42px}.f-lt p{display:none}
+  .f-board .fsw span{display:none}.f-board .hd{margin-bottom:8px}.f-board h3{font-size:22px}
+  .f-board{top:58%}.f-board .k{display:none}
+  #fLoc{top:calc(var(--sat) + 66px)}
   .f-cap{bottom:calc(var(--sab) + 10px)}.f-cap h3{font-size:22px}.f-cap .lg{display:none}
   .f-end{padding-top:calc(var(--sat) + 70px);padding-bottom:calc(var(--sab) + 16px)}
   .f-end h2{font-size:40px}.f-end .acts button{height:46px}
@@ -1072,7 +1135,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
     <button class="playbtn" id="bFilm" aria-label="집 소개 영상 재생">
       <span class="pb-sh"></span>
       <span class="pb-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg></span>
-      <span class="pb-tx"><b>집 소개 영상</b><i>1분 투어 재생</i></span>
+      <span class="pb-tx"><b>집 소개 영상</b><i>1분 20초 투어</i></span>
     </button>
   </div>
 </header>
@@ -1137,10 +1200,12 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 
 <div id="film" aria-hidden="true">
   <div class="f-shade"></div>
+  <div class="f-bars"></div>
   <svg id="fSvg" aria-hidden="true"></svg>
   <div class="f-zones" id="fZones"><i data-z="prev"></i><i data-z="toggle"></i><i data-z="next"></i></div>
   <div id="fTags"></div>
   <div id="fStage"></div>
+  <canvas id="fLoc" width="10" height="10"></canvas>
   <div class="f-flash" id="fFlash"></div>
   <div class="f-wipe" id="fWipe"><i></i><i></i><i></i><div class="w-txt" id="fWipeTxt"></div></div>
   <div class="f-top">
@@ -3367,8 +3432,10 @@ window.HOUSE = (function () {
       '둘러보기 눈높이는 사진 높이 (147~158), 바닥을 탭해 이동할 때도 그대로 유지돼요.',
     ] },
     { title: '집 소개 영상 (10차)', kind: 'new', items: [
-      '오른쪽 위 "집 소개 영상" 버튼을 누르면 약 1분짜리 소개 영상이 재생돼요. 카메라 동선 · 장면 순서 · 자막 문구는 연출이고, 숫자와 제품명은 이 메모 · 제품 정보와 같은 데이터에서 가져와요.',
+      '오른쪽 위 "집 소개 영상" 버튼을 누르면 약 1분 20초짜리 소개 영상이 재생돼요. 카메라 동선 · 장면 순서 · 자막 문구는 연출이고, 숫자와 제품명은 이 메모 · 제품 정보와 같은 데이터에서 가져와요.',
       '영상 속 침실과 엔딩은 저녁 조명으로 보여 줘요. 서재 장면은 배치안 A → D를 차례로 보여 줘요. 영상이 끝나면 조명 · 배치안 · 벽 보기는 원래대로 돌아가요.',
+      '영상에서만 빛 번짐 · 초점 흐림 · 색보정 · 필름 입자 효과를 써요 (평소 화면은 그대로). 세로 화면에서는 집을 90° 돌려 왼쪽(거실 창 쪽)에서 본 모습으로 크게 보여 줘요.',
+      '영상 속 마감재 견본은 3D에 쓴 무늬(근사)를 잘라 붙인 것이라 실제 자재 색과 다를 수 있어요.',
       '영상 중에는 실외기실 문을 닫아 둬요 (침실 창밖으로 문짝이 보여서). 현관문과 중문은 다가가면 열려요.',
       '벽 전개도 기능은 뺐어요. 메모는 왼쪽 위 "우리집 3D" 칸을 누르면 열려요.',
     ] },
@@ -3445,7 +3512,7 @@ window.HOUSE = (function () {
 <script>(function () {
 'use strict';
 /* ==== FILE: src/3d/00-core.js ==== */
-// ===== 00 core: 렌더러 · 화질 단계 · 후처리(AO) =====
+// ===== 00 core: 렌더러 · 화질 단계 · 후처리(AO · 빛 번짐 · 심도 · 색보정) =====
 const H = window.HOUSE;
 const V3 = THREE.Vector3, V2 = THREE.Vector2;
 const CM = v => v / 100;
@@ -3499,7 +3566,10 @@ let needRender = 3;
 function invalidate(n) { needRender = Math.max(needRender, n || 2); }
 function shadowDirty() { renderer.shadowMap.needsUpdate = true; invalidate(); }
 
-// ---------- 후처리: MSAA 타깃 → AO → 합성 ----------
+// ---------- 후처리: MSAA 타깃 → AO → (빛 번짐) → 합성(심도 · 색보정 · 입자) ----------
+// fx 기본값 = 평소 화면 그대로. 집 소개 영상(08-film-*)만 장면마다 바꾼다. dof = 흐림 반경(화면 높이 대비), focus = 초점 거리(m)
+const FX0 = { bloom: 0, thr: 0.7, dof: 0, focus: 3, expo: 1, contrast: 0, warm: 0, sat: 1.14, vig: 0.16, grain: 0 };
+const fx = Object.assign({}, FX0);
 const post = (function () {
   const quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
   const quadScene = new THREE.Scene();
@@ -3564,21 +3634,65 @@ const post = (function () {
       }
       gl_FragColor = vec4(vec3(sum / wsum), 1.0);
     }`, { tAO: { value: null }, tDepth: { value: null }, projInv: { value: new THREE.Matrix4() }, near: { value: 0.05 }, far: { value: 260 }, dir: { value: new V2() }, pdir: { value: new V2() } });
-  const outMat = mk(`
-    varying vec2 vUv; uniform sampler2D tColor; uniform sampler2D tAO; uniform float aoAmt; uniform float debug; uniform float sat;
+  // 밝은 곳만 뽑아 1/4 크기로 (빛 번짐용)
+  const brightMat = mk(`
+    varying vec2 vUv; uniform sampler2D tColor; uniform vec2 px; uniform float thr;
     void main(){
-      vec4 c = texture2D(tColor, vUv);
+      vec3 c = (texture2D(tColor, vUv + px * vec2(-1.0, -1.0)).rgb + texture2D(tColor, vUv + px * vec2(1.0, -1.0)).rgb + texture2D(tColor, vUv + px * vec2(-1.0, 1.0)).rgb + texture2D(tColor, vUv + px * vec2(1.0, 1.0)).rgb) * 0.25;
+      float l = max(c.r, max(c.g, c.b));
+      gl_FragColor = vec4(c * smoothstep(thr, thr + 0.22, l), 1.0);
+    }`, { tColor: { value: null }, px: { value: new V2() }, thr: { value: 0.7 } });
+  const gaussMat = mk(`
+    varying vec2 vUv; uniform sampler2D tSrc; uniform vec2 dir;
+    void main(){
+      vec3 c = texture2D(tSrc, vUv).rgb * 0.227027;
+      c += (texture2D(tSrc, vUv + dir * 1.384615).rgb + texture2D(tSrc, vUv - dir * 1.384615).rgb) * 0.316216;
+      c += (texture2D(tSrc, vUv + dir * 3.230769).rgb + texture2D(tSrc, vUv - dir * 3.230769).rgb) * 0.070270;
+      gl_FragColor = vec4(c, 1.0);
+    }`, { tSrc: { value: null }, dir: { value: new V2() } });
+  // 합성: (심도) → 음영 → 빛 번짐 → 색보정 → 가장자리 어둡게 → 필름 입자
+  const outMat = mk(`
+    varying vec2 vUv; uniform sampler2D tColor; uniform sampler2D tAO; uniform sampler2D tBloomA; uniform sampler2D tBloomB;
+    uniform float aoAmt; uniform float debug; uniform float sat; uniform float vig; uniform float bloom; uniform float expo; uniform float contrast; uniform float warm; uniform float grain; uniform float seed;
+    uniform float dof; uniform float focus; uniform vec2 px;
+    ${DEPTH_FN}
+    float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+    void main(){
+      vec3 col = texture2D(tColor, vUv).rgb;
+      if (dof > 0.0) {                                           // 초점에서 먼 곳만 흐리게 (초점 안쪽 물체가 번져 들어오지 않게 가중치)
+        float z = -viewZ(rawDepth(vUv)), c0 = clamp(abs(z - focus) / (focus * 0.9 + 0.4) - 0.12, 0.0, 1.0);
+        if (c0 > 0.02) {
+          float rot = hash(gl_FragCoord.xy) * 6.2831853, wsum = 1.0; vec3 sum = col;
+          for (int i = 0; i < DOF_N; i++) {
+            float fi = float(i), r = sqrt((fi + 0.5) / float(DOF_N)), a = rot + fi * 2.3999632;
+            vec2 uv = vUv + vec2(cos(a), sin(a)) * r * c0 * dof * px;
+            float zi = -viewZ(rawDepth(uv)), ci = clamp(abs(zi - focus) / (focus * 0.9 + 0.4) - 0.12, 0.0, 1.0);
+            float w = clamp(ci / c0 + 0.08, 0.0, 1.0);
+            sum += texture2D(tColor, uv).rgb * w; wsum += w;
+          }
+          col = sum / wsum;
+        }
+      }
       float ao = mix(1.0, texture2D(tAO, vUv).r, aoAmt);
-      vec3 col = c.rgb * ao;
+      col *= ao;
+      if (bloom > 0.0) col += (texture2D(tBloomA, vUv).rgb * 0.6 + texture2D(tBloomB, vUv).rgb * 0.8) * bloom;
+      col *= expo;
       float lum = dot(col, vec3(0.2126, 0.7152, 0.0722)); col = max(mix(vec3(lum), col, sat), 0.0);
-      // 살짝 대비 올리고 가장자리 아주 약하게 어둡게
-      vec2 q = vUv - 0.5; col *= 1.0 - dot(q, q) * 0.16;
+      if (contrast != 0.0 || warm != 0.0) {
+        vec3 g = sqrt(min(col, 1.0));                            // 대략 감마 공간에서 S자 대비
+        g = mix(g, g * g * (3.0 - 2.0 * g), contrast);
+        col = g * g * vec3(1.0 + warm * 0.07, 1.0 + warm * 0.012, 1.0 - warm * 0.085);
+      }
+      vec2 q = vUv - 0.5; col *= 1.0 - dot(q, q) * vig;
+      if (grain > 0.0) col += (hash(gl_FragCoord.xy + seed * 91.7) - 0.5) * grain * (0.35 + 0.65 * sqrt(max(col.g, 0.0)));
       if (debug > 0.5) col = vec3(ao);
       gl_FragColor = vec4(col, 1.0);
       #include <encodings_fragment>
-    }`, { tColor: { value: null }, tAO: { value: null }, aoAmt: { value: 1 }, sat: { value: 1.14 }, debug: { value: QS.get('ao') ? 1 : 0 } });
-  let rt = null, ao1 = null, ao2 = null, ok = true, checked = false;
-  function dispose() { [rt, ao1, ao2].forEach(t => t && t.dispose()); if (rt && rt.depthTexture) rt.depthTexture.dispose(); rt = ao1 = ao2 = null; }
+    }`, { tColor: { value: null }, tAO: { value: null }, tBloomA: { value: null }, tBloomB: { value: null }, tDepth: { value: null }, projInv: { value: new THREE.Matrix4() }, near: { value: 0.05 }, far: { value: 260 },
+    aoAmt: { value: 1 }, sat: { value: 1.14 }, vig: { value: 0.16 }, bloom: { value: 0 }, expo: { value: 1 }, contrast: { value: 0 }, warm: { value: 0 }, grain: { value: 0 }, seed: { value: 0 },
+    dof: { value: 0 }, focus: { value: 3 }, px: { value: new V2() }, debug: { value: QS.get('ao') ? 1 : 0 } }, { DOF_N: 12 });
+  let rt = null, ao1 = null, ao2 = null, bl = null, ok = true, checked = false, frameNo = 0;
+  function dispose() { [rt, ao1, ao2].concat(bl || []).forEach(t => t && t.dispose()); if (rt && rt.depthTexture) rt.depthTexture.dispose(); rt = ao1 = ao2 = bl = null; }
   function setSize(w, h) {
     dispose();
     if (!tier.post || !ok) return;
@@ -3591,9 +3705,20 @@ const post = (function () {
     ao1 = new THREE.WebGLRenderTarget(aw, ah, o); ao2 = new THREE.WebGLRenderTarget(aw, ah, o);
     aoMat.uniforms.res.value.set(aw, ah);
     if (aoMat.defines.NS !== tier.aoN) { aoMat.defines.NS = tier.aoN; aoMat.needsUpdate = true; }
+    const dn = tier.aoScale >= 1 ? 12 : 8; if (outMat.defines.DOF_N !== dn) { outMat.defines.DOF_N = dn; outMat.needsUpdate = true; }
     checked = false;
   }
+  function bloomTargets() {               // 빛 번짐은 영상에서만 쓰므로 처음 쓸 때 만든다 (1/4 · 1/8 크기)
+    const mkT = d => { const t = new THREE.WebGLRenderTarget(Math.max(2, Math.round(rt.width / d)), Math.max(2, Math.round(rt.height / d)), { depthBuffer: false, stencilBuffer: false, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, generateMipmaps: false }); t.texture.encoding = THREE.sRGBEncoding; return t; };
+    bl = [mkT(4), mkT(4), mkT(8), mkT(8)];
+  }
   function pass(mat, target) { quad.material = mat; renderer.setRenderTarget(target); renderer.render(quadScene, quadCam); }
+  function gauss(src, tmp, n) {           // src ↔ tmp 가로·세로 번갈아 n번, 결과는 src
+    for (let i = 0; i < n; i++) {
+      gaussMat.uniforms.tSrc.value = src.texture; gaussMat.uniforms.dir.value.set((1 + i) / src.width, 0); pass(gaussMat, tmp);
+      gaussMat.uniforms.tSrc.value = tmp.texture; gaussMat.uniforms.dir.value.set(0, (1 + i) / src.height); pass(gaussMat, src);
+    }
+  }
   function render(sc, cam, aoAmt) {
     if (!tier.post || !ok || !rt) { renderer.setRenderTarget(null); renderer.render(sc, cam); return; }
     renderer.setRenderTarget(rt); renderer.render(sc, cam);
@@ -3606,12 +3731,24 @@ const post = (function () {
     }
     const pi = aoMat.uniforms.projInv.value.copy(cam.projectionMatrixInverse);
     blurMat.uniforms.projInv.value.copy(pi);
-    [aoMat, blurMat].forEach(m => { m.uniforms.tDepth.value = rt.depthTexture; m.uniforms.near.value = cam.near; m.uniforms.far.value = cam.far; });
+    [aoMat, blurMat, outMat].forEach(m => { m.uniforms.tDepth.value = rt.depthTexture; m.uniforms.near.value = cam.near; m.uniforms.far.value = cam.far; });
     aoMat.uniforms.projScale.value = ao1.height / (2 * Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2));
     pass(aoMat, ao1);
     blurMat.uniforms.tAO.value = ao1.texture; blurMat.uniforms.dir.value.set(1 / ao1.width, 0); blurMat.uniforms.pdir.value.set(1, 0); pass(blurMat, ao2);
     blurMat.uniforms.tAO.value = ao2.texture; blurMat.uniforms.dir.value.set(0, 1 / ao1.height); blurMat.uniforms.pdir.value.set(0, 1); pass(blurMat, ao1);
-    outMat.uniforms.tColor.value = rt.texture; outMat.uniforms.tAO.value = ao1.texture; outMat.uniforms.aoAmt.value = aoAmt;
+    const U = outMat.uniforms;
+    if (fx.bloom > 0) {
+      if (!bl) bloomTargets();
+      brightMat.uniforms.tColor.value = rt.texture; brightMat.uniforms.px.value.set(1 / rt.width, 1 / rt.height); brightMat.uniforms.thr.value = fx.thr; pass(brightMat, bl[0]);
+      gauss(bl[0], bl[1], 2);
+      gaussMat.uniforms.tSrc.value = bl[0].texture; gaussMat.uniforms.dir.value.set(0, 0); pass(gaussMat, bl[2]);
+      gauss(bl[2], bl[3], 3);
+      U.tBloomA.value = bl[0].texture; U.tBloomB.value = bl[2].texture;
+    }
+    U.tColor.value = rt.texture; U.tAO.value = ao1.texture; U.aoAmt.value = aoAmt;
+    U.bloom.value = fx.bloom; U.expo.value = fx.expo; U.contrast.value = fx.contrast; U.warm.value = fx.warm; U.sat.value = fx.sat; U.vig.value = fx.vig;
+    U.grain.value = fx.grain; U.seed.value = (frameNo = (frameNo + 1) % 64);
+    U.dof.value = fx.dof * rt.height; U.focus.value = fx.focus; U.px.value.set(1 / rt.width, 1 / rt.height);
     pass(outMat, null);
   }
   return { setSize, render, get active() { return !!(tier.post && ok && rt); } };
@@ -3821,7 +3958,18 @@ const TS = tierName === 'low' ? 512 : 1024;
   TEX.moruN = texOf(nC, 0.048, 0.048); TEX.moru = texOf(cC, 0.048, 0.048, true);
 })();
 // ---------- 재질 ----------
-const M = (color, o) => new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.8, metalness: 0, envMapIntensity: 0.6 }, o || {}));
+// 집 짓기 연출(소개 영상)용: 모든 재질이 꼭짓점 높이를 '한 점에서 퍼지는 물결'에 맞춰 0 → 1로 키울 수 있다.
+// RISE.value = (중심 x, 중심 z, 진행, 거리 1m당 지연). 진행이 충분히 크면(평소 1000) 원래 모양 그대로.
+const RISE = { value: new THREE.Vector4(4.85, -0.2, 1e3, 0.22) };
+function riseHook(shader) {
+  shader.uniforms.uRise = RISE;
+  shader.vertexShader = 'uniform vec4 uRise;\n' + shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+    { vec4 wpR = modelMatrix * vec4(transformed, 1.0); float qR = clamp(uRise.z - distance(wpR.xz, uRise.xy) * uRise.w, 0.0, 1.0) - 1.0;
+      transformed.y *= max(0.003, 1.0 + 2.4 * qR * qR * qR + 1.4 * qR * qR); }`);
+}
+const riseMat = m => { m.onBeforeCompile = riseHook; m.customProgramCacheKey = () => 'rise'; return m; };
+const RISE_DEPTH = riseMat(new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking }));      // 그림자도 같이 자라게
+const M = (color, o) => riseMat(new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.8, metalness: 0, envMapIntensity: 0.6 }, o || {})));
 const MAT = {
   // 마감재표
   floor: M(0xffffff, { map: TEX.floor, bumpMap: TEX.floorB, bumpScale: 0.0016, roughness: 0.62, envMapIntensity: 0.5 }),
@@ -3896,7 +4044,7 @@ const MAT = {
 MAT.downlight.toneMapped = false;
 // 바깥벽: 방향별로 따로(바깥에서 보는 쪽만 투명하게)
 const extMats = {}, hiddenSide = {};
-['N', 'S', 'W', 'E'].forEach(s => { extMats[s] = MAT.wall.clone(); hiddenSide[s] = false; });
+['N', 'S', 'W', 'E'].forEach(s => { extMats[s] = riseMat(MAT.wall.clone()); hiddenSide[s] = false; });
 const wallMatsAll = () => [MAT.wall, MAT.bearing, MAT.thin, ...Object.values(extMats)];
 
 /* ==== END FILE: src/3d/01-textures.js ==== */
@@ -3977,7 +4125,7 @@ class Batch {
     const g = new THREE.Group();
     this.parts.forEach(e => {
       const m = new THREE.Mesh(mergeGeos(e.geos), e.mat);
-      m.castShadow = e.cast && !e.mat.transparent; m.receiveShadow = true;
+      m.castShadow = e.cast && !e.mat.transparent; m.receiveShadow = true; m.customDepthMaterial = RISE_DEPTH;
       g.add(m);
     });
     this.parts.clear();
@@ -5724,15 +5872,18 @@ qualityHooks.push(fromAuto => { applyRig(); qualNote(); if (fromAuto) toast('부
 segSet('qualMode', 'q', qualPref);
 
 /* ==== END FILE: src/3d/07-ui.js ==== */
-/* ==== FILE: src/3d/08-film.js ==== */
-// ===== 08 film: 집 소개 영상 (모션그래픽 투어) =====
-// 영상 시간 film.t(초) 하나로 카메라 · 문 · 조명 · 자막이 모두 정해진다. 장면은 SCENES 표, 장면 안의 사건은 cues([초, 함수]).
-// 화면 글자는 CSS 애니메이션(지연 = --d + --o), 3D 위치를 따라다니는 표시(치수선 · 방 이름 · 안내선)는 매 프레임 계산한다.
+/* ==== FILE: src/3d/08-film-a-core.js ==== */
+// ===== 08 film (a) core: 집 소개 영상의 바탕 — 시간 곡선 · 카메라 · 문/조명 · 화면 효과 · 집 짓기 연출 · 화면 전환 =====
+// 영상 시간 film.t(초) 하나로 카메라 · 문 · 조명 · 자막이 모두 정해진다.
+//   (a) core   이 파일: 다른 세 파일이 쓰는 도구
+//   (b) gfx    화면 글자와 3D 위치를 따라다니는 표시 (제목 · 안내선 · 치수선 · 위치 지도 · 마감재 판)
+//   (c) scenes 장면 표 SCENES (카메라 동선 · 자막 · 사건)
+//   (d) player 재생 (시작 · 매 프레임 · 일시정지 · 건너뛰기 · 끝내고 되돌리기)
 // 좌표는 평면 cm (x, y, 높이). 카메라 키: [초, 눈 x, y, 높이, 보는 곳 x, y, 높이, 화각 배율].
 const filmEl = $('film'), fSvg = $('fSvg'), fTags = $('fTags'), fStage = $('fStage');
 const SVGNS = 'http://www.w3.org/2000/svg';
 function svgEl(parent, tag, attrs) { const e = document.createElementNS(SVGNS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; }
-const film = { on: false, ready: false, t: 0, last: 0, idx: -1, cue: 0, fresh: false, paused: false, closing: false, ff: 0, ct: 0, shadow: false, items: [], counters: [], laters: [], units: [], saved: null, wallK: 1, popOn: false };
+const film = { on: false, ready: false, t: 0, last: 0, idx: -1, cue: 0, fresh: false, paused: false, closing: false, ff: 0, ct: 0, shadow: false, items: [], counters: [], laters: [], units: [], saved: null, offKey: '' };
 
 // ---------- 움직임 곡선 ----------
 const fSat = k => clamp(k, 0, 1);
@@ -5769,12 +5920,14 @@ function filmFov(base) {          // base = 가로 화면의 세로 화각. 세�
 function fSetProj(fov, near) {
   if (Math.abs(camera.fov - fov) > 1e-3 || Math.abs(camera.near - near) > 1e-4) { camera.fov = fov; camera.near = near; camera.updateProjectionMatrix(); }
 }
-function fCamWalk(v) {            // 방 안: 눈 위치 → 보는 곳
+function fCamWalk(v) {            // 방 안: 눈 위치 → 보는 곳. 초점은 보는 곳에 맞춘다
   camera.position.set(CM(v[0]), CM(v[2]), CM(v[1])); fLook.set(CM(v[3]), CM(v[5]), CM(v[4]));
   camera.up.set(0, 1, 0); camera.lookAt(fLook);
   fSetProj(filmFov(58 * (v[6] || 1)), 0.05); camera.updateMatrixWorld();
+  fx.focus = camera.position.distanceTo(fLook);
 }
-function fCamOrbit(ty, az, pol, dist, fov) {     // 바깥: 집 가운데를 보며 도는 카메라
+// 바깥에서 집 가운데를 보며 도는 카메라. az = 0이면 아래쪽(남쪽)에서, -90°면 왼쪽(서쪽)에서 본다
+function fCamOrbit(ty, az, pol, dist, fov) {
   const sp = Math.sin(pol);
   fLook.set(5.09, ty, 3.5);
   camera.position.set(5.09 + dist * sp * Math.sin(az), ty + dist * Math.cos(pol), 3.5 + dist * sp * Math.cos(az));
@@ -5785,10 +5938,18 @@ function filmFit(w, h, fov, padK) {              // 폭 w · 높이 h (m)가 화
   const t = Math.tan(THREE.MathUtils.degToRad(fov) / 2);
   return Math.max((h / 2) / t * (padK || 1.3), (w / 2) / (t * camera.aspect) * 1.04);
 }
-// 좌우 바깥벽이 자동 투명으로 바뀌지 않는 회전 한계 (updateCutaway 기준: 카메라 x < -0.2 또는 > 10.4)
-const filmAzMax = (dist, pol) => Math.asin(fSat(4.9 / (dist * Math.sin(pol))));
+// 전체 모습 구도. 세로 화면(휴대폰)은 집을 90° 돌려 왼쪽(거실 창 쪽)에서 본다 — 긴 쪽이 세로로 놓여 훨씬 크게 보인다.
+// 좌우로 흔드는 각은 바깥벽 자동 투명(updateCutaway)이 바뀌지 않는 범위로 제한.
+function filmFrame(fov, pol, padPlan, padIso) {
+  const port = fPortrait();
+  const plan = port ? filmFit(7.9, 10.8, fov, padPlan) : filmFit(10.8, 7.9, fov, padPlan);
+  const iso = port ? filmFit(9.0, 11.6, fov, padIso) : filmFit(13.6, 9.6, fov, padIso);
+  const sway = port ? 0.11 : Math.min(0.24, Math.asin(fSat(4.9 / (iso * Math.sin(pol)))) * 0.9);
+  return { base: port ? -Math.PI / 2 : 0, plan, iso, sway };
+}
 
-// ---------- 문 · 환경 ----------
+// ---------- 문 · 조명 ----------
+const F_OPEN = { _: 1, 'd-ac': 0 };     // 실외기실 문은 닫아 둠 (침실 창밖으로 문짝이 보여서)
 function filmDoors(map) {         // 0 = 닫힘, 1 = 열림. '_' = 나머지 문
   doorObjs.forEach(o => {
     const k = map[o.d.id] != null ? map[o.d.id] : map._, a = lerp(o.a0, o.a1, k);
@@ -5801,13 +5962,24 @@ function filmEnv(inside, night) {
   if (light.inside !== inside) setInside(inside); else { applyWalls(); if (ch) applyRig(); }
 }
 
-const F_OPEN = { _: 1, 'd-ac': 0 };
-
-// ---------- 집 짓기 연출: 벽 올리기 · 가구 채우기 ----------
-function filmWallK(k) {
-  if (film.wallK === k) return;
-  film.wallK = k; structure.scale.y = k; fixedG.scale.y = k; doorObjs.forEach(o => (o.pivot.scale.y = k)); film.shadow = true;
+// ---------- 화면 효과 (00-core의 fx): 장면마다 빛 번짐 · 심도 · 색보정 · 필름 입자 ----------
+const FXP = {
+  open: { bloom: 0.14, thr: 0.9, contrast: 0.16, warm: 0.15, grain: 0.02, vig: 0.3, sat: 1.16 },
+  day: { bloom: 0.4, thr: 0.78, contrast: 0.3, warm: 0.42, grain: 0.028, vig: 0.5, sat: 1.2, dof: 0.007 },
+  night: { bloom: 0.85, thr: 0.58, contrast: 0.3, warm: 0.5, grain: 0.035, vig: 0.6, sat: 1.2, dof: 0.007 },
+  end: { bloom: 0.9, thr: 0.55, contrast: 0.26, warm: 0.3, grain: 0.03, vig: 0.5, sat: 1.18 },
+};
+function fxSet(p) {
+  Object.assign(fx, FX0, p || {});
+  renderer.domElement.style.filter = p && !post.active ? 'contrast(1.07) saturate(1.1)' : '';      // 후처리가 꺼진 기기(화질 낮음)는 간단한 보정만
 }
+
+// ---------- 집 짓기 연출: 벽 물결 올리기(재질 셰이더 RISE) · 가구 채우기 ----------
+function filmRise(T) {            // T: 0 = 바닥에 붙음 … 현관에서부터 차례로 올라옴 … null = 평소
+  const v = T == null ? 1e3 : T;
+  if (RISE.value.z !== v) { RISE.value.z = v; film.shadow = true; }
+}
+const RISE_END = 1 + 9.6 * RISE.value.w;         // 가장 먼 모서리까지 다 올라오는 진행 값
 function filmUnits() {            // 가구를 방 순서대로 줄 세움 (하나씩 톡톡 올라오게)
   const order = ['living', 'entry', 'hall', 'kitchen', 'study', 'closet', 'laundry', 'bath', 'bed', 'balcony', 'ac'];
   const list = [], box = new THREE.Box3(), c = new V3();
@@ -5844,6 +6016,11 @@ const wipe = {
   clear() { this.el.className = 'f-wipe'; this.txt.innerHTML = ''; },
 };
 
+/* ==== END FILE: src/3d/08-film-a-core.js ==== */
+/* ==== FILE: src/3d/08-film-b-gfx.js ==== */
+// ===== 08 film (b) gfx: 화면 글자 · 3D 위치를 따라다니는 표시 · 위치 지도 · 마감재 판 =====
+// 글자는 CSS 애니메이션(지연 = --d + 건너뛰기 보정 --o), 3D 위치를 따라다니는 것은 매 프레임(filmOverlay) 계산한다.
+
 // ---------- 화면 글자 ----------
 function fAdd(html, cls) {
   const el = document.createElement('div');
@@ -5867,6 +6044,52 @@ function stepCap(kick, text, extra) {
   return fAdd(`<div class="k an a-fade">${kick}</div><h3>${fChars(text, 0.08, 0.035)}</h3>${extra || ''}`, 'f-cap');
 }
 
+// ---------- 마감재 판: 실제 3D 재질의 무늬를 잘라 붙인 견본 ----------
+const FIN_TEX = { floor: 'floor', wall: 'wall', doorFilm: 'door', lower: 'door', top: 'top', ktile: 'ktile', entryTile: 'entry' };
+function finishBoard() {
+  const el = fAdd(`<div class="hd"><div class="k an a-fade">MATERIALS</div><h3>${fChars('우리집 마감재', 0.08, 0.05)}</h3></div><div class="grid"></div>`, 'f-board');
+  const grid = el.querySelector('.grid');
+  H.finishes.forEach((f, i) => {
+    const d = document.createElement('div'); d.className = 'fsw an a-pop'; d.style.setProperty('--d', (0.35 + i * 0.09).toFixed(2) + 's');
+    const tex = TEX[FIN_TEX[f.id]];
+    if (tex && tex.image) d.appendChild(canvasOf(220, 104, g => { const im = tex.image, sw = im.width * 0.62; g.drawImage(im, 0, 0, sw, sw * 104 / 220, 0, 0, 220, 104); }));
+    else { const c = document.createElement('i'); c.style.background = f.color; d.appendChild(c); }
+    d.insertAdjacentHTML('beforeend', `<b>${esc(f.part)}</b><span>${esc(f.model)}</span>`);
+    grid.appendChild(d);
+  });
+  return el;
+}
+
+// ---------- 위치 지도: 방 장면에서 지금 어느 방을 어디서 보고 있는지 ----------
+const fLoc = { el: $('fLoc'), base: null, s: 1, w: 0, h: 0, room: null, x0: -30, y0: -30, x1: 1048, y1: 730 };
+function locBuild() {
+  const cssW = window.innerWidth < 760 ? 104 : 148, dpr = Math.min(2, window.devicePixelRatio || 1);
+  if (fLoc.base && fLoc.cssW === cssW) return;
+  fLoc.cssW = cssW; fLoc.w = Math.round(cssW * dpr); fLoc.s = fLoc.w / (fLoc.x1 - fLoc.x0); fLoc.h = Math.round((fLoc.y1 - fLoc.y0) * fLoc.s);
+  fLoc.el.width = fLoc.w; fLoc.el.height = fLoc.h; fLoc.el.style.width = cssW + 'px';
+  fLoc.base = canvasOf(fLoc.w, fLoc.h, g => {
+    const s = fLoc.s; g.setTransform(s, 0, 0, s, -fLoc.x0 * s, -fLoc.y0 * s);
+    H.floors.forEach(f => { g.beginPath(); f.poly.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.closePath(); g.fillStyle = 'rgba(255,255,255,.13)'; g.fill(); });
+    g.fillStyle = 'rgba(255,255,255,.82)'; H.walls.forEach(w => g.fillRect(w.x0, w.y0, w.x1 - w.x0, w.y1 - w.y0));
+    g.fillStyle = 'rgba(140,196,255,.95)'; H.windows.forEach(w => g.fillRect(w.x0, w.y0, w.x1 - w.x0, w.y1 - w.y0));
+  });
+}
+function locDraw(tl) {
+  const sc = SCENES[film.idx], on = !!(sc && sc.ch);
+  if (fLoc.on !== on) { fLoc.on = on; fLoc.el.classList.toggle('on', on); }
+  if (!on) return;
+  locBuild();
+  const g = fLoc.el.getContext('2d'), s = fLoc.s, X = x => (x - fLoc.x0) * s, Y = y => (y - fLoc.y0) * s;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, fLoc.w, fLoc.h);
+  const r = spaceById(sc.ch.id).rect, k = eOutCubic(fSeg(tl, 0.5, 1.1));
+  g.fillStyle = `rgba(231,116,58,${(0.9 * k).toFixed(2)})`; g.fillRect(X(r[0]), Y(r[1]), (r[2] - r[0]) * s, (r[3] - r[1]) * s);
+  g.drawImage(fLoc.base, 0, 0);
+  const px = X(camera.position.x * 100), py = Y(camera.position.z * 100), dir = camera.getWorldDirection(fTmp), a = Math.atan2(dir.z, dir.x), R = 150 * s;
+  const gr = g.createRadialGradient(px, py, 0, px, py, R); gr.addColorStop(0, 'rgba(255,255,255,.75)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.beginPath(); g.moveTo(px, py); g.arc(px, py, R, a - 0.5, a + 0.5); g.closePath(); g.fill();
+  g.fillStyle = '#fff'; g.beginPath(); g.arc(px, py, 3.2 * fLoc.w / fLoc.cssW, 0, 6.283); g.fill();
+}
+
 // ---------- 3D 위치를 따라다니는 표시 ----------
 const P3 = a => new V3(CM(a[0]), CM(a[2]), CM(a[1]));
 function callout(at, t0, t1, title, sub, o) {     // 점 + 꺾인 안내선 + 이름 상자
@@ -5888,7 +6111,7 @@ function dimLine(d, t0, t1) {     // 평면 위에서 자라나는 치수선 (H.
 }
 function planDraw(t0, t1) {       // 도면 단계: 벽과 창이 선을 긋듯 그려짐 (벽이 올라오면 사라짐)
   const g = svgEl(fSvg, 'g', { visibility: 'hidden' });
-  const mk = (r, col) => ({ r, horiz: (r.x1 - r.x0) >= (r.y1 - r.y0), el: svgEl(g, 'polygon', { fill: col }), d: (r.x0 + r.x1) / 2036 * 0.9 + (r.y0 + r.y1) / 1400 * 0.45 });
+  const mk = (r, col) => ({ r, horiz: (r.x1 - r.x0) >= (r.y1 - r.y0), el: svgEl(g, 'polygon', { fill: col }), d: Math.hypot((r.x0 + r.x1) / 2 - 485, (r.y0 + r.y1) / 2) / 900 * 1.2 });
   const list = [...H.walls.map(w => mk(w, w.type === 'bearing' ? '#b3261e' : '#35322d')), ...H.windows.map(w => mk(w, '#5b9bd8'))];
   film.items.push({ kind: 'wl', g, list, t0, t1 });
 }
@@ -5909,8 +6132,8 @@ function fProj(v) { fTmp.copy(v).project(camera); return fTmp.z > -1 && fTmp.z <
 const fHide = it => { if (it.shown !== false) { it.shown = false; if (it.el) it.el.style.opacity = 0; if (it.g) it.g.setAttribute('visibility', 'hidden'); } };
 const fXY = (x, y) => { fTmp.set(CM(x), 0.012, CM(y)).project(camera); return ((fTmp.x + 1) / 2 * fW).toFixed(1) + ',' + ((1 - fTmp.y) / 2 * fH).toFixed(1); };
 function filmOverlay(tl) {
-  fW = view.clientWidth; fH = view.clientHeight;
   const topPad = 78, botPad = fH * 0.3, placed = [];
+  if (fLoc.on) placed.push([fW - fLoc.cssW - 40, fW, 60, (fW < 760 ? 80 : fH * 0.085) + fLoc.h / fLoc.w * fLoc.cssW + 22]);      // 위치 지도 자리는 비워 둠
   for (const it of film.items) {
     if (tl < it.t0 || tl >= it.t1) { fHide(it); continue; }
     const ko = 1 - fSeg(tl, it.t1 - 0.35, it.t1);
@@ -5967,9 +6190,15 @@ function filmOverlay(tl) {
     it.shown = true;
   }
   for (const c of film.counters) { const n = Math.round(c.to * eOutExpo(fSeg(tl, c.t0, c.t0 + 1.1))); if (n !== c.last) { c.last = n; c.el.textContent = n; } }
+  locDraw(tl);
 }
 
-// ---------- 장면 ----------
+/* ==== END FILE: src/3d/08-film-b-gfx.js ==== */
+/* ==== FILE: src/3d/08-film-c-scenes.js ==== */
+// ===== 08 film (c) scenes: 장면 표 — 카메라 동선 · 자막 · 사건 =====
+// 장면 = { id, dur(초), theme('lt' = 밝은 배경에 어두운 글자), inside, night, fx(FXP 이름), enter(), exit(), update(tl), cues: [[초, 함수]] }
+// ch가 있으면 방 장면: 전환 가림막에 번호·이름이 뜨고 위치 지도에 그 방이 표시된다. cut: false면 앞 장면에서 끊지 않고 이어짐.
+// offX / offYp: 화면 중심을 옮김 (가로 화면 / 세로 화면) — 글자 판과 집이 겹치지 않게.
 const CH = {
   entry: { id: 'entry', no: '01', name: '현관', en: 'ENTRANCE', desc: '유리 중문과 천장까지 닿는 신발장' },
   living: { id: 'living', no: '02', name: '거실', en: 'LIVING ROOM', kind: 'real', desc: '확장 발코니까지 이어지는 전면창, 리클라이너 소파와 77인치 TV' },
@@ -5978,10 +6207,10 @@ const CH = {
   closet: { id: 'closet', no: '05', name: '옷방', en: 'DRESSING ROOM', kind: 'real', desc: 'ㄱ자 시스템장과 스타일러 자리' },
   bed: { id: 'bed', no: '06', name: '침실', en: 'BEDROOM', kind: 'real', desc: '모션베드와 화장대, 저녁의 침실' },
 };
-const chWipe = ch => `<div class="w-ch"><b>${ch.no}</b><span><em>${ch.en}</em><strong>${ch.name}</strong></span></div>`;
+const chWipe = ch => `<div class="w-ch">${ch.no ? `<b>${ch.no}</b>` : ''}<span><em>${ch.en}</em><strong>${ch.name}</strong></span></div>`;
 const TITLE_HTML = `<div class="w-title"><div class="kick an a-fade" style="--d:.15s">OUR HOME · 3D TOUR</div>` +
   `<h1><span class="ln">${fChars('우리집을', 0.3, 0.06)}</span><span class="ln">${fChars('소개합니다', 0.55, 0.06)}</span></h1>` +
-  `<div class="rule an a-line" style="--d:1.0s;transform-origin:50% 50%"></div><div class="sub an a-rise" style="--d:1.2s">실측 치수로 지은 3D 도면 · 1분 투어</div></div>`;
+  `<div class="rule an a-line" style="--d:1.0s;transform-origin:50% 50%"></div><div class="sub an a-rise" style="--d:1.2s">실측 치수로 지은 3D 도면 · 1분 20초 투어</div></div>`;
 
 // 현관 → 거실은 끊지 않고 한 번에 걸어 들어간다 (현관 장면 7.5초 + 거실 장면)
 const ENTRY_DUR = 7.5;
@@ -6023,33 +6252,34 @@ const camBed = fTrack([
 ], true, true);
 
 const SCENES = [
-  { id: 'open', label: '도면에서 집으로', dur: 14, theme: 'lt', inside: false, night: false,
+  // ---- 오프닝: 제목 → 도면(벽 · 실측 치수선) → 벽이 현관에서부터 물결처럼 올라옴 → 가구가 방 순서대로 등장 ----
+  { id: 'open', label: '도면에서 집으로', dur: 14, theme: 'lt', inside: false, night: false, fx: 'open', offYp: 0.07,
     enter() {
       wipe.set(TITLE_HTML);
       filmDoors(F_OPEN);
-      film.units = filmUnits(); filmUnitsAt(-1, 0); filmWallK(0.003);
+      film.units = filmUnits(); filmUnitsAt(-1, 0); filmRise(0);
       const ds = H.dims.filter(d => /^\d+$/.test(d.t) && +d.t >= 100 && d.kind !== 'est');
-      ds.forEach((d, i) => dimLine(d, 3.9 + i * 0.24, 7.7));
-      H.rooms.filter(r => !r.small && r.kind !== 'est').forEach((r, i) => roomTag(r, 9.3 + i * 0.16, 13.3));
-      planDraw(3.3, 7.6);
+      ds.forEach((d, i) => dimLine(d, 4.3 + i * 0.22, 7.7));
+      H.rooms.filter(r => !r.small && r.kind !== 'est').forEach((r, i) => roomTag(r, 9.5 + i * 0.16, 13.3));
+      planDraw(3.3, 7.7);
     },
-    exit() { filmUnitsAt(null); filmWallK(1); },
+    exit() { filmUnitsAt(null); filmRise(null); },
     cues: [
       [3.3, () => wipe.reveal()],
       [3.6, s => (s.cap = stepCap('STEP 01', '실측 치수에서 시작해서', '<div class="lg an a-fade" style="--d:.5s"><span><i class="dot d-real"></i>실측</span><span><i class="dot d-est"></i>계산</span><span>단위 cm</span></div>'))],
       [6.5, s => { fOut(s.cap); s.cap = stepCap('STEP 02', '벽을 세우고'); }],
-      [8.5, s => { fOut(s.cap); s.cap = stepCap('STEP 03', '가구와 가전을 채우면'); }],
-      [11.0, s => { fOut(s.cap); s.cap = stepCap('OUR HOME', '미리 살아 보는 우리집'); }],
+      [8.6, s => { fOut(s.cap); s.cap = stepCap('STEP 03', '가구와 가전을 채우면'); }],
+      [11.2, s => { fOut(s.cap); s.cap = stepCap('OUR HOME', '미리 살아 보는 우리집'); }],
     ],
     update(tl) {
-      filmWallK(Math.max(0.003, ease(fSeg(tl, 6.6, 8.8))));
-      filmUnitsAt(tl, 8.5);
-      const kt = ease(fSeg(tl, 6.4, 10.6)), fov = lerp(16, 30, kt), pol = lerp(0.012, 0.712, kt), port = fPortrait();
-      const dist = lerp(filmFit(10.8, 7.9, fov, port ? 1.55 : 1.75), filmFit(port ? 11.5 : 13.6, 9.6, fov, 1.55), kt) * lerp(1.08, 1, eOutCubic(fSeg(tl, 3.2, 8)));
-      const A = Math.min(0.24, filmAzMax(dist, 0.712) * 0.9);
-      fCamOrbit(lerp(0, 0.6, kt), -A * (0.8 * kt + 0.2 * fSeg(tl, 10.6, 14)), pol, dist, fov);
+      filmRise(tl < 6.5 ? 0 : tl > 9.4 ? null : fSeg(tl, 6.5, 9.3) * RISE_END);
+      filmUnitsAt(tl, 8.7);
+      const kt = ease(fSeg(tl, 6.3, 10.6)), fov = lerp(16, 30, kt), pol = lerp(0.012, 0.712, kt), F = filmFrame(fov, 0.712, fPortrait() ? 1.5 : 1.75, 1.5);
+      const dist = lerp(F.plan, F.iso, kt) * lerp(1.08, 1, eOutCubic(fSeg(tl, 3.2, 8)));
+      fCamOrbit(lerp(0, 0.6, kt), F.base - F.sway * (0.8 * kt + 0.2 * fSeg(tl, 10.6, 14)), pol, dist, fov);
     } },
-  { id: 'entry', ch: CH.entry, dur: ENTRY_DUR, inside: true, night: false,
+  // ---- 01 현관: 현관문 · 중문이 열리며 걸어 들어감 ----
+  { id: 'entry', ch: CH.entry, dur: ENTRY_DUR, inside: true, night: false, fx: 'day',
     enter() {
       filmDoors({ _: 1, 'd-ac': 0, 'd-front': 0, 'd-mid': 0 });
       coProd('lock', [521, -27, 105], 1.15, 2.5, { side: 'l', rise: 60 });
@@ -6061,7 +6291,8 @@ const SCENES = [
       filmDoors({ _: 1, 'd-ac': 0, 'd-front': ease(fSeg(tl, 1.9, 3.2)), 'd-mid': ease(fSeg(tl, 3.9, 5.1)) });
       fCamWalk(camEL(tl));
     } },
-  { id: 'living', ch: CH.living, dur: 9.5, cut: false, inside: true, night: false,
+  // ---- 02 거실 (현관에서 이어짐) ----
+  { id: 'living', ch: CH.living, dur: 9.5, cut: false, inside: true, night: false, fx: 'day',
     enter() {
       filmDoors(F_OPEN);
       callout([2, 177, 150], 2.4, 4.8, '거실 전면창', '폭 227 · 창턱 10 cm (사진 계산)', { rise: 20 });
@@ -6071,7 +6302,8 @@ const SCENES = [
     },
     cues: [[0.25, s => (s.lt = lowerThird(CH.living))]],
     update(tl) { fCamWalk(camEL(tl + ENTRY_DUR)); } },
-  { id: 'kitchen', ch: CH.kitchen, dur: 8.5, inside: true, night: false,
+  // ---- 03 주방 ----
+  { id: 'kitchen', ch: CH.kitchen, dur: 8.5, inside: true, night: false, fx: 'day',
     enter() {
       filmDoors(F_OPEN);
       coProd('induction', [590, 262, 88], 1.0, 3.1, { rise: 64 });
@@ -6082,16 +6314,21 @@ const SCENES = [
     },
     cues: [[0.6, s => (s.lt = lowerThird(CH.kitchen))]],
     update(tl) { fCamWalk(camKitchen(tl)); } },
-  { id: 'study', ch: CH.study, dur: 9.5, inside: true, night: false,
+  // ---- 04 서재: 배치안 A → D ----
+  { id: 'study', ch: CH.study, dur: 9.5, inside: true, night: false, fx: 'day',
     enter(s) { filmDoors(F_OPEN); s.pl = null; },
-    exit() { if (film.saved && proposals.study.cur !== film.saved.study) setProposal('study', film.saved.study); proposals.study.groups[proposals.study.cur].scale.setScalar(1); proposals.study.groups[proposals.study.cur].position.set(0, 0, 0); },
+    exit() {
+      const g = proposals.study.groups[proposals.study.cur]; g.scale.setScalar(1); g.position.set(0, 0, 0);
+      if (film.saved && proposals.study.cur !== film.saved.study) setProposal('study', film.saved.study);
+    },
     cues: [[0.6, s => (s.lt = lowerThird(CH.study))], [1.3, s => filmPlan(s, 0)], [3.4, s => filmPlan(s, 1)], [5.3, s => filmPlan(s, 2)], [7.2, s => filmPlan(s, 3)]],
     update(tl) {
       fCamWalk(camStudy(tl));
       const g = proposals.study.groups[proposals.study.cur], k = film.planT == null ? 1 : fSeg(tl, film.planT, film.planT + 0.5), s = lerp(0.9, 1, eOutBack(k));
       if (g.scale.x !== s) { g.scale.setScalar(s); g.position.set(7.9 * (1 - s), 0, 1.07 * (1 - s)); film.shadow = true; }       // 서재 가운데 기준으로 살짝 튀어나오듯
     } },
-  { id: 'closet', ch: CH.closet, dur: 7.5, inside: true, night: false,
+  // ---- 05 옷방 ----
+  { id: 'closet', ch: CH.closet, dur: 7.5, inside: true, night: false, fx: 'day',
     enter() {
       filmDoors(F_OPEN);
       coProd('styler', [700, 638, 150], 1.2, 3.2, { rise: 30 });
@@ -6100,7 +6337,16 @@ const SCENES = [
     },
     cues: [[0.6, s => (s.lt = lowerThird(CH.closet))]],
     update(tl) { fCamWalk(camCloset(tl)); } },
-  { id: 'bed', ch: CH.bed, dur: 9, inside: true, night: true,
+  // ---- 마감재: 실제 재질 무늬 견본 판 ----
+  { id: 'finish', label: '마감재', wipe: chWipe({ en: 'MATERIALS', name: '마감재' }), dur: 8, theme: 'lt', inside: false, night: false, fx: 'open', offX: -0.25, offYp: 0.2,
+    enter() { filmDoors(F_OPEN); },
+    cues: [[0.75, () => finishBoard()]],
+    update(tl) {
+      const fov = 30, pol = 0.74, F = filmFrame(fov, pol, 1.5, fPortrait() ? 1.75 : 1.5);
+      fCamOrbit(0.6, F.base + F.sway * (0.9 - 0.2 * tl), pol, F.iso * (fPortrait() ? 1.42 : 1.14) * lerp(1.06, 1, eOutCubic(fSeg(tl, 0, 6))), fov);
+    } },
+  // ---- 06 침실 (저녁 조명) ----
+  { id: 'bed', ch: CH.bed, dur: 9, inside: true, night: true, fx: 'night',
     enter() {
       filmDoors(F_OPEN);
       coProd('bed', [276, 560, 66], 2.6, 5.0, { rise: 70 });
@@ -6110,15 +6356,15 @@ const SCENES = [
     },
     cues: [[0.6, s => (s.lt = lowerThird(CH.bed))]],
     update(tl) { fCamWalk(camBed(tl)); } },
-  { id: 'end', label: '엔딩', dur: 8, last: true, inside: false, night: true, offX: -0.17,
+  // ---- 엔딩: 저녁 전경 + 다시 보기 / 직접 둘러보기 ----
+  { id: 'end', label: '엔딩', dur: 8, last: true, inside: false, night: true, fx: 'end', offX: -0.17, offYp: -0.06,
     enter() { filmDoors(F_OPEN); },
     cues: [[1.3, () => fAdd(`<div><div class="kick an a-fade">OUR HOME</div><h2>${fChars('우리집 3D', 0.12, 0.06)}</h2><p class="an a-rise" style="--d:.7s">실측 치수 · 가전 · 마감재까지<br>이 파일 하나에 담았어요</p></div>` +
       `<div class="acts an a-rise" style="--d:1.1s"><button class="sec" data-f="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>다시 보기</button>` +
       `<button class="pri" data-f="explore">직접 둘러보기<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>`, 'f-end')]],
     update(tl) {
-      const port = fPortrait(), fov = 30, pol = 0.76, dist = filmFit(port ? 11.5 : 13.6, 9.6, fov, port ? 1.3 : 1.4);
-      const A = Math.min(0.22, filmAzMax(dist, pol) * 0.9);
-      fCamOrbit(0.6, A * Math.sin((tl - 3) * 0.2), pol, dist * lerp(1.1, 1, eOutCubic(fSeg(tl, 0, 6))), fov);
+      const fov = 30, pol = 0.76, F = filmFrame(fov, pol, 1.5, fPortrait() ? 1.55 : 1.4);
+      fCamOrbit(0.6, F.base + F.sway * Math.sin((tl - 3) * 0.2), pol, F.iso * (fPortrait() ? 1.45 : 1) * lerp(1.1, 1, eOutCubic(fSeg(tl, 0, 6))), fov);
     } },
 ];
 function filmPlan(s, i) {         // 서재 배치안을 차례로 보여 줌
@@ -6129,6 +6375,10 @@ function filmPlan(s, i) {         // 서재 배치안을 차례로 보여 줌
   s.pl.querySelectorAll('.dots i').forEach((d, k) => d.classList.toggle('on', k === i));
   const nm = s.pl.querySelector('.nm'); nm.innerHTML = `<span class="an a-up" style="--o:${(-film.ff).toFixed(2)}s">${esc(p.name)}</span>`;
 }
+
+/* ==== END FILE: src/3d/08-film-c-scenes.js ==== */
+/* ==== FILE: src/3d/08-film-d-player.js ==== */
+// ===== 08 film (d) player: 재생 — 시작 · 매 프레임 · 일시정지 · 건너뛰기 · 끝내고 되돌리기 =====
 (function filmInit() {            // 장면 시작 시각 · 전환 가림막 · 진행 막대
   let t = 0;
   SCENES.forEach((s, i) => {
@@ -6142,7 +6392,6 @@ function filmPlan(s, i) {         // 서재 배치안을 차례로 보여 줌
   film.bars = [...$('fProg').querySelectorAll('b')];
 })();
 
-// ---------- 재생 ----------
 const F_ICON = { pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4.2" height="14" rx="1.2"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.2"/></svg>', play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>' };
 function filmEnter(i) {
   const cur = SCENES[film.idx];
@@ -6168,15 +6417,15 @@ function filmStep(now) {
   if (film.fresh) {
     film.fresh = false; film.ff = tl; film.ct = 0;
     filmEl.classList.toggle('lt', s.theme === 'lt'); filmEl.classList.toggle('shade', s.theme !== 'lt');
-    filmEnv(s.inside, s.night); s.enter(s);
+    filmEnv(s.inside, s.night); fxSet(FXP[s.fx]); s.enter(s);
   }
   while (film.cue < s.cues.length && s.cues[film.cue][0] <= tl) { const c = s.cues[film.cue++]; film.ct = c[0]; film.ff = tl - c[0]; c[1](s); }
   film.ff = 0;
   if (film.laters.length) film.laters = film.laters.filter(l => (l.t <= film.t ? (l.fn(), false) : true));
   s.update(tl);
   fW = view.clientWidth; fH = view.clientHeight;
-  const ox = s.offX && !fPortrait() ? Math.round(s.offX * fW) : 0, ok = ox + ':' + fW + ':' + fH;       // 화면 중심 옮기기 (엔딩 가로 화면)
-  if (ok !== film.offKey) { film.offKey = ok; if (ox) camera.setViewOffset(fW, fH, ox, 0, fW, fH); else camera.clearViewOffset(); }
+  const port = fPortrait(), ox = s.offX && !port ? Math.round(s.offX * fW) : 0, oy = s.offYp && port ? Math.round(s.offYp * fH) : 0, key = ox + ':' + oy + ':' + fW + ':' + fH;       // 화면 중심 옮기기
+  if (key !== film.offKey) { film.offKey = key; if (ox || oy) camera.setViewOffset(fW, fH, ox, oy, fW, fH); else camera.clearViewOffset(); }
   if (film.shadow) { film.shadow = false; shadowDirty(); }
   filmOverlay(tl);
   film.bars.forEach((b, j) => { const k = j < film.idx ? 1 : j > film.idx ? 0 : fSat(tl / s.dur); if (b._k !== k) { b._k = k; b.style.transform = `scaleX(${k.toFixed(4)})`; } });
@@ -6200,16 +6449,17 @@ function filmStart() {
   $('fChap').textContent = '';
   wipe.cover(''); invalidate();
 }
-function filmRestore() {
+function filmRestore() {          // 영상이 바꾼 것을 모두 원래대로
   const cur = SCENES[film.idx];
   if (cur && cur.exit) cur.exit();
   filmClear(); film.idx = -1;
+  filmUnitsAt(null); filmRise(null); fxSet(null);
   if (film.ready) {
-    filmUnitsAt(null); filmWallK(1);
     state.wallPref = film.saved.wallPref; light.night = film.saved.night;
     furn.visible = state.showFurn; dimG.visible = state.showDims;
   }
   film.on = false; film.ready = false; film.closing = false;
+  fLoc.on = false; fLoc.el.classList.remove('on');
   document.body.classList.remove('film'); filmEl.classList.remove('lt', 'shade', 'paused');
   goOrbit('all', true); applyWalls(); applyRig(); viewOffDirty = true; markRooms();
 }
@@ -6255,7 +6505,7 @@ window.addEventListener('keydown', e => {
   else if (e.key === 'ArrowLeft') filmGo(film.idx - 1);
 });
 
-/* ==== END FILE: src/3d/08-film.js ==== */
+/* ==== END FILE: src/3d/08-film-d-player.js ==== */
 /* ==== FILE: src/3d/09-main.js ==== */
 // ===== 09 main: 그리기 루프 · 자동 화질 · 시작 =====
 const perf = {
@@ -6314,7 +6564,7 @@ requestAnimationFrame(frame);
 if (QS.get('film')) setTimeout(filmStart, 300);
 
 // 검증용 훅
-window.__house = { look: (px, py, ph, lx, ly, lh, fov) => goWalk(new V3(CM(px), CM(ph), CM(py)), new V3(CM(lx), CM(lh), CM(ly)), fov || photoFov(74), { instant: true }), setProposal, hemi, sun, fills, lamps, MAT, getMats: () => allMats, shadowDirty, state, goSpace, goOrbit, enterAt, walkTo, setTier, invalidate, camera, light, applyRig, renderer, GRID, pickAt, tierName: () => tierName, post, mapSet, setMeasuring, measAdd, cardFurn, cardWin, walk, applyWalkCam, film: { start: filmStart, stop: filmStop, seek: filmSeek, go: filmGo, pause: filmPause, state: film, scenes: SCENES } };
+window.__house = { look: (px, py, ph, lx, ly, lh, fov) => goWalk(new V3(CM(px), CM(ph), CM(py)), new V3(CM(lx), CM(lh), CM(ly)), fov || photoFov(74), { instant: true }), setProposal, hemi, sun, fills, lamps, MAT, getMats: () => allMats, shadowDirty, state, goSpace, goOrbit, enterAt, walkTo, setTier, invalidate, camera, light, applyRig, renderer, GRID, pickAt, tierName: () => tierName, post, mapSet, setMeasuring, measAdd, cardFurn, cardWin, walk, applyWalkCam, fx, film: { start: filmStart, stop: filmStop, seek: filmSeek, go: filmGo, pause: filmPause, state: film, scenes: SCENES } };
 
 /* ==== END FILE: src/3d/09-main.js ==== */
 })();

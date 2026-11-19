@@ -181,7 +181,18 @@ const TS = tierName === 'low' ? 512 : 1024;
   TEX.moruN = texOf(nC, 0.048, 0.048); TEX.moru = texOf(cC, 0.048, 0.048, true);
 })();
 // ---------- 재질 ----------
-const M = (color, o) => new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.8, metalness: 0, envMapIntensity: 0.6 }, o || {}));
+// 집 짓기 연출(소개 영상)용: 모든 재질이 꼭짓점 높이를 '한 점에서 퍼지는 물결'에 맞춰 0 → 1로 키울 수 있다.
+// RISE.value = (중심 x, 중심 z, 진행, 거리 1m당 지연). 진행이 충분히 크면(평소 1000) 원래 모양 그대로.
+const RISE = { value: new THREE.Vector4(4.85, -0.2, 1e3, 0.22) };
+function riseHook(shader) {
+  shader.uniforms.uRise = RISE;
+  shader.vertexShader = 'uniform vec4 uRise;\n' + shader.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+    { vec4 wpR = modelMatrix * vec4(transformed, 1.0); float qR = clamp(uRise.z - distance(wpR.xz, uRise.xy) * uRise.w, 0.0, 1.0) - 1.0;
+      transformed.y *= max(0.003, 1.0 + 2.4 * qR * qR * qR + 1.4 * qR * qR); }`);
+}
+const riseMat = m => { m.onBeforeCompile = riseHook; m.customProgramCacheKey = () => 'rise'; return m; };
+const RISE_DEPTH = riseMat(new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking }));      // 그림자도 같이 자라게
+const M = (color, o) => riseMat(new THREE.MeshStandardMaterial(Object.assign({ color, roughness: 0.8, metalness: 0, envMapIntensity: 0.6 }, o || {})));
 const MAT = {
   // 마감재표
   floor: M(0xffffff, { map: TEX.floor, bumpMap: TEX.floorB, bumpScale: 0.0016, roughness: 0.62, envMapIntensity: 0.5 }),
@@ -256,5 +267,5 @@ const MAT = {
 MAT.downlight.toneMapped = false;
 // 바깥벽: 방향별로 따로(바깥에서 보는 쪽만 투명하게)
 const extMats = {}, hiddenSide = {};
-['N', 'S', 'W', 'E'].forEach(s => { extMats[s] = MAT.wall.clone(); hiddenSide[s] = false; });
+['N', 'S', 'W', 'E'].forEach(s => { extMats[s] = riseMat(MAT.wall.clone()); hiddenSide[s] = false; });
 const wallMatsAll = () => [MAT.wall, MAT.bearing, MAT.thin, ...Object.values(extMats)];

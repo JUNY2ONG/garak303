@@ -283,6 +283,27 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 .f-dm{position:absolute;left:0;top:0;will-change:transform,opacity;font-size:11px;font-weight:800;padding:2px 6px;border-radius:6px;background:#fff;font-variant-numeric:tabular-nums;white-space:nowrap;box-shadow:0 1px 4px rgba(40,30,15,.18)}
 .f-dm.k-real{color:var(--real)}.f-dm.k-calc,.f-dm.k-est{color:var(--est)}
 
+/* 가로 화면: 방 장면에 위아래 검은 띠 (영화 화면비) */
+.f-bars::before,.f-bars::after{content:"";position:absolute;left:0;right:0;height:5.4vh;background:#0d0b08;transform:scaleY(0);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.f-bars::before{top:0;transform-origin:50% 0}.f-bars::after{bottom:0;transform-origin:50% 100%}
+@media (min-aspect-ratio:6/5){#film.shade .f-bars::before,#film.shade .f-bars::after{transform:none}}
+
+/* 위치 지도 */
+#fLoc{position:absolute;right:12px;top:calc(var(--sat) + 80px);box-sizing:content-box;padding:7px;border-radius:13px;background:rgba(22,18,12,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);opacity:0;transform:translateY(-6px);transition:opacity .45s,transform .45s;pointer-events:none}
+#fLoc.on{opacity:1;transform:none}
+
+/* 마감재 판 */
+.f-board{position:absolute;left:0;right:0;bottom:0;padding:0 16px calc(var(--sab) + 20px)}
+.f-board .hd{margin:0 4px 12px}
+.f-board .k{font-size:11px;font-weight:800;letter-spacing:.34em;color:var(--fa)}
+.f-board h3{margin:6px 0 0;font-size:clamp(26px,7.4vmin,44px);font-weight:900;letter-spacing:-.04em;line-height:1.15;overflow:hidden;padding-bottom:.08em}
+.f-board h3 span{display:inline-block}
+.f-board .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.f-board .fsw{background:#fffefb;border-radius:12px;padding:5px 5px 7px;box-shadow:0 4px 14px rgba(40,30,15,.12),0 0 0 1px rgba(40,30,15,.05);min-width:0}
+.f-board .fsw canvas,.f-board .fsw i{display:block;width:100%;height:46px;border-radius:8px;border:1px solid rgba(40,30,15,.1)}
+.f-board .fsw b{display:block;margin:6px 3px 0;font-size:11.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.f-board .fsw span{display:block;margin:1px 3px 0;font-size:10px;line-height:1.3;color:var(--mute);height:2.6em;overflow:hidden}
+
 /* 엔딩 */
 .f-end{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;padding:calc(var(--sat) + 15vh) 24px calc(var(--sab) + 11vh)}
 .f-end .kick{font-size:11px;font-weight:800;letter-spacing:.4em;color:var(--fa);margin-right:-.4em}
@@ -296,22 +317,29 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 .f-end .acts .sec{color:#fff;background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.42)}
 .f-end .acts button:active{transform:scale(.96)}
 @media (min-aspect-ratio:1/1){
+  .f-board{left:max(36px,5.5vw);right:auto;width:min(44vw,540px);bottom:auto;top:54%;transform:translateY(-50%);padding:0}
+  .f-board .fsw canvas,.f-board .fsw i{height:clamp(40px,8vh,70px)}
   .f-end{align-items:flex-start;text-align:left;justify-content:center;gap:34px;padding:0 0 0 max(40px,7vw)}
   .f-end .acts{justify-content:flex-start}
 }
 @media (min-width:760px){
-  .f-lt{padding:0 0 46px 54px;max-width:680px}
+  #fLoc{top:calc(var(--sat) + 8.5vh);right:22px}
+  .f-board .fsw b{font-size:13px}.f-board .fsw span{font-size:11.5px}
+  .f-lt{padding:0 0 calc(5.4vh + 34px) 54px;max-width:680px}
   .f-lt p{max-width:36em}
   .f-cap{bottom:5vh}
   .f-co .bx{font-size:14px}.f-co .bx small{font-size:12px}
   .f-rt{font-size:13.5px}.f-dm{font-size:12.5px}
 }
 @media (max-aspect-ratio:4/5){
-  .f-cap{bottom:calc(var(--sab) + 17vh)}
+  .f-cap{bottom:calc(var(--sab) + 6vh)}
 }
 @media (max-height:520px){
-  .f-lt{padding-bottom:calc(var(--sab) + 14px)}
+  .f-lt{padding-bottom:calc(var(--sab) + 5.4vh + 10px)}
   .f-lt h2{font-size:42px}.f-lt p{display:none}
+  .f-board .fsw span{display:none}.f-board .hd{margin-bottom:8px}.f-board h3{font-size:22px}
+  .f-board{top:58%}.f-board .k{display:none}
+  #fLoc{top:calc(var(--sat) + 66px)}
   .f-cap{bottom:calc(var(--sab) + 10px)}.f-cap h3{font-size:22px}.f-cap .lg{display:none}
   .f-end{padding-top:calc(var(--sat) + 70px);padding-bottom:calc(var(--sab) + 16px)}
   .f-end h2{font-size:40px}.f-end .acts button{height:46px}
@@ -347,7 +375,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
     <button class="playbtn" id="bFilm" aria-label="집 소개 영상 재생">
       <span class="pb-sh"></span>
       <span class="pb-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg></span>
-      <span class="pb-tx"><b>집 소개 영상</b><i>1분 투어 재생</i></span>
+      <span class="pb-tx"><b>집 소개 영상</b><i>1분 20초 투어</i></span>
     </button>
   </div>
 </header>
@@ -412,10 +440,12 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 
 <div id="film" aria-hidden="true">
   <div class="f-shade"></div>
+  <div class="f-bars"></div>
   <svg id="fSvg" aria-hidden="true"></svg>
   <div class="f-zones" id="fZones"><i data-z="prev"></i><i data-z="toggle"></i><i data-z="next"></i></div>
   <div id="fTags"></div>
   <div id="fStage"></div>
+  <canvas id="fLoc" width="10" height="10"></canvas>
   <div class="f-flash" id="fFlash"></div>
   <div class="f-wipe" id="fWipe"><i></i><i></i><i></i><div class="w-txt" id="fWipeTxt"></div></div>
   <div class="f-top">

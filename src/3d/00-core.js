@@ -1,4 +1,4 @@
-// ===== 00 core: 렌더러 · 화질 단계 · 후처리(AO) =====
+// ===== 00 core: 렌더러 · 화질 단계 · 후처리(AO · 빛 번짐 · 심도 · 색보정) =====
 const H = window.HOUSE;
 const V3 = THREE.Vector3, V2 = THREE.Vector2;
 const CM = v => v / 100;
@@ -52,7 +52,10 @@ let needRender = 3;
 function invalidate(n) { needRender = Math.max(needRender, n || 2); }
 function shadowDirty() { renderer.shadowMap.needsUpdate = true; invalidate(); }
 
-// ---------- 후처리: MSAA 타깃 → AO → 합성 ----------
+// ---------- 후처리: MSAA 타깃 → AO → (빛 번짐) → 합성(심도 · 색보정 · 입자) ----------
+// fx 기본값 = 평소 화면 그대로. 집 소개 영상(08-film-*)만 장면마다 바꾼다. dof = 흐림 반경(화면 높이 대비), focus = 초점 거리(m)
+const FX0 = { bloom: 0, thr: 0.7, dof: 0, focus: 3, expo: 1, contrast: 0, warm: 0, sat: 1.14, vig: 0.16, grain: 0 };
+const fx = Object.assign({}, FX0);
 const post = (function () {
   const quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
   const quadScene = new THREE.Scene();
@@ -117,21 +120,65 @@ const post = (function () {
       }
       gl_FragColor = vec4(vec3(sum / wsum), 1.0);
     }`, { tAO: { value: null }, tDepth: { value: null }, projInv: { value: new THREE.Matrix4() }, near: { value: 0.05 }, far: { value: 260 }, dir: { value: new V2() }, pdir: { value: new V2() } });
-  const outMat = mk(`
-    varying vec2 vUv; uniform sampler2D tColor; uniform sampler2D tAO; uniform float aoAmt; uniform float debug; uniform float sat;
+  // 밝은 곳만 뽑아 1/4 크기로 (빛 번짐용)
+  const brightMat = mk(`
+    varying vec2 vUv; uniform sampler2D tColor; uniform vec2 px; uniform float thr;
     void main(){
-      vec4 c = texture2D(tColor, vUv);
+      vec3 c = (texture2D(tColor, vUv + px * vec2(-1.0, -1.0)).rgb + texture2D(tColor, vUv + px * vec2(1.0, -1.0)).rgb + texture2D(tColor, vUv + px * vec2(-1.0, 1.0)).rgb + texture2D(tColor, vUv + px * vec2(1.0, 1.0)).rgb) * 0.25;
+      float l = max(c.r, max(c.g, c.b));
+      gl_FragColor = vec4(c * smoothstep(thr, thr + 0.22, l), 1.0);
+    }`, { tColor: { value: null }, px: { value: new V2() }, thr: { value: 0.7 } });
+  const gaussMat = mk(`
+    varying vec2 vUv; uniform sampler2D tSrc; uniform vec2 dir;
+    void main(){
+      vec3 c = texture2D(tSrc, vUv).rgb * 0.227027;
+      c += (texture2D(tSrc, vUv + dir * 1.384615).rgb + texture2D(tSrc, vUv - dir * 1.384615).rgb) * 0.316216;
+      c += (texture2D(tSrc, vUv + dir * 3.230769).rgb + texture2D(tSrc, vUv - dir * 3.230769).rgb) * 0.070270;
+      gl_FragColor = vec4(c, 1.0);
+    }`, { tSrc: { value: null }, dir: { value: new V2() } });
+  // 합성: (심도) → 음영 → 빛 번짐 → 색보정 → 가장자리 어둡게 → 필름 입자
+  const outMat = mk(`
+    varying vec2 vUv; uniform sampler2D tColor; uniform sampler2D tAO; uniform sampler2D tBloomA; uniform sampler2D tBloomB;
+    uniform float aoAmt; uniform float debug; uniform float sat; uniform float vig; uniform float bloom; uniform float expo; uniform float contrast; uniform float warm; uniform float grain; uniform float seed;
+    uniform float dof; uniform float focus; uniform vec2 px;
+    ${DEPTH_FN}
+    float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+    void main(){
+      vec3 col = texture2D(tColor, vUv).rgb;
+      if (dof > 0.0) {                                           // 초점에서 먼 곳만 흐리게 (초점 안쪽 물체가 번져 들어오지 않게 가중치)
+        float z = -viewZ(rawDepth(vUv)), c0 = clamp(abs(z - focus) / (focus * 0.9 + 0.4) - 0.12, 0.0, 1.0);
+        if (c0 > 0.02) {
+          float rot = hash(gl_FragCoord.xy) * 6.2831853, wsum = 1.0; vec3 sum = col;
+          for (int i = 0; i < DOF_N; i++) {
+            float fi = float(i), r = sqrt((fi + 0.5) / float(DOF_N)), a = rot + fi * 2.3999632;
+            vec2 uv = vUv + vec2(cos(a), sin(a)) * r * c0 * dof * px;
+            float zi = -viewZ(rawDepth(uv)), ci = clamp(abs(zi - focus) / (focus * 0.9 + 0.4) - 0.12, 0.0, 1.0);
+            float w = clamp(ci / c0 + 0.08, 0.0, 1.0);
+            sum += texture2D(tColor, uv).rgb * w; wsum += w;
+          }
+          col = sum / wsum;
+        }
+      }
       float ao = mix(1.0, texture2D(tAO, vUv).r, aoAmt);
-      vec3 col = c.rgb * ao;
+      col *= ao;
+      if (bloom > 0.0) col += (texture2D(tBloomA, vUv).rgb * 0.6 + texture2D(tBloomB, vUv).rgb * 0.8) * bloom;
+      col *= expo;
       float lum = dot(col, vec3(0.2126, 0.7152, 0.0722)); col = max(mix(vec3(lum), col, sat), 0.0);
-      // 살짝 대비 올리고 가장자리 아주 약하게 어둡게
-      vec2 q = vUv - 0.5; col *= 1.0 - dot(q, q) * 0.16;
+      if (contrast != 0.0 || warm != 0.0) {
+        vec3 g = sqrt(min(col, 1.0));                            // 대략 감마 공간에서 S자 대비
+        g = mix(g, g * g * (3.0 - 2.0 * g), contrast);
+        col = g * g * vec3(1.0 + warm * 0.07, 1.0 + warm * 0.012, 1.0 - warm * 0.085);
+      }
+      vec2 q = vUv - 0.5; col *= 1.0 - dot(q, q) * vig;
+      if (grain > 0.0) col += (hash(gl_FragCoord.xy + seed * 91.7) - 0.5) * grain * (0.35 + 0.65 * sqrt(max(col.g, 0.0)));
       if (debug > 0.5) col = vec3(ao);
       gl_FragColor = vec4(col, 1.0);
       #include <encodings_fragment>
-    }`, { tColor: { value: null }, tAO: { value: null }, aoAmt: { value: 1 }, sat: { value: 1.14 }, debug: { value: QS.get('ao') ? 1 : 0 } });
-  let rt = null, ao1 = null, ao2 = null, ok = true, checked = false;
-  function dispose() { [rt, ao1, ao2].forEach(t => t && t.dispose()); if (rt && rt.depthTexture) rt.depthTexture.dispose(); rt = ao1 = ao2 = null; }
+    }`, { tColor: { value: null }, tAO: { value: null }, tBloomA: { value: null }, tBloomB: { value: null }, tDepth: { value: null }, projInv: { value: new THREE.Matrix4() }, near: { value: 0.05 }, far: { value: 260 },
+    aoAmt: { value: 1 }, sat: { value: 1.14 }, vig: { value: 0.16 }, bloom: { value: 0 }, expo: { value: 1 }, contrast: { value: 0 }, warm: { value: 0 }, grain: { value: 0 }, seed: { value: 0 },
+    dof: { value: 0 }, focus: { value: 3 }, px: { value: new V2() }, debug: { value: QS.get('ao') ? 1 : 0 } }, { DOF_N: 12 });
+  let rt = null, ao1 = null, ao2 = null, bl = null, ok = true, checked = false, frameNo = 0;
+  function dispose() { [rt, ao1, ao2].concat(bl || []).forEach(t => t && t.dispose()); if (rt && rt.depthTexture) rt.depthTexture.dispose(); rt = ao1 = ao2 = bl = null; }
   function setSize(w, h) {
     dispose();
     if (!tier.post || !ok) return;
@@ -144,9 +191,20 @@ const post = (function () {
     ao1 = new THREE.WebGLRenderTarget(aw, ah, o); ao2 = new THREE.WebGLRenderTarget(aw, ah, o);
     aoMat.uniforms.res.value.set(aw, ah);
     if (aoMat.defines.NS !== tier.aoN) { aoMat.defines.NS = tier.aoN; aoMat.needsUpdate = true; }
+    const dn = tier.aoScale >= 1 ? 12 : 8; if (outMat.defines.DOF_N !== dn) { outMat.defines.DOF_N = dn; outMat.needsUpdate = true; }
     checked = false;
   }
+  function bloomTargets() {               // 빛 번짐은 영상에서만 쓰므로 처음 쓸 때 만든다 (1/4 · 1/8 크기)
+    const mkT = d => { const t = new THREE.WebGLRenderTarget(Math.max(2, Math.round(rt.width / d)), Math.max(2, Math.round(rt.height / d)), { depthBuffer: false, stencilBuffer: false, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, generateMipmaps: false }); t.texture.encoding = THREE.sRGBEncoding; return t; };
+    bl = [mkT(4), mkT(4), mkT(8), mkT(8)];
+  }
   function pass(mat, target) { quad.material = mat; renderer.setRenderTarget(target); renderer.render(quadScene, quadCam); }
+  function gauss(src, tmp, n) {           // src ↔ tmp 가로·세로 번갈아 n번, 결과는 src
+    for (let i = 0; i < n; i++) {
+      gaussMat.uniforms.tSrc.value = src.texture; gaussMat.uniforms.dir.value.set((1 + i) / src.width, 0); pass(gaussMat, tmp);
+      gaussMat.uniforms.tSrc.value = tmp.texture; gaussMat.uniforms.dir.value.set(0, (1 + i) / src.height); pass(gaussMat, src);
+    }
+  }
   function render(sc, cam, aoAmt) {
     if (!tier.post || !ok || !rt) { renderer.setRenderTarget(null); renderer.render(sc, cam); return; }
     renderer.setRenderTarget(rt); renderer.render(sc, cam);
@@ -159,12 +217,24 @@ const post = (function () {
     }
     const pi = aoMat.uniforms.projInv.value.copy(cam.projectionMatrixInverse);
     blurMat.uniforms.projInv.value.copy(pi);
-    [aoMat, blurMat].forEach(m => { m.uniforms.tDepth.value = rt.depthTexture; m.uniforms.near.value = cam.near; m.uniforms.far.value = cam.far; });
+    [aoMat, blurMat, outMat].forEach(m => { m.uniforms.tDepth.value = rt.depthTexture; m.uniforms.near.value = cam.near; m.uniforms.far.value = cam.far; });
     aoMat.uniforms.projScale.value = ao1.height / (2 * Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2));
     pass(aoMat, ao1);
     blurMat.uniforms.tAO.value = ao1.texture; blurMat.uniforms.dir.value.set(1 / ao1.width, 0); blurMat.uniforms.pdir.value.set(1, 0); pass(blurMat, ao2);
     blurMat.uniforms.tAO.value = ao2.texture; blurMat.uniforms.dir.value.set(0, 1 / ao1.height); blurMat.uniforms.pdir.value.set(0, 1); pass(blurMat, ao1);
-    outMat.uniforms.tColor.value = rt.texture; outMat.uniforms.tAO.value = ao1.texture; outMat.uniforms.aoAmt.value = aoAmt;
+    const U = outMat.uniforms;
+    if (fx.bloom > 0) {
+      if (!bl) bloomTargets();
+      brightMat.uniforms.tColor.value = rt.texture; brightMat.uniforms.px.value.set(1 / rt.width, 1 / rt.height); brightMat.uniforms.thr.value = fx.thr; pass(brightMat, bl[0]);
+      gauss(bl[0], bl[1], 2);
+      gaussMat.uniforms.tSrc.value = bl[0].texture; gaussMat.uniforms.dir.value.set(0, 0); pass(gaussMat, bl[2]);
+      gauss(bl[2], bl[3], 3);
+      U.tBloomA.value = bl[0].texture; U.tBloomB.value = bl[2].texture;
+    }
+    U.tColor.value = rt.texture; U.tAO.value = ao1.texture; U.aoAmt.value = aoAmt;
+    U.bloom.value = fx.bloom; U.expo.value = fx.expo; U.contrast.value = fx.contrast; U.warm.value = fx.warm; U.sat.value = fx.sat; U.vig.value = fx.vig;
+    U.grain.value = fx.grain; U.seed.value = (frameNo = (frameNo + 1) % 64);
+    U.dof.value = fx.dof * rt.height; U.focus.value = fx.focus; U.px.value.set(1 / rt.width, 1 / rt.height);
     pass(outMat, null);
   }
   return { setSize, render, get active() { return !!(tier.post && ok && rt); } };
