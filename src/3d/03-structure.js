@@ -140,7 +140,8 @@ function buildStructure(cut) {
   });
   // 주방 벽 타일 88015: 메인 카운터 뒤 상판~상부장, 반대편 카운터 뒤 상판~천장 (가정)
   if (top > 85) {
-    trim.boxC(MAT.ktile, 545, 797, 85, Math.min(150, top), 225, 225.8, { cast: false });
+    const kc = H.furniture.find(f => f.id === 'counter-main').poly;
+    trim.boxC(MAT.ktile, kc[0][0], kc[1][0], 85, Math.min(150, top), 225, 225.8, { cast: false });
 
   }
   const wg = walls.build(structure, { kind: 'wall' }); wg.userData.structural = true;
