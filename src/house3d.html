@@ -171,6 +171,18 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 @keyframes spin{to{transform:rotate(360deg)}}
 #fatal{position:fixed;inset:0;z-index:30;background:var(--bg);display:none;align-items:center;justify-content:center;padding:30px;text-align:center;font-size:14px;line-height:1.6}
 
+/* ---------- 실사 렌더 (실험, 10-real.js) ---------- */
+.realbtn{width:100%;height:48px;border-radius:13px;background:var(--ink);color:#fff;font-size:14px;font-weight:800}
+.realbtn:active{transform:scale(.98)}
+body.real #top,body.real #dock{opacity:0;visibility:hidden}
+body.real #card,body.real #measBar,body.real #toast,body.real #mapWrap,body.real #labels,body.real #reticle{display:none!important}
+#real{position:fixed;inset:0;z-index:14;display:none;pointer-events:none}
+#real.on{display:block}
+.r-pill{position:absolute;left:50%;bottom:calc(var(--sab) + 18px);transform:translateX(-50%);pointer-events:auto;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 20px);padding:8px 8px 8px 14px;border-radius:18px;background:rgba(22,18,12,.62);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#fff;font-size:13px;font-weight:800;line-height:1.3}
+.r-pill i{width:9px;height:9px;border-radius:50%;background:#e7743a;flex:none;animation:pbPulse 1.6s infinite}
+.r-pill small{display:block;font-size:11px;font-weight:600;opacity:.78;margin-top:1px}
+.r-pill button{flex:none;height:40px;padding:0 14px;border-radius:12px;background:rgba(255,255,255,.16);font-size:13px;font-weight:800}
+
 /* ---------- 집 소개 영상 (08-film.js) ---------- */
 #top,#dock{transition:opacity .35s,visibility 0s}
 body.film #top,body.film #dock{opacity:0;visibility:hidden;transition:opacity .35s,visibility 0s .35s}
@@ -417,6 +429,10 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
       <div class="seg" id="qualMode"><button data-q="auto" class="on">자동</button><button data-q="low">낮음</button><button data-q="mid">보통</button><button data-q="high">높음</button></div>
       <div class="hintline" id="qualNote">자동: 기기 속도에 맞춰 그림자·음영 품질을 조절해요.</div>
     </div>
+    <div class="sec"><h4>실사 렌더 (실험)</h4>
+      <button id="oReal" class="realbtn">지금 보는 장면을 실사로 그리기</button>
+      <div class="hintline">빛이 창으로 들어와 벽·바닥에 튀는 것을 실제로 계산해서 사진처럼 그려요. 카메라는 고정되고, 오래 둘수록 깨끗해져요. 낮 조명 전용 · 기기에 따라 느리거나 안 될 수 있어요.</div>
+    </div>
     <div class="sec"><h4>조작법</h4>
       <div class="hintline" style="margin-top:0">
         <b>전체·평면</b> — 한 손가락 드래그: 돌리기 · 두 손가락: 확대/이동 · 방 바닥 탭: 그 방 이름과 들어가기 버튼<br>
@@ -451,6 +467,8 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
   </div>
 </div>
 
+<div id="real"><div class="r-pill"><i></i><span id="realMsg"></span><button id="realClose" aria-label="실사 렌더 끝내기">끝내기</button></div></div>
+
 <div id="loading"><i></i>집을 짓는 중…</div>
 <div id="fatal"></div>
 
@@ -459,6 +477,10 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 <script>/*ORBIT*/</script>
 <script>/*ROOMENV*/</script>
 <script>/*ROUNDED*/</script>
+<script>/*BGU*/</script>
+<script>/*PASS*/</script>
+<script>/*BVH*/</script>
+<script>/*PT*/</script>
 <script>/*DATA*/</script>
 <script>/*APP*/</script>
 </body>

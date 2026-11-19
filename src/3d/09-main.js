@@ -16,6 +16,7 @@ const perf = {
 let lastNow = performance.now(), firstFrame = true;
 function frame(now) {
   requestAnimationFrame(frame);
+  if (real.on) { lastNow = now; realStep(now); return; }               // 실사 렌더 중에는 카메라 고정, 경로 추적만
   const dt = Math.min(0.05, (now - lastNow) / 1000); lastNow = now;
   const moving = film.on ? filmStep(now) : stepNav(now, dt);
   let doorMoving = false;

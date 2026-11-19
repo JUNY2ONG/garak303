@@ -36,13 +36,15 @@ parts = sorted(p.relative_to(root).as_posix() for p in (root / "src/3d").glob("*
 app = "(function () {\n'use strict';\n" + "\n".join(js(p) for p in parts) + "\n})();\n"
 bundle = "\n".join(
     [plain("HANDOFF.md", ' id="handoff"')]
-    + [plain(p) for p in ["build.py", "extract.py", "shot3d.py", "shotplan.py", "src/house3d.html", "src/plan.html", "src/plan.js", "vendor/LICENSE-three.txt"]]
+    + [plain(p) for p in ["build.py", "extract.py", "shot3d.py", "shotplan.py", "src/house3d.html", "src/plan.html", "src/plan.js", "vendor/LICENSE-three.txt", "vendor/LICENSE-pathtracer.txt"]]
 )
 out3 = (rd("src/house3d.html")
         .replace("/*THREE*/", js("vendor/three.min.js"))
         .replace("/*ORBIT*/", js("vendor/OrbitControls.js"))
         .replace("/*ROOMENV*/", js("vendor/RoomEnvironment.js"))
         .replace("/*ROUNDED*/", js("vendor/RoundedBoxGeometry.js"))
+        .replace("/*BGU*/", js("vendor/BufferGeometryUtils.js")).replace("/*PASS*/", js("vendor/Pass.js"))
+        .replace("/*BVH*/", js("vendor/three-mesh-bvh.umd.js")).replace("/*PT*/", js("vendor/three-gpu-pathtracer.umd.js"))
         .replace("/*DATA*/", data).replace("/*APP*/", app)
         .replace("<!--BUNDLE-->", bundle))     # 묶음은 맨 마지막에 (그 안의 자리표시가 바뀌지 않게)
 (root / "out/house-3d.html").write_text(out3, encoding="utf-8")
