@@ -111,11 +111,13 @@ const TS = tierName === 'low' ? 512 : 1024;
   TEX.entry = texOf(entryC, 1.2, 1.2, true); TEX.entryB = texOf(entryB, 1.2, 1.2);
 
   // 벽지: LX 베스띠 디아 회벽 / 블랑 그레이 — 한 장 = 1m
+  // 색은 사용자가 준 LX지인 견본 이미지(평균 RGB 233·229·222의 따뜻한 아이보리)를 따름. 얼룩은 은은하게 + 아주 약한 세로 결
   const wallC = canvasOf(TS, TS, (g, W, Hh) => {
-    const r = rng(5); g.fillStyle = '#f4f2ed'; g.fillRect(0, 0, W, Hh);
-    clouds(g, W, Hh, r, 70, '255,255,252', 0.07); clouds(g, W, Hh, r, 50, '205,198,186', 0.045);
-    clouds(g, W, Hh, r, 500, '200,193,182', 0.05, 0.004, 0.018); clouds(g, W, Hh, r, 500, '255,255,253', 0.08, 0.004, 0.018);
-    speckle(g, W, Hh, r, W * 40, ['rgba(186,178,166,0.16)', 'rgba(255,255,255,0.3)'], W / 1100);
+    const r = rng(5); g.fillStyle = '#ece6da'; g.fillRect(0, 0, W, Hh);
+    clouds(g, W, Hh, r, 60, '250,246,238', 0.05); clouds(g, W, Hh, r, 44, '214,205,190', 0.035);
+    clouds(g, W, Hh, r, 420, '212,203,188', 0.035, 0.004, 0.018); clouds(g, W, Hh, r, 420, '252,249,242', 0.05, 0.004, 0.018);
+    for (let i = 0; i < 90; i++) { const x = r() * W, w = 1 + r() * 3; g.fillStyle = r() < 0.5 ? 'rgba(255,252,244,0.05)' : 'rgba(198,188,170,0.04)'; g.fillRect(x, 0, w, Hh); }
+    speckle(g, W, Hh, r, W * 30, ['rgba(196,186,170,0.12)', 'rgba(255,253,246,0.22)'], W / 1100);
   });
   TEX.wall = texOf(wallC, 1.0, 1.0, true); TEX.wallB = texOf(bumpFrom(wallC, 3.2), 1.0, 1.0);
 
@@ -210,7 +212,7 @@ const MAT = {
   top: M(0xffffff, { map: TEX.top, roughness: 0.3, envMapIntensity: 1.0 }),                          // 갤럭시 어반 화이트
   // 구조
   cut: M(0x55524c, { roughness: 0.9, envMapIntensity: 0.2 }),          // 벽 자른 면
-  ceiling: M(0xfaf9f6, { roughness: 0.97, envMapIntensity: 0.6 }),
+  ceiling: M(0xffffff, { map: TEX.wall, bumpMap: TEX.wallB, bumpScale: 0.0012, roughness: 0.96, envMapIntensity: 0.6 }),       // 천장도 벽과 같은 벽지 (사용자 요청)
   slab: M(0xcfc9be, { roughness: 0.9 }),
   frame: M(0xf7f7f5, { roughness: 0.42 }),                              // 창호·중문 프레임 (흰색)
   frameDark: M(0xb9bcbe, { roughness: 0.4, metalness: 0.4 }),

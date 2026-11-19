@@ -172,7 +172,7 @@ const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), new THREE.ShadowM
 ground.rotation.x = -Math.PI / 2; ground.position.set(5, -0.125, 3.5); ground.receiveShadow = true; scene.add(ground);
 // 창으로 들어오는 하늘빛 (낮, 방 안) — 그림자 없는 보조광
 const fillDefs = [[70, 177, 1.0], [185, 505, 0.7], [925, 108, 0.75], [962, 362, 0.8], [822, 554, 0.5]];
-const fills = fillDefs.map(([x, y, k]) => { const l = new THREE.PointLight(0xe4eeff, 0, 6.5, 1.6); l.position.set(CM(x), 1.45, CM(y)); l.userData.k = k; l.visible = false; scene.add(l); return l; });
+const fills = fillDefs.map(([x, y, k]) => { const l = new THREE.PointLight(0xfff3e4, 0, 6.5, 1.6); l.position.set(CM(x), 1.45, CM(y)); l.userData.k = k; l.visible = false; scene.add(l); return l; });
 // 실내등 (저녁) — 방마다 하나씩
 const lampDefs = [[280, 180, 1.15], [760, 345, 1.0], [510, 300, 0.7], [276, 525, 0.9], [790, 108, 0.9], [740, 590, 0.75], [483, 50, 0.55], [513, 590, 0.55], [958, 590, 0.45]];
 const lamps = lampDefs.map(([x, y, k]) => { const l = new THREE.PointLight(0xffe0b4, 0, 6, 1.5); l.position.set(CM(x), 2.12, CM(y)); l.userData.k = k; l.visible = false; scene.add(l); return l; });
