@@ -137,6 +137,18 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 .tog button.on{color:var(--ink)}
 .tog button.on::after{background-color:var(--acc);box-shadow:inset 0 0 0 2px var(--acc);background-image:radial-gradient(circle at 24px 10px,#fff 7.5px,transparent 8px)}
 .hintline{font-size:12px;color:var(--mute);line-height:1.5;margin-top:8px}
+.sl{display:flex;align-items:center;gap:10px;height:46px;font-size:13.5px;font-weight:700;color:var(--ink2)}
+.sl span{flex:none;width:44px}
+.sl b{flex:none;width:98px;text-align:right;font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.sl input{flex:1;min-width:0;height:30px;margin:0;-webkit-appearance:none;appearance:none;background:none;touch-action:pan-y}
+.sl input::-webkit-slider-runnable-track{height:8px;border-radius:4px;background:linear-gradient(90deg,#55524c,#f4efe6)}
+.sl input.temp::-webkit-slider-runnable-track{background:linear-gradient(90deg,#ffb46b,#fff1dc 45%,#eaf2ff)}
+.sl input::-moz-range-track{height:8px;border-radius:4px;background:linear-gradient(90deg,#55524c,#f4efe6)}
+.sl input.temp::-moz-range-track{background:linear-gradient(90deg,#ffb46b,#fff1dc 45%,#eaf2ff)}
+.sl input::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-9px;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(40,30,15,.35),0 0 0 1px rgba(40,30,15,.12)}
+.sl input::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(40,30,15,.35),0 0 0 1px rgba(40,30,15,.12)}
+.chips3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px}
+.chips3 button{height:40px;border-radius:11px;background:#f1eee8;font-size:12px;font-weight:700;color:var(--ink2);letter-spacing:-.02em}
 .memo h4{margin:16px 0 6px;font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:6px}
 .memo ul{margin:0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--ink2)}
 .memo li{margin:2px 0}
@@ -416,6 +428,12 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
     <div class="sec"><h4>조명</h4>
       <div class="seg" id="lightMode"><button data-l="day" class="on">낮 (햇빛)</button><button data-l="night">저녁 (실내등)</button></div>
     </div>
+    <div class="sec"><h4>다운라이트 (3인치 31개) · 옷방 중앙등</h4>
+      <label class="sl"><span>밝기</span><input type="range" id="dlBright" min="0" max="100" step="5" value="80"><b id="dlBrightV">80%</b></label>
+      <label class="sl"><span>색온도</span><input type="range" id="dlTemp" min="2700" max="6500" step="100" value="3500" class="temp"><b id="dlTempV">3500K</b></label>
+      <div class="chips3"><button data-dlk="3000">전구색 3000K</button><button data-dlk="4000">주백색 4000K</button><button data-dlk="5700">주광색 5700K</button></div>
+      <div class="hintline">저녁 조명에서 켜져요. 조절하면 자동으로 저녁 조명으로 바뀌어요.</div>
+    </div>
     <div class="sec"><h4>화질</h4>
       <div class="seg" id="qualMode"><button data-q="auto" class="on">자동</button><button data-q="low">낮음</button><button data-q="mid">보통</button><button data-q="high">높음</button></div>
       <div class="hintline" id="qualNote">자동: 기기 속도에 맞춰 그림자·음영 품질을 조절해요.</div>
@@ -458,7 +476,7 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
 <div id="fatal"></div>
 
 <script type="text/plain" data-file="HANDOFF.md" id="handoff">
-# 우리집 3D 도면 — 작업 인계 문서 (16차까지 반영)
+# 우리집 3D 도면 — 작업 인계 문서 (17차까지 반영)
 
 이 문서는 `house-3d.html` 안에 들어 있다. **이 HTML 파일 하나만 있으면** 소스 전부를 꺼내 수정하고 다시 빌드할 수 있다. (`house-plan.html`은 같은 소스에서 함께 만들어지므로 따로 들고 다닐 필요 없음.)
 
@@ -592,8 +610,13 @@ LG 워시콤보 FC2521UX6CX (700 × 990 × 885).
 - **공개 주소**: https://garak303.vercel.app (Vercel 프로젝트 `woorijip-3d`, 사용자 계정). `out/house-3d.html` → `index.html`, `out/house-plan.html` → `plan.html`로 복사하고 아래 `vercel.json`과 함께 `vercel deploy --prod`로 올림(저장소 자동 연결 아님, 올릴 때마다 사용자가 `vercel login` 기기 인증). 실사 렌더(경로 추적) 시험은 사용자 요청으로 제외함 — 다시 넣지 말 것.
   `vercel.json`: `{"headers":[{"source":"/(.*)","headers":[{"key":"X-Robots-Tag","value":"noindex, nofollow"}]}],"redirects":[{"source":"/film","destination":"/?film=1","permanent":false}]}`
 
+### 조명 (17차)
+- **3인치 다운라이트 31개**: 사용자가 평면 캡처에 표시한 자리(`house-data.js`의 `lightGroups` — 거실 10 · 서재 8 · 주방 7 · 복도 1 · 침실 3 · 욕실 2). 표시를 좌표로 옮긴 값이라 ±10cm 오차, 줄·간격만 가지런히 맞춤. **옷방은 다운라이트가 아니라 일반 중앙등**(`ceilingLamps`, 사용자 확인. 모양은 가정).
+- **밝기 · 색온도 조절** (사용자 요청): 보기 옵션의 슬라이더 → 전역 `dl = { b: 0~1, k: 2700~6500 }` (`05-env.js`), `applyRig()`가 저녁 실내등 색·세기와 다운라이트 면 색에 반영. 조절하면 자동으로 저녁 조명으로 바뀜. 값은 localStorage `house3d.dl`에 저장.
+- 실제 빛 계산은 묶음(`lightGroups`의 한 줄)마다 점광원 하나로 근사 + 옷방 중앙등 + 표시가 없던 현관·세탁실 기본등(가정). 색온도는 근사식(`kelvinRGB`)에 눈의 적응을 감안해 흰색 쪽으로 절반 당김.
+
 ## 5. 가정 (메모 패널에도 표시 — H.memo가 최신)
-욕실 폭 150, 오른쪽 발코니 폭 120, 현관 약 100 × 105, 벽 두께(외벽 20 · 내벽 10), 문 높이 210, 문짝 폭, 발코니 바깥 창 3곳, 세탁실 문 위치, 협탁 크기, 침대 크기 2200 × 2000, 주방 타일 범위(메인 카운터 뒤 상판~상부장), TV 높이(화면 아래 75), 중문 열림 방향, 메인 카운터 왼쪽 끝 뒤 가벽(두께 4), 주방 수전 모양, 냉장고장 옆판 2 · 화이트, 키큰장 오픈 칸 90~135, 욕실 기구 크기, 테이블 위치(소파에서 48), 사이드 테이블 디자인, 러그 220 × 160, 속커튼, 리클라이너·모션베드 펼친 각도, 소파 좌석 2분할, 서재 가구 크기 전부, 서재 창 아래 라디에이터·배관 없음, TV 스탠드 크기, PVC 문 프레임 폭, 모루 유리 골 간격, 창밖 풍경(연출), 다운라이트 위치.
+욕실 폭 150, 오른쪽 발코니 폭 120, 현관 약 100 × 105, 벽 두께(외벽 20 · 내벽 10), 문 높이 210, 문짝 폭, 발코니 바깥 창 3곳, 세탁실 문 위치, 협탁 크기, 침대 크기 2200 × 2000, 주방 타일 범위(메인 카운터 뒤 상판~상부장), TV 높이(화면 아래 75), 중문 열림 방향, 메인 카운터 왼쪽 끝 뒤 가벽(두께 4), 주방 수전 모양, 냉장고장 옆판 2 · 화이트, 키큰장 오픈 칸 90~135, 욕실 기구 크기, 테이블 위치(소파에서 48), 사이드 테이블 디자인, 러그 220 × 160, 속커튼, 리클라이너·모션베드 펼친 각도, 소파 좌석 2분할, 서재 가구 크기 전부, 서재 창 아래 라디에이터·배관 없음, TV 스탠드 크기, PVC 문 프레임 폭, 모루 유리 골 간격, 창밖 풍경(연출), 다운라이트는 17차에 사용자 표시 자리로 확정(옷방 중앙등 모양만 가정).
 
 ## 6. 주의 (UI 경고로 유지)
 - 옷방 서랍장(850)이 창턱(약 780)보다 7cm 높아 창 아래를 가림.
@@ -620,7 +643,7 @@ LG 워시콤보 FC2521UX6CX (700 × 990 × 885).
 - 검증: `window.__house.film.seek(초, true)` → 그 시각에서 멈춘 화면(글자 애니메이션도 그 시각 상태). 장면 시작 시각: 오프닝 0 / 현관 14 / 거실 21.5 / 주방 31 / 서재 39.5 / 옷방 48 / 마감재 55.5 / 침실 63.5 / 엔딩 72.5. `window.__house.fx`로 효과 값을 직접 바꿔 볼 수 있다.
 
 ## 8. 작업 이력
-1차 v2 전체 재작성(사용성·그래픽) → 2차 평면도 개선 → 3차 주방 깊이·냉장고장·키큰장·욕실 배치·소파/침대 디테일·테이블·서재안·화장대 → 4차 발코니 문 2곳(PVC, 모루/백사틴) → 5차 침실 TV 스탠드, 서재안 새로 → 6차 시트 동작, 소파 재제작, 주방 표준 모듈, 러그·협탁·커튼 → 7차 TV 스탠드를 화장대와 방문 사이로, 이 인계 문서 내장 → 8차 이름표 기본 꺼짐, 서재 A안 창 아래 장 → 9차 A안 책상·장 간섭 정리 → 10차 집 소개 영상 추가, 벽 전개도 제거, 메모를 '우리집 3D' 칸에 통합 → 11차 영상 품질 개편(후처리에 빛 번짐·초점 흐림·색보정·입자, 벽 물결 올리기 셰이더, 세로 화면 구도, 위치 지도, 마감재 장면, 영상 코드를 4개 파일로 분리) → 12차 영상의 서재는 A안만 → 16차 벽지 색을 사용자가 준 LX지인 견본 이미지(평균 RGB 233·229·222, 따뜻한 아이보리)에 맞춤(`01-textures.js` wallC 바탕 #ece6da, 얼룩 은은하게 + 약한 세로 결), **천장도 같은 벽지**(사용자 요청, `MAT.ceiling`), 실내 보조광 색을 따뜻하게(0xfff3e4) → 15차 벽지가 실제보다 어둡다는 지적으로 실내 주변광(`applyRig` 낮·실내 hemi 0.3 / env 0.6, 보조광 0.92, AO 0.82)과 벽지 바탕색(#f4f2ed)을 밝게 — 벽지 색은 견본 사진 없이 이름으로 짐작한 근사임 → 14차 거실 창을 벽 없이 전체 창으로, 전동 커튼(거실 2중 · 침실 겉지), 창밖 풍경을 현장 사진 기준으로 다시 그림, 영상 바로가기(?film=1), Vercel 공개 → 13차 가구 업체 실측 메모 반영(주방 상하부장·냉장고장·키큰장·신발장·앞 베란다 장 치수, 주방 베란다 장 추가, 인덕션을 후드 아래로, 식기세척기 위치 추정).
+1차 v2 전체 재작성(사용성·그래픽) → 2차 평면도 개선 → 3차 주방 깊이·냉장고장·키큰장·욕실 배치·소파/침대 디테일·테이블·서재안·화장대 → 4차 발코니 문 2곳(PVC, 모루/백사틴) → 5차 침실 TV 스탠드, 서재안 새로 → 6차 시트 동작, 소파 재제작, 주방 표준 모듈, 러그·협탁·커튼 → 7차 TV 스탠드를 화장대와 방문 사이로, 이 인계 문서 내장 → 8차 이름표 기본 꺼짐, 서재 A안 창 아래 장 → 9차 A안 책상·장 간섭 정리 → 10차 집 소개 영상 추가, 벽 전개도 제거, 메모를 '우리집 3D' 칸에 통합 → 11차 영상 품질 개편(후처리에 빛 번짐·초점 흐림·색보정·입자, 벽 물결 올리기 셰이더, 세로 화면 구도, 위치 지도, 마감재 장면, 영상 코드를 4개 파일로 분리) → 12차 영상의 서재는 A안만 → 17차 3인치 다운라이트 31개를 사용자가 표시한 자리에, 옷방 중앙등, 밝기·색온도 조절 → 16차 벽지 색을 사용자가 준 LX지인 견본 이미지(평균 RGB 233·229·222, 따뜻한 아이보리)에 맞춤(`01-textures.js` wallC 바탕 #ece6da, 얼룩 은은하게 + 약한 세로 결), **천장도 같은 벽지**(사용자 요청, `MAT.ceiling`), 실내 보조광 색을 따뜻하게(0xfff3e4) → 15차 벽지가 실제보다 어둡다는 지적으로 실내 주변광(`applyRig` 낮·실내 hemi 0.3 / env 0.6, 보조광 0.92, AO 0.82)과 벽지 바탕색(#f4f2ed)을 밝게 — 벽지 색은 견본 사진 없이 이름으로 짐작한 근사임 → 14차 거실 창을 벽 없이 전체 창으로, 전동 커튼(거실 2중 · 침실 겉지), 창밖 풍경을 현장 사진 기준으로 다시 그림, 영상 바로가기(?film=1), Vercel 공개 → 13차 가구 업체 실측 메모 반영(주방 상하부장·냉장고장·키큰장·신발장·앞 베란다 장 치수, 주방 베란다 장 추가, 인덕션을 후드 아래로, 식기세척기 위치 추정).
 
 ## 9. 남은 한계
 실제 휴대폰에서 성능 미검증(헤드리스 소프트웨어 렌더러로만 확인 — 소개 영상도 마찬가지, 영상의 빛 번짐·초점 흐림은 기기에 따라 무거울 수 있고 느리면 자동 화질이 한 단계 낮춤) · 소개 영상에 소리 없음 · 실시간 근사 조명(간접광 없음, 보조광은 벽을 조금 통과, 스탠드·무드등은 빛나 보이기만 함) · 가까운 얇은 부재의 음영 얼룩 · 텍스처는 캔버스로 그린 근사 · 모루 유리는 굴절 없이 골 반사만 · 거리 재기에 스냅 없음 · 욕실/발코니/세탁실은 참고 수준.
@@ -915,6 +938,18 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 .tog button.on{color:var(--ink)}
 .tog button.on::after{background-color:var(--acc);box-shadow:inset 0 0 0 2px var(--acc);background-image:radial-gradient(circle at 24px 10px,#fff 7.5px,transparent 8px)}
 .hintline{font-size:12px;color:var(--mute);line-height:1.5;margin-top:8px}
+.sl{display:flex;align-items:center;gap:10px;height:46px;font-size:13.5px;font-weight:700;color:var(--ink2)}
+.sl span{flex:none;width:44px}
+.sl b{flex:none;width:98px;text-align:right;font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.sl input{flex:1;min-width:0;height:30px;margin:0;-webkit-appearance:none;appearance:none;background:none;touch-action:pan-y}
+.sl input::-webkit-slider-runnable-track{height:8px;border-radius:4px;background:linear-gradient(90deg,#55524c,#f4efe6)}
+.sl input.temp::-webkit-slider-runnable-track{background:linear-gradient(90deg,#ffb46b,#fff1dc 45%,#eaf2ff)}
+.sl input::-moz-range-track{height:8px;border-radius:4px;background:linear-gradient(90deg,#55524c,#f4efe6)}
+.sl input.temp::-moz-range-track{background:linear-gradient(90deg,#ffb46b,#fff1dc 45%,#eaf2ff)}
+.sl input::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-9px;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(40,30,15,.35),0 0 0 1px rgba(40,30,15,.12)}
+.sl input::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(40,30,15,.35),0 0 0 1px rgba(40,30,15,.12)}
+.chips3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px}
+.chips3 button{height:40px;border-radius:11px;background:#f1eee8;font-size:12px;font-weight:700;color:var(--ink2);letter-spacing:-.02em}
 .memo h4{margin:16px 0 6px;font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:6px}
 .memo ul{margin:0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--ink2)}
 .memo li{margin:2px 0}
@@ -1193,6 +1228,12 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
     </div>
     <div class="sec"><h4>조명</h4>
       <div class="seg" id="lightMode"><button data-l="day" class="on">낮 (햇빛)</button><button data-l="night">저녁 (실내등)</button></div>
+    </div>
+    <div class="sec"><h4>다운라이트 (3인치 31개) · 옷방 중앙등</h4>
+      <label class="sl"><span>밝기</span><input type="range" id="dlBright" min="0" max="100" step="5" value="80"><b id="dlBrightV">80%</b></label>
+      <label class="sl"><span>색온도</span><input type="range" id="dlTemp" min="2700" max="6500" step="100" value="3500" class="temp"><b id="dlTempV">3500K</b></label>
+      <div class="chips3"><button data-dlk="3000">전구색 3000K</button><button data-dlk="4000">주백색 4000K</button><button data-dlk="5700">주광색 5700K</button></div>
+      <div class="hintline">저녁 조명에서 켜져요. 조절하면 자동으로 저녁 조명으로 바뀌어요.</div>
     </div>
     <div class="sec"><h4>화질</h4>
       <div class="seg" id="qualMode"><button data-q="auto" class="on">자동</button><button data-q="low">낮음</button><button data-q="mid">보통</button><button data-q="high">높음</button></div>
@@ -3345,7 +3386,19 @@ window.HOUSE = (function () {
   ];
 
   // 천장 다운라이트 위치 (추정, 연출용)
-  const lights = [[230, 110], [330, 110], [230, 250], [330, 250], [700, 340], [820, 340], [276, 450], [276, 600], [760, 110], [880, 110], [740, 590], [513, 590], [483, 50], [960, 350], [510, 300]];
+  // 3인치 다운라이트 (16차): 사용자가 평면 캡처에 표시한 자리를 좌표로 옮김 (±10cm쯤 오차, 줄 · 간격은 가지런히 맞춤). 묶음(pts)마다 저녁 조명의 광원 하나
+  const lightGroups = [
+    { room: 'living', pts: [[50, 75], [162, 75], [198, 75]] }, { room: 'living', pts: [[332, 75], [368, 75]] },
+    { room: 'living', pts: [[45, 280], [170, 280], [206, 280]] }, { room: 'living', pts: [[338, 280], [374, 280]] },
+    { room: 'study', pts: [[686, 44], [726, 44], [692, 148], [732, 148]] }, { room: 'study', pts: [[864, 44], [904, 44], [866, 148], [906, 148]] },
+    { room: 'kitchen', pts: [[620, 310], [758, 310], [624, 392]] }, { room: 'kitchen', pts: [[889, 310], [994, 310], [769, 388], [892, 388]] },
+    { room: 'hall', pts: [[514, 406]] },
+    { room: 'bed', pts: [[173, 430], [389, 422], [402, 528]] },
+    { room: 'bath', pts: [[562, 530], [562, 622]] },
+  ];
+  const lights = lightGroups.flatMap(g => g.pts);
+  // 옷방은 다운라이트가 아니라 일반 중앙등 (사용자 확인). 모양 · 크기는 가정 (지름 50 원형)
+  const ceilingLamps = [{ room: 'closet', at: [745, 578], r: 25 }];
 
   // ---------- 배치 제안 (버튼으로 전환) ---------- face: 가구 앞면(사람이 앉는 쪽) 방향
   const at = (x, y, d) => r(x - d, y - d, x + d, y + d);
@@ -3464,13 +3517,19 @@ window.HOUSE = (function () {
     { title: '이번 버전에서 새로 정한 것', kind: 'new', items: [
       '창밖 풍경은 보내 준 사진 2장을 참고해 그린 그림이에요 (14차). 거실 · 침실 쪽(왼쪽)은 단풍 든 산과 흰 아파트 단지 · 붉은 벽돌 학교, 세탁실 · 주방 · 서재 쪽(오른쪽)은 붉은 단풍 숲과 저층 건물, 그리고 세탁실 창에서 오른쪽으로 비껴 보이는 롯데월드타워와 짙은 유리 고층 (주방에서 정면으로는 안 보임). 건물 위치 · 크기는 근사이고 햇빛 방향은 연출용.',
       '거실 전면창 바깥 난간은 거실 사진을 보고 넣었어요 (높이 약 110 가정).',
-      '창호 프레임 모양 · 창짝 개수, 다운라이트 위치와 개수는 가정.',
+      '창호 프레임 모양 · 창짝 개수는 가정. (다운라이트 위치는 17차에 표시해 주신 자리로 바뀜)',
       '침대 헤드보드 (높이 100) · 이불 · 베개 모양, 소파 쿠션 모양과 색은 제품 사진 기준 근사.',
       '주방 수전 (개수대 뒤 가운데)은 목록에 없어 일반 모양으로 가정. 하부장 손잡이 모양도 가정.',
       '냉장고 문 구성 (위 2문 + 아래 서랍 2단)과 가전 색상은 제품 사진 기준 근사.',
       '메인 카운터 왼쪽 끝 뒤 가벽 (두께 4cm).',
       '옷방 시점은 사진 자리가 지금 장 자리라 방문 바로 안쪽으로 옮겼어요.',
       '둘러보기 눈높이는 사진 높이 (147~158), 바닥을 탭해 이동할 때도 그대로 유지돼요.',
+    ] },
+    { title: '조명 (17차)', kind: 'new', items: [
+      '3인치 다운라이트 31개를 평면 캡처에 표시해 주신 자리에 넣었어요: 거실 10 · 서재 8 · 주방 7 · 복도 1 · 침실 3 · 욕실 2. 표시를 좌표로 옮긴 것이라 ±10cm쯤 오차가 있고, 줄과 간격은 가지런히 맞췄어요.',
+      '옷방은 다운라이트가 아니라 일반 중앙등이에요 (지름 50 원형은 가정).',
+      '보기 옵션의 "다운라이트"에서 밝기와 색온도(2700K 전구색 ~ 6500K 주광색)를 바꿀 수 있어요. 저녁 조명에서 켜지고, 조절하면 자동으로 저녁 조명으로 바뀌어요.',
+      '실제 빛 계산은 다운라이트 하나하나가 아니라 묶음(방마다 1~4개)으로 근사해요. 표시가 없던 현관 · 세탁실은 기본등이 있다고 보고 약한 빛만 뒀어요.',
     ] },
     { title: '창 · 커튼 · 창밖 풍경 (14차)', kind: 'new', items: [
       '거실 전면창은 양옆에 벽 없이 확장부 전체 폭(약 355)이 모두 창이에요 (알려 주신 내용). 왼쪽 끝은 발코니 벽이 얇은 이음새(10cm)로만 남고 바로 발코니 창으로 이어져요. 창짝 나눔(넓은 창 + 좁은 창)은 사진 비율 근사.',
@@ -3561,7 +3620,7 @@ window.HOUSE = (function () {
   ];
 
   return { walls, windows, doors, floors, expanded, xboxes, furniture, rooms, dims,
-    products, finishes, spaces, lights, memo, studyPlans, vanitySpots,
+    products, finishes, spaces, lights, lightGroups, ceilingLamps, memo, studyPlans, vanitySpots,
     H: 230, doorH: 210,
     bounds: { x0: -40, y0: -120, x1: 1060, y1: 740 } };
 })();
@@ -4245,10 +4304,15 @@ const ceilG = new THREE.Group(); ceilG.visible = false; world.add(ceilG);
   ceilG.add(m);
   const b = new Batch();
   H.lights.forEach(([x, y]) => {
-    const ring = new THREE.RingGeometry(0.04, 0.055, 28); ring.rotateX(Math.PI / 2); ring.translate(CM(x), CM(CEIL) - 0.002, CM(y));
+    const ring = new THREE.RingGeometry(0.036, 0.046, 28); ring.rotateX(Math.PI / 2); ring.translate(CM(x), CM(CEIL) - 0.002, CM(y));      // 3인치: 타공 약 7.5cm + 테두리
     b.geo(MAT.downlightRing, ring, { cast: false });
-    const disc = new THREE.CircleGeometry(0.04, 28); disc.rotateX(Math.PI / 2); disc.translate(CM(x), CM(CEIL) - 0.0015, CM(y));
+    const disc = new THREE.CircleGeometry(0.036, 28); disc.rotateX(Math.PI / 2); disc.translate(CM(x), CM(CEIL) - 0.0015, CM(y));
     b.geo(MAT.downlight, disc, { cast: false });
+  });
+  H.ceilingLamps.forEach(L => {                       // 일반 중앙등: 납작한 원형 등 (모양 가정)
+    const [x, y] = L.at, r = CM(L.r);
+    b.cyl(MAT.downlightRing, r, r, 0.022, CM(x), CM(CEIL) - 0.011, CM(y), 'y', { seg: 48, cast: false });
+    b.cyl(MAT.downlight, r - 0.012, r - 0.03, 0.05, CM(x), CM(CEIL) - 0.047, CM(y), 'y', { seg: 48, cast: false });
   });
   b.build(ceilG);
 })();
@@ -5225,9 +5289,24 @@ ground.rotation.x = -Math.PI / 2; ground.position.set(5, -0.125, 3.5); ground.re
 // 창으로 들어오는 하늘빛 (낮, 방 안) — 그림자 없는 보조광
 const fillDefs = [[70, 177, 1.0], [185, 505, 0.7], [925, 108, 0.75], [962, 362, 0.8], [822, 554, 0.5]];
 const fills = fillDefs.map(([x, y, k]) => { const l = new THREE.PointLight(0xfff3e4, 0, 6.5, 1.6); l.position.set(CM(x), 1.45, CM(y)); l.userData.k = k; l.visible = false; scene.add(l); return l; });
-// 실내등 (저녁) — 방마다 하나씩
-const lampDefs = [[280, 180, 1.15], [760, 345, 1.0], [510, 300, 0.7], [276, 525, 0.9], [790, 108, 0.9], [740, 590, 0.75], [483, 50, 0.55], [513, 590, 0.55], [958, 590, 0.45]];
+// 실내등 (저녁): 다운라이트 묶음마다 하나 + 옷방 중앙등 + 표시가 없던 현관 · 세탁실 기본등(가정)
+const lampDefs = [
+  ...H.lightGroups.map(g => { const n = g.pts.length; return [g.pts.reduce((s, p) => s + p[0], 0) / n, g.pts.reduce((s, p) => s + p[1], 0) / n, 0.34 + 0.13 * n]; }),
+  ...H.ceilingLamps.map(L => [L.at[0], L.at[1], 0.85]), [483, 50, 0.5], [958, 590, 0.4],
+];
 const lamps = lampDefs.map(([x, y, k]) => { const l = new THREE.PointLight(0xffe0b4, 0, 6, 1.5); l.position.set(CM(x), 2.12, CM(y)); l.userData.k = k; l.visible = false; scene.add(l); return l; });
+// 다운라이트 밝기(0~1) · 색온도(K). 보기 옵션에서 바꿈
+const dl = { b: 0.8, k: 3500 };
+try { const sv = JSON.parse(localStorage.getItem('house3d.dl') || 'null'); if (sv && sv.b >= 0 && sv.b <= 1 && sv.k >= 2700 && sv.k <= 6500) Object.assign(dl, sv); } catch (e) { /* 무시 */ }
+const kelvinCol = new THREE.Color(), dlTmp = new THREE.Color();
+function kelvinRGB(K) {           // 색온도 → 빛 색 (근사식)
+  const t = K / 100;
+  const r = t <= 66 ? 255 : 329.698727446 * Math.pow(t - 60, -0.1332047592);
+  const g = t <= 66 ? 99.4708025861 * Math.log(t) - 161.1195681661 : 288.1221695283 * Math.pow(t - 60, -0.0755148492);
+  const b = t >= 66 ? 255 : t <= 19 ? 0 : 138.5177312231 * Math.log(t - 10) - 305.0447927307;
+  // 눈(카메라)이 조명 색에 어느 정도 적응하는 것을 감안해 흰색 쪽으로 절반쯤 당김 — 안 그러면 3000K대가 주황색 방이 됨
+  return kelvinCol.setRGB(clamp(r, 0, 255) / 255, clamp(g, 0, 255) / 255, clamp(b, 0, 255) / 255).lerp(dlTmp.set(0xffffff), 0.5).convertSRGBToLinear();
+}
 
 let allMats = null;
 function collectMats() {
@@ -5246,15 +5325,16 @@ function applyRig() {
     if (inside) { sun.position.set(5 - 11.5, 1 + 8.2, 3.5 + 4.2); sun.intensity = 2.5; sun.color.set(0xffe6c6); hemi.intensity = T.fill ? 0.3 : 0.46; env = T.fill ? 0.6 : 0.8; hemi.color.set(0xfff8ee); hemi.groundColor.set(0xe6d8c4); }      // 흰 벽지가 회색으로 보이지 않게 실내 주변광을 올림 (15차)
     else { sun.position.set(5 - 3.0, 13, 3.5 + 4.6); sun.intensity = 0.95; sun.color.set(0xfff1dc); hemi.intensity = 0.1; env = 0.3; hemi.color.set(0xffffff); hemi.groundColor.set(0xc9bca8); }
   } else {
-    if (inside) { sun.intensity = 0; hemi.intensity = T.fill ? 0.1 : 0.34; env = T.fill ? 0.18 : 0.34; hemi.color.set(0xffe9cc); hemi.groundColor.set(0x8a7a66); }
+    if (inside) { sun.intensity = 0; hemi.intensity = (T.fill ? 0.1 : 0.34) * (0.25 + 0.95 * dl.b); env = (T.fill ? 0.18 : 0.34) * (0.3 + 0.9 * dl.b); hemi.color.copy(kelvinRGB(dl.k)); hemi.groundColor.set(0x8a7a66); }
     else { sun.position.set(5 - 3.0, 13, 3.5 + 4.6); sun.intensity = 0.16; sun.color.set(0xbfd0ff); hemi.intensity = T.fill ? 0.07 : 0.25; env = 0.14; hemi.color.set(0xffe9cc); hemi.groundColor.set(0x8a7a66); }
   }
   sun.visible = sun.intensity > 0;
   sun.target.position.set(5, inside ? 1 : 0, 3.5); sun.target.updateMatrixWorld();
   fills.forEach(l => { l.visible = T.fill && !night && inside; l.intensity = l.userData.k * LK.fill; });
-  lamps.forEach(l => { l.visible = T.fill && night; l.intensity = l.userData.k * LK.lamp; });
+  const lc = kelvinRGB(dl.k);
+  lamps.forEach(l => { l.visible = T.fill && night && dl.b > 0.01; l.intensity = l.userData.k * LK.lamp * dl.b * 1.25; l.color.copy(lc); });
   allMats.forEach(m => { m.envMapIntensity = m.userData.env0 * env; });
-  MAT.downlight.color.set(night ? 0xfff3d6 : 0xfbf8f0);
+  if (night) MAT.downlight.color.copy(lc).lerp(dlTmp.set(0xffffff), 0.3).multiplyScalar(0.3 + 0.7 * dl.b).convertLinearToSRGB(); else MAT.downlight.color.set(0xfbf8f0);
   MAT.tvScreen.envMapIntensity = MAT.tvScreen.userData.env0 * (night ? 0.5 : 1);
   backdrop.visible = inside; ground.visible = !inside && !night;
   scene.background = inside ? null : studioBg[night ? 'night' : 'day'];
@@ -6023,6 +6103,20 @@ $('tMap').addEventListener('click', () => { if (MAP.big) { MAP.big = false; mapA
 $('tMeas').addEventListener('click', () => setMeasuring(!state.measuring));
 $('measClear').addEventListener('click', measClear); $('measDone').addEventListener('click', () => setMeasuring(false));
 segInit('lightMode', 'l', v => { light.night = v === 'night'; applyRig(); });
+// 다운라이트 밝기 · 색온도 (저녁 조명에서 보이므로 조절하면 저녁으로 바꿈)
+(function dlUI() {
+  const bEl = $('dlBright'), kEl = $('dlTemp'), name = k => (k <= 3200 ? '전구색' : k <= 4500 ? '주백색' : '주광색');
+  const show = () => { $('dlBrightV').textContent = Math.round(dl.b * 100) + '%'; $('dlTempV').textContent = dl.k + 'K · ' + name(dl.k); };
+  bEl.value = Math.round(dl.b * 100); kEl.value = dl.k; show();
+  const on = () => {
+    dl.b = clamp(+bEl.value / 100, 0, 1); dl.k = clamp(+kEl.value, 2700, 6500); show();
+    try { localStorage.setItem('house3d.dl', JSON.stringify(dl)); } catch (e) { /* 무시 */ }
+    if (!light.night) { light.night = true; segSet('lightMode', 'l', 'night'); toast('다운라이트가 보이도록 저녁 조명으로 바꿨어요', 2200); }
+    applyRig();
+  };
+  bEl.addEventListener('input', on); kEl.addEventListener('input', on);
+  document.querySelectorAll('[data-dlk]').forEach(b => b.addEventListener('click', () => { kEl.value = b.dataset.dlk; on(); }));
+})();
 segInit('curtainMode', 'c', v => { curtainSet(v); invalidate(); toast(v === 'open' ? '전동 커튼을 열어요' : v === 'sheer' ? '거실 속커튼만 닫아요' : '커튼을 모두 닫아요', 1800); });
 function qualNote() { $('qualNote').textContent = (qualPref === 'auto' ? '자동 → 지금은 ' : '지금은 ') + tier.name + (post.active ? ' (부드러운 그림자 + 음영 + 계단 현상 제거)' : ' (기본 그림자)') + (qualPref === 'auto' ? '. 느리면 알아서 낮춰요.' : ''); }
 segInit('qualMode', 'q', v => {
@@ -6726,7 +6820,7 @@ requestAnimationFrame(frame);
 if (QS.get('film')) setTimeout(filmStart, 300);
 
 // 검증용 훅
-window.__house = { look: (px, py, ph, lx, ly, lh, fov) => goWalk(new V3(CM(px), CM(ph), CM(py)), new V3(CM(lx), CM(lh), CM(ly)), fov || photoFov(74), { instant: true }), setProposal, hemi, sun, fills, lamps, MAT, getMats: () => allMats, shadowDirty, state, goSpace, goOrbit, enterAt, walkTo, setTier, invalidate, camera, light, applyRig, renderer, GRID, pickAt, tierName: () => tierName, post, mapSet, setMeasuring, measAdd, cardFurn, cardWin, walk, applyWalkCam, fx, curtainSet, film: { start: filmStart, stop: filmStop, seek: filmSeek, go: filmGo, pause: filmPause, state: film, scenes: SCENES } };
+window.__house = { look: (px, py, ph, lx, ly, lh, fov) => goWalk(new V3(CM(px), CM(ph), CM(py)), new V3(CM(lx), CM(lh), CM(ly)), fov || photoFov(74), { instant: true }), setProposal, hemi, sun, fills, lamps, MAT, getMats: () => allMats, shadowDirty, state, goSpace, goOrbit, enterAt, walkTo, setTier, invalidate, camera, light, applyRig, renderer, GRID, pickAt, tierName: () => tierName, post, mapSet, setMeasuring, measAdd, cardFurn, cardWin, walk, applyWalkCam, fx, curtainSet, dl, film: { start: filmStart, stop: filmStop, seek: filmSeek, go: filmGo, pause: filmPause, state: film, scenes: SCENES } };
 
 /* ==== END FILE: src/3d/09-main.js ==== */
 })();

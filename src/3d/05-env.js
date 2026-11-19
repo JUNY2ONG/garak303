@@ -173,9 +173,24 @@ ground.rotation.x = -Math.PI / 2; ground.position.set(5, -0.125, 3.5); ground.re
 // 창으로 들어오는 하늘빛 (낮, 방 안) — 그림자 없는 보조광
 const fillDefs = [[70, 177, 1.0], [185, 505, 0.7], [925, 108, 0.75], [962, 362, 0.8], [822, 554, 0.5]];
 const fills = fillDefs.map(([x, y, k]) => { const l = new THREE.PointLight(0xfff3e4, 0, 6.5, 1.6); l.position.set(CM(x), 1.45, CM(y)); l.userData.k = k; l.visible = false; scene.add(l); return l; });
-// 실내등 (저녁) — 방마다 하나씩
-const lampDefs = [[280, 180, 1.15], [760, 345, 1.0], [510, 300, 0.7], [276, 525, 0.9], [790, 108, 0.9], [740, 590, 0.75], [483, 50, 0.55], [513, 590, 0.55], [958, 590, 0.45]];
+// 실내등 (저녁): 다운라이트 묶음마다 하나 + 옷방 중앙등 + 표시가 없던 현관 · 세탁실 기본등(가정)
+const lampDefs = [
+  ...H.lightGroups.map(g => { const n = g.pts.length; return [g.pts.reduce((s, p) => s + p[0], 0) / n, g.pts.reduce((s, p) => s + p[1], 0) / n, 0.34 + 0.13 * n]; }),
+  ...H.ceilingLamps.map(L => [L.at[0], L.at[1], 0.85]), [483, 50, 0.5], [958, 590, 0.4],
+];
 const lamps = lampDefs.map(([x, y, k]) => { const l = new THREE.PointLight(0xffe0b4, 0, 6, 1.5); l.position.set(CM(x), 2.12, CM(y)); l.userData.k = k; l.visible = false; scene.add(l); return l; });
+// 다운라이트 밝기(0~1) · 색온도(K). 보기 옵션에서 바꿈
+const dl = { b: 0.8, k: 3500 };
+try { const sv = JSON.parse(localStorage.getItem('house3d.dl') || 'null'); if (sv && sv.b >= 0 && sv.b <= 1 && sv.k >= 2700 && sv.k <= 6500) Object.assign(dl, sv); } catch (e) { /* 무시 */ }
+const kelvinCol = new THREE.Color(), dlTmp = new THREE.Color();
+function kelvinRGB(K) {           // 색온도 → 빛 색 (근사식)
+  const t = K / 100;
+  const r = t <= 66 ? 255 : 329.698727446 * Math.pow(t - 60, -0.1332047592);
+  const g = t <= 66 ? 99.4708025861 * Math.log(t) - 161.1195681661 : 288.1221695283 * Math.pow(t - 60, -0.0755148492);
+  const b = t >= 66 ? 255 : t <= 19 ? 0 : 138.5177312231 * Math.log(t - 10) - 305.0447927307;
+  // 눈(카메라)이 조명 색에 어느 정도 적응하는 것을 감안해 흰색 쪽으로 절반쯤 당김 — 안 그러면 3000K대가 주황색 방이 됨
+  return kelvinCol.setRGB(clamp(r, 0, 255) / 255, clamp(g, 0, 255) / 255, clamp(b, 0, 255) / 255).lerp(dlTmp.set(0xffffff), 0.5).convertSRGBToLinear();
+}
 
 let allMats = null;
 function collectMats() {
@@ -194,15 +209,16 @@ function applyRig() {
     if (inside) { sun.position.set(5 - 11.5, 1 + 8.2, 3.5 + 4.2); sun.intensity = 2.5; sun.color.set(0xffe6c6); hemi.intensity = T.fill ? 0.3 : 0.46; env = T.fill ? 0.6 : 0.8; hemi.color.set(0xfff8ee); hemi.groundColor.set(0xe6d8c4); }      // 흰 벽지가 회색으로 보이지 않게 실내 주변광을 올림 (15차)
     else { sun.position.set(5 - 3.0, 13, 3.5 + 4.6); sun.intensity = 0.95; sun.color.set(0xfff1dc); hemi.intensity = 0.1; env = 0.3; hemi.color.set(0xffffff); hemi.groundColor.set(0xc9bca8); }
   } else {
-    if (inside) { sun.intensity = 0; hemi.intensity = T.fill ? 0.1 : 0.34; env = T.fill ? 0.18 : 0.34; hemi.color.set(0xffe9cc); hemi.groundColor.set(0x8a7a66); }
+    if (inside) { sun.intensity = 0; hemi.intensity = (T.fill ? 0.1 : 0.34) * (0.25 + 0.95 * dl.b); env = (T.fill ? 0.18 : 0.34) * (0.3 + 0.9 * dl.b); hemi.color.copy(kelvinRGB(dl.k)); hemi.groundColor.set(0x8a7a66); }
     else { sun.position.set(5 - 3.0, 13, 3.5 + 4.6); sun.intensity = 0.16; sun.color.set(0xbfd0ff); hemi.intensity = T.fill ? 0.07 : 0.25; env = 0.14; hemi.color.set(0xffe9cc); hemi.groundColor.set(0x8a7a66); }
   }
   sun.visible = sun.intensity > 0;
   sun.target.position.set(5, inside ? 1 : 0, 3.5); sun.target.updateMatrixWorld();
   fills.forEach(l => { l.visible = T.fill && !night && inside; l.intensity = l.userData.k * LK.fill; });
-  lamps.forEach(l => { l.visible = T.fill && night; l.intensity = l.userData.k * LK.lamp; });
+  const lc = kelvinRGB(dl.k);
+  lamps.forEach(l => { l.visible = T.fill && night && dl.b > 0.01; l.intensity = l.userData.k * LK.lamp * dl.b * 1.25; l.color.copy(lc); });
   allMats.forEach(m => { m.envMapIntensity = m.userData.env0 * env; });
-  MAT.downlight.color.set(night ? 0xfff3d6 : 0xfbf8f0);
+  if (night) MAT.downlight.color.copy(lc).lerp(dlTmp.set(0xffffff), 0.3).multiplyScalar(0.3 + 0.7 * dl.b).convertLinearToSRGB(); else MAT.downlight.color.set(0xfbf8f0);
   MAT.tvScreen.envMapIntensity = MAT.tvScreen.userData.env0 * (night ? 0.5 : 1);
   backdrop.visible = inside; ground.visible = !inside && !night;
   scene.background = inside ? null : studioBg[night ? 'night' : 'day'];

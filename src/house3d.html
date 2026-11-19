@@ -137,6 +137,18 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;-webki
 .tog button.on{color:var(--ink)}
 .tog button.on::after{background-color:var(--acc);box-shadow:inset 0 0 0 2px var(--acc);background-image:radial-gradient(circle at 24px 10px,#fff 7.5px,transparent 8px)}
 .hintline{font-size:12px;color:var(--mute);line-height:1.5;margin-top:8px}
+.sl{display:flex;align-items:center;gap:10px;height:46px;font-size:13.5px;font-weight:700;color:var(--ink2)}
+.sl span{flex:none;width:44px}
+.sl b{flex:none;width:98px;text-align:right;font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.sl input{flex:1;min-width:0;height:30px;margin:0;-webkit-appearance:none;appearance:none;background:none;touch-action:pan-y}
+.sl input::-webkit-slider-runnable-track{height:8px;border-radius:4px;background:linear-gradient(90deg,#55524c,#f4efe6)}
+.sl input.temp::-webkit-slider-runnable-track{background:linear-gradient(90deg,#ffb46b,#fff1dc 45%,#eaf2ff)}
+.sl input::-moz-range-track{height:8px;border-radius:4px;background:linear-gradient(90deg,#55524c,#f4efe6)}
+.sl input.temp::-moz-range-track{background:linear-gradient(90deg,#ffb46b,#fff1dc 45%,#eaf2ff)}
+.sl input::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-9px;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(40,30,15,.35),0 0 0 1px rgba(40,30,15,.12)}
+.sl input::-moz-range-thumb{width:26px;height:26px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(40,30,15,.35),0 0 0 1px rgba(40,30,15,.12)}
+.chips3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px}
+.chips3 button{height:40px;border-radius:11px;background:#f1eee8;font-size:12px;font-weight:700;color:var(--ink2);letter-spacing:-.02em}
 .memo h4{margin:16px 0 6px;font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:6px}
 .memo ul{margin:0;padding-left:18px;font-size:13px;line-height:1.6;color:var(--ink2)}
 .memo li{margin:2px 0}
@@ -415,6 +427,12 @@ body.film #card,body.film #measBar,body.film #toast,body.film #mapWrap,body.film
     </div>
     <div class="sec"><h4>조명</h4>
       <div class="seg" id="lightMode"><button data-l="day" class="on">낮 (햇빛)</button><button data-l="night">저녁 (실내등)</button></div>
+    </div>
+    <div class="sec"><h4>다운라이트 (3인치 31개) · 옷방 중앙등</h4>
+      <label class="sl"><span>밝기</span><input type="range" id="dlBright" min="0" max="100" step="5" value="80"><b id="dlBrightV">80%</b></label>
+      <label class="sl"><span>색온도</span><input type="range" id="dlTemp" min="2700" max="6500" step="100" value="3500" class="temp"><b id="dlTempV">3500K</b></label>
+      <div class="chips3"><button data-dlk="3000">전구색 3000K</button><button data-dlk="4000">주백색 4000K</button><button data-dlk="5700">주광색 5700K</button></div>
+      <div class="hintline">저녁 조명에서 켜져요. 조절하면 자동으로 저녁 조명으로 바뀌어요.</div>
     </div>
     <div class="sec"><h4>화질</h4>
       <div class="seg" id="qualMode"><button data-q="auto" class="on">자동</button><button data-q="low">낮음</button><button data-q="mid">보통</button><button data-q="high">높음</button></div>

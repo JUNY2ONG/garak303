@@ -413,6 +413,20 @@ $('tMap').addEventListener('click', () => { if (MAP.big) { MAP.big = false; mapA
 $('tMeas').addEventListener('click', () => setMeasuring(!state.measuring));
 $('measClear').addEventListener('click', measClear); $('measDone').addEventListener('click', () => setMeasuring(false));
 segInit('lightMode', 'l', v => { light.night = v === 'night'; applyRig(); });
+// 다운라이트 밝기 · 색온도 (저녁 조명에서 보이므로 조절하면 저녁으로 바꿈)
+(function dlUI() {
+  const bEl = $('dlBright'), kEl = $('dlTemp'), name = k => (k <= 3200 ? '전구색' : k <= 4500 ? '주백색' : '주광색');
+  const show = () => { $('dlBrightV').textContent = Math.round(dl.b * 100) + '%'; $('dlTempV').textContent = dl.k + 'K · ' + name(dl.k); };
+  bEl.value = Math.round(dl.b * 100); kEl.value = dl.k; show();
+  const on = () => {
+    dl.b = clamp(+bEl.value / 100, 0, 1); dl.k = clamp(+kEl.value, 2700, 6500); show();
+    try { localStorage.setItem('house3d.dl', JSON.stringify(dl)); } catch (e) { /* 무시 */ }
+    if (!light.night) { light.night = true; segSet('lightMode', 'l', 'night'); toast('다운라이트가 보이도록 저녁 조명으로 바꿨어요', 2200); }
+    applyRig();
+  };
+  bEl.addEventListener('input', on); kEl.addEventListener('input', on);
+  document.querySelectorAll('[data-dlk]').forEach(b => b.addEventListener('click', () => { kEl.value = b.dataset.dlk; on(); }));
+})();
 segInit('curtainMode', 'c', v => { curtainSet(v); invalidate(); toast(v === 'open' ? '전동 커튼을 열어요' : v === 'sheer' ? '거실 속커튼만 닫아요' : '커튼을 모두 닫아요', 1800); });
 function qualNote() { $('qualNote').textContent = (qualPref === 'auto' ? '자동 → 지금은 ' : '지금은 ') + tier.name + (post.active ? ' (부드러운 그림자 + 음영 + 계단 현상 제거)' : ' (기본 그림자)') + (qualPref === 'auto' ? '. 느리면 알아서 낮춰요.' : ''); }
 segInit('qualMode', 'q', v => {

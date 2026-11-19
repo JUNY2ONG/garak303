@@ -44,10 +44,15 @@ const ceilG = new THREE.Group(); ceilG.visible = false; world.add(ceilG);
   ceilG.add(m);
   const b = new Batch();
   H.lights.forEach(([x, y]) => {
-    const ring = new THREE.RingGeometry(0.04, 0.055, 28); ring.rotateX(Math.PI / 2); ring.translate(CM(x), CM(CEIL) - 0.002, CM(y));
+    const ring = new THREE.RingGeometry(0.036, 0.046, 28); ring.rotateX(Math.PI / 2); ring.translate(CM(x), CM(CEIL) - 0.002, CM(y));      // 3인치: 타공 약 7.5cm + 테두리
     b.geo(MAT.downlightRing, ring, { cast: false });
-    const disc = new THREE.CircleGeometry(0.04, 28); disc.rotateX(Math.PI / 2); disc.translate(CM(x), CM(CEIL) - 0.0015, CM(y));
+    const disc = new THREE.CircleGeometry(0.036, 28); disc.rotateX(Math.PI / 2); disc.translate(CM(x), CM(CEIL) - 0.0015, CM(y));
     b.geo(MAT.downlight, disc, { cast: false });
+  });
+  H.ceilingLamps.forEach(L => {                       // 일반 중앙등: 납작한 원형 등 (모양 가정)
+    const [x, y] = L.at, r = CM(L.r);
+    b.cyl(MAT.downlightRing, r, r, 0.022, CM(x), CM(CEIL) - 0.011, CM(y), 'y', { seg: 48, cast: false });
+    b.cyl(MAT.downlight, r - 0.012, r - 0.03, 0.05, CM(x), CM(CEIL) - 0.047, CM(y), 'y', { seg: 48, cast: false });
   });
   b.build(ceilG);
 })();
