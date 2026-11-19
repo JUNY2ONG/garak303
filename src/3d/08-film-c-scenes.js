@@ -110,11 +110,14 @@ const SCENES = [
   { id: 'kitchen', ch: CH.kitchen, dur: 8.5, inside: true, night: false, fx: 'day',
     enter() {
       filmDoors(F_OPEN);
-      coProd('induction', [590, 262, 88], 1.0, 3.1, { rise: 64 });
-      coProd('dw', [665, 296, 50], 1.5, 3.6, { up: false, rise: 26 });
-      coProd('fridge', [845, 296, 150], 2.1, 4.3, { rise: 40 });
-      coProd('purifier', [785, 248, 100], 4.7, 6.4, { rise: 50 });
-      coProd('tallcab', [790, 399, 112], 6.6, 8.2, { title: '키큰장', sub: '바닥~천장 · 가운데 오픈 칸', rise: 50 });
+      const bb = id => bboxOf(H.furniture.find(q => q.id === id).poly), mid = (b, y, h) => [(b[0] + b[1]) / 2, y, h];
+      const ro = bb('robot'), ind = bb('induction'), dw = bb('dw'), fr = bb('fridge'), tc = bb('tallcab'), fa = H.furniture.find(q => q.id === 'faucet').at;
+      coProd('robot', mid(ro, ro[3], 9), 0.9, 2.7, { sub: '걸레받이 안에 쏙', up: false, rise: 18 });
+      coProd('induction', mid(ind, (ind[2] + ind[3]) / 2, 88), 1.4, 3.5, { rise: 64 });
+      coProd('dw', mid(dw, dw[3], 50), 2.6, 4.5, { up: false, rise: 26 });
+      coProd('fridge', mid(fr, fr[3], 150), 3.0, 4.8, { rise: 40 });
+      coProd('purifier', [fa[0], fa[1] + 2, 100], 4.9, 6.5, { rise: 50 });
+      coProd('tallcab', mid(tc, tc[2], 112), 6.6, 8.2, { title: '키큰장', sub: '바닥~천장 · 가운데 오픈 칸', rise: 50 });
     },
     cues: [[0.6, s => (s.lt = lowerThird(CH.kitchen))]],
     update(tl) { fCamWalk(camKitchen(tl)); } },

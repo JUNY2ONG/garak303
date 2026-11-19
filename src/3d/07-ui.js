@@ -31,7 +31,7 @@ H.furniture.forEach(f => {
   if (f.poly) { const [x0, x1, y0, y1] = bboxOf(f.parts ? [[f.parts[1][0], f.parts[1][1]], [f.parts[1][2], f.parts[1][3]]] : f.poly); x = (x0 + x1) / 2; y = (y0 + y1) / 2; h = Math.min((f.h1 || f.h || 80) + 12, 205); }
   else { x = f.at[0]; y = f.at[1]; h = 122; }
   if (f.type === 'tv') { y -= 8; h = 186; } if (f.type === 'hood') { y = 296; h = 140; } if (f.type === 'fridge') { y = 300; h = 150; } if (f.type === 'tall') { y = 395; h = 150; }
-  if (f.type === 'shoe') { x = 526; h = 150; } if (f.type === 'cabinet') { y = 68; h = 150; } if (f.type === 'robot') { y = 300; h = 22; }
+  if (f.type === 'shoe') { x = 526; h = 150; } if (f.type === 'cabinet') { y = bboxOf(f.poly)[3] + 6; h = 150; } if (f.type === 'robot') { y = 300; h = 22; }
   if (f.type === 'dw') { y = 300; h = 55; } if (f.type === 'closet') h = 150; if (f.type === 'styler') { y = 632; h = 150; }
   if (f.id === 'closet-l') { y = 636; } if (f.id === 'closet-r') { y = 544; }
   const short = f.label.replace(/ \d+×\d+$/, '');

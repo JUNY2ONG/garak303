@@ -35,6 +35,34 @@ function faceFrame(poly, face) {
   else { m.makeRotationY(-Math.PI / 2); m.setPosition(CM(x1), 0, CM((y0 + y1) / 2)); W = y1 - y0; D = x1 - x0; }
   return { m, W: CM(W), D: CM(D) };
 }
+// 붙박이장 공통 (키큰장 · 신발장 · 수납장): 앞에서 본 칸 구성 f.cells 대로 몸통과 문짝을 만든다 (업체 실측 메모 기준, 문은 가정).
+//   칸 = [u0, u1, 아래 높이, 위 높이, 문 수 | 'open']. u = 앞에서 봤을 때 왼쪽 끝부터의 거리(cm). face = 문이 달린 쪽
+function storeBuild(f, b, [x0, x1, y0, y1]) {
+  const F = f.face, horiz = F === 'S' || F === 'N', W = horiz ? x1 - x0 : y1 - y0, D = horiz ? y1 - y0 : x1 - x0, T = 2;
+  const mat = MAT[f.mat || 'cream'], inner = MAT[f.innerMat || f.mat || 'cream'], top = f.h, bot = f.h0 || 0, base = f.base || 0, [sl, sr] = f.sides || [2, 2];
+  const put = (m, u0, u1, h0, h1, d0, d1, o) => {                      // 앞면 기준 상자: 좌우 u, 높이 h, 앞에서 안쪽으로 d
+    if (u1 - u0 < 0.05 || h1 - h0 < 0.05 || d1 - d0 < 0.05) return;
+    if (F === 'S') b.boxC(m, x0 + u0, x0 + u1, h0, h1, y1 - d1, y1 - d0, o);
+    else if (F === 'N') b.boxC(m, x1 - u1, x1 - u0, h0, h1, y0 + d0, y0 + d1, o);
+    else if (F === 'W') b.boxC(m, x0 + d0, x0 + d1, h0, h1, y0 + u0, y0 + u1, o);
+    else b.boxC(m, x1 - d1, x1 - d0, h0, h1, y1 - u1, y1 - u0, o);
+  };
+  put(mat, 0, sl, bot, top, 0, D); put(mat, W - sr, W, bot, top, 0, D);                              // 옆판
+  if (base) put(MAT.toe, sl, W - sr, bot, bot + base, 6, D, { cast: false });                         // 걸레받이
+  const cellTop = Math.max(...f.cells.map(c => c[3]));
+  if (cellTop < top) put(mat, sl, W - sr, cellTop, top, 0.3, D);                                      // 맨 위 막음
+  f.cells.forEach(([u0, u1, h0, h1, n]) => {
+    if (n === 'open') {                                                                                // 오픈 칸: 뒤판 + 안쪽 면
+      put(inner, u0, u1, h0, h1, D - 2.5, D, { cast: false });
+      put(inner, u0, u1, h0, h0 + 0.6, 0.3, D - 2.5, { cast: false }); put(inner, u0, u1, h1 - 0.6, h1, 0.3, D - 2.5, { cast: false });
+      put(inner, u0, u0 + 0.6, h0 + 0.6, h1 - 0.6, 0.3, D - 2.5, { cast: false }); put(inner, u1 - 0.6, u1, h0 + 0.6, h1 - 0.6, 0.3, D - 2.5, { cast: false });
+      return;
+    }
+    put(mat, u0, u1, h0, h1, T, D);
+    const w = (u1 - u0) / n;
+    for (let i = 0; i < n; i++) put(mat, u0 + i * w + 0.15, u0 + (i + 1) * w - 0.15, h0 + 0.15, h1 - 0.15, 0, T, { cast: false });
+  });
+}
 const BUILD = {
   // 하부장: 걸레받이 15, 몸통 15~82, 상판 82~85 (+개수대 구멍)
   counter(f, b, [x0, x1, y0, y1]) {
@@ -189,13 +217,7 @@ const BUILD = {
     tiltBox(b, MATX.fabBeige, s0 + 6, s0 + 50, 46, 90, y0 + (open ? 44 : 39), y0 + (open ? 57 : 52), 5.8, open ? -0.55 : -0.3);   // 쿠션 2개 (분위기용)
     tiltBox(b, MATX.fabIvory, s0 + 24, s0 + 66, 46, 76, y0 + (open ? 58 : 52), y0 + (open ? 70 : 64), 5.2, open ? -0.6 : -0.38);
   },
-  cabinet(f, b, [x0, x1, y0, y1]) {                                  // 붙박이 수납장 (문이 face 쪽, 모양 가정)
-    b.boxC(MAT.cream, x0, x1, 0, f.h, y0, y1 - 2);
-    const cx = (x0 + x1) / 2;
-    b.boxC(MAT.cream, x0 + 0.2, cx - 0.15, 6, f.h - 0.4, y1 - 2, y1, { cast: false }); b.boxC(MAT.cream, cx + 0.15, x1 - 0.2, 6, f.h - 0.4, y1 - 2, y1, { cast: false });
-    b.boxC(MAT.seamDark, x0, x1, 0, 6, y1 - 4, y1 - 3.6, { cast: false });
-    [-2.2, 2.2].forEach(dx => b.boxC(MAT.handle, cx + dx - 0.5, cx + dx + 0.5, 95, 125, y1, y1 + 2.2, { r: 0.4, cast: false }));
-  },
+  cabinet: storeBuild,
   bed(f, b, [x0, x1, y0, y1], open) {                                // 모션베드 2200×2000: 전동 베이스 2 + 매트리스 2 (머리 = 아래쪽 벽)
     const mid = (x0 + x1) / 2, HB = 8, by1 = y1 - HB, hh = f.headH || 100, T = f.h - 31;
     b.boxC(MAT.headboard, x0 - 1, x1 + 1, 0, hh, by1, y1, { r: 2.5 });
@@ -234,12 +256,7 @@ const BUILD = {
     b.cyl(MAT.white, 0.035, 0.04, 0.03, cx, h + 0.015, cz - 0.03, 'y');
     const g = new THREE.SphereGeometry(0.07, 20, 14); g.translate(cx, h + 0.09, cz - 0.03); b.geo(MATX.shade, g, { cast: false });
   },
-  shoe(f, b, [x0, x1, y0, y1]) {                                     // 천장까지 붙박이, 아래 25 띄움. 문은 현관 쪽(서쪽)
-    b.boxC(MAT.cream, x0 + 2, x1, f.h0, CEIL, y0, y1);
-    const n = 3, w = (y1 - y0) / n;
-    for (let i = 0; i < n; i++) b.boxC(MAT.cream, x0, x0 + 2, f.h0 + 0.2, CEIL - 0.4, y0 + i * w + 0.15, y0 + (i + 1) * w - 0.15, { cast: false });
-    b.boxC(MAT.seamDark, x0 + 2, x0 + 2.4, f.h0, CEIL, y0, y1, { cast: false });
-  },
+  shoe: storeBuild,
   bath(f, b, [x0, x1, y0, y1]) {
     const t = 5;
     b.boxC(MAT.porcelain, x0, x1, 0, 14, y0, y1); b.boxC(MAT.porcelain, x0, x1, 14, f.h, y0, y0 + t, { r: 1.5 }); b.boxC(MAT.porcelain, x0, x1, 14, f.h, y1 - t, y1, { r: 1.5 });
@@ -258,24 +275,13 @@ const BUILD = {
     const lid = new THREE.CylinderGeometry(0.19, 0.19, 0.03, 28); lid.scale(sx, 1, sz); lid.translate(CM(cx), 0.415, CM(cy)); b.geo(MAT.porcelain, lid);
   },
   fridgecase(f, b, [x0, x1, y0, y1]) {                               // 냉장고장 (목공): 옆판 + 위 막음
-    const [ix0, ix1, top] = f.inner;
+    const [ix0, ix1, top] = f.inner, n = f.topDoors || 0;
     b.boxC(MAT.cabUp, x0, ix0, 0, CEIL, y0, y1); b.boxC(MAT.cabUp, ix1, x1, 0, CEIL, y0, y1);
-    b.boxC(MAT.cabUp, ix0, ix1, top, CEIL, y0, y1);
+    b.boxC(MAT.cabUp, ix0, ix1, top, CEIL, y0, y1 - (n ? 1.9 : 0));
+    const w = (ix1 - ix0) / (n || 1);                                  // 냉장고 위 상부장 문 (업체 메모에 칸이 있어 추가, 문짝 수 가정)
+    for (let i = 0; i < n; i++) b.boxC(MAT.cabUp, ix0 + i * w + 0.15, ix0 + (i + 1) * w - 0.15, top + 0.3, CEIL - 0.3, y1 - 1.9, y1, { cast: false });
   },
-  tall(f, b, [x0, x1, y0, y1]) {                                     // 흰색 키큰장 + 가로로 긴 오픈 칸(안쪽 우드). 앞면 = 북쪽(y0)
-    const [n0, n1] = f.niche, F = y0, B0 = y0 + 2, n = 3, w = 60, xs = (x0 + x1) / 2 - 90;
-    b.boxC(MAT.toe, x0 + 0.5, x1 - 0.5, 0, 6, y0 + 6, y1, { cast: false });
-    b.boxC(MAT.cabUp, x0, x1, 6, n0, B0, y1); b.boxC(MAT.cabUp, x0, x1, n1, CEIL, B0, y1);
-    b.boxC(MAT.cabUp, x0, x0 + 2, n0, n1, F, y1); b.boxC(MAT.cabUp, x1 - 2, x1, n0, n1, F, y1);
-    b.boxC(MAT.leaf, x0 + 2, x1 - 2, n0, n1, y1 - 2.5, y1, { cast: false });                          // 오픈 칸 안쪽: 우드
-    b.boxC(MAT.leaf, x0 + 2, x1 - 2, n0, n0 + 0.6, F, y1 - 2.5, { cast: false }); b.boxC(MAT.leaf, x0 + 2, x1 - 2, n1 - 0.6, n1, F + 0.3, y1 - 2.5, { cast: false });
-    b.boxC(MAT.leaf, x0 + 2, x0 + 2.6, n0, n1, F + 0.3, y1 - 2.5, { cast: false }); b.boxC(MAT.leaf, x1 - 2.6, x1 - 2, n0, n1, F + 0.3, y1 - 2.5, { cast: false });
-    for (let i = 0; i < n; i++) {
-      b.boxC(MAT.cabUp, xs + i * w + 0.15, xs + (i + 1) * w - 0.15, 6.3, n0 - 0.15, F, B0, { cast: false });
-      b.boxC(MAT.cabUp, xs + i * w + 0.15, xs + (i + 1) * w - 0.15, n1 + 0.15, CEIL - 0.3, F, B0, { cast: false });
-    }
-    [[x0, xs], [xs + 180, x1]].forEach(([a, c]) => { b.boxC(MAT.cabUp, a, c - 0.15, 6.3, n0 - 0.15, F + 0.3, B0, { cast: false }); b.boxC(MAT.cabUp, a, c - 0.15, n1 + 0.15, CEIL - 0.3, F + 0.3, B0, { cast: false }); });   // 필러
-  },
+  tall: storeBuild,
   ltable(f, b, [x0, x1, y0, y1]) {                                   // 무인양품 호두나무 리빙 다이닝 테이블 2: 130×65×60
     b.boxC(MAT.walnut, x0, x1, f.h - 3, f.h, y0, y1, { r: 0.6 });
     b.boxC(MAT.walnut, x0 + 5, x1 - 5, f.h - 9, f.h - 3, y0 + 4, y0 + 6.2); b.boxC(MAT.walnut, x0 + 5, x1 - 5, f.h - 9, f.h - 3, y1 - 6.2, y1 - 4);
